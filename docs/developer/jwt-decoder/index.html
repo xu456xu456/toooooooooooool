@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>JWT Decoder — Local Only | GoToolOnline</title>
+<meta name="description" content="Decode JWT header and payload locally. Base64URL parsing, pretty JSON, copy buttons. No server, no uploads."/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text x='2' y='14' font-size='14'>🔑</text></svg>" rel="icon"/>
+<style>
+  :root{--bg:#0a0f1e;--card:#0f1830;--fg:#eaf3ff;--muted:#9fb0c3}
+  *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+  header{max-width:900px;margin:18px auto 8px;display:flex;gap:10px;align-items:center;padding:0 16px}
+  header a{color:var(--fg);text-decoration:none}
+  .pill{padding:8px 12px;border:1px solid #24365b;background:#0f1a2f;border-radius:999px;white-space:nowrap}
+  .langWrap{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .lang{padding:8px 10px;border-radius:10px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;font-size:14px}
+  main{max-width:900px;margin:8px auto 72px;padding:0 16px}
+  .card{background:#0f1830;border:1px solid #1a2843;border-radius:18px;padding:16px;margin:12px 0}
+  textarea,input,button{padding:12px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;font-size:16px}
+  button{cursor:pointer;font-weight:800}
+  button.primary{background:linear-gradient(180deg,#2a78ff,#0050d4);border:none}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .mono{font-family:ui-monospace, Menlo, Consolas, monospace}
+  pre{white-space:pre-wrap;word-break:break-word;background:#0d142a;border:1px solid #213259;border-radius:12px;padding:12px}
+  .muted{color:#9fb0c3}
+</style>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/developer/jwt-decoder/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/developer/jwt-decoder/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/developer/jwt-decoder/">
+</head>
+<body>
+<header>
+  <a class="pill" data-home href="#">🛠 GoToolOnline</a>
+  <a id="backLink" class="pill" data-home href="#">← Back to Home</a>
+  <div class="langWrap">
+    <span class="muted">🌐</span>
+    <select id="lang" class="lang" aria-label="Language">
+      <option value="en">English</option>
+      <option value="zh">简体中文</option>
+      <option value="ph">Tagalog</option>
+      <option value="id">Bahasa Indonesia</option>
+      <option value="vi">Tiếng Việt</option>
+      <option value="bn">বাংলা</option>
+      <option value="ng">English (NG)</option>
+      <option value="sw">Kiswahili</option>
+      <option value="ar">العربية</option>
+    </select>
+  </div>
+</header>
+<main>
+<section class="card">
+  <h1 id="title">JWT Decoder</h1>
+  <p id="desc" class="muted">Decodes locally. <b>Do not paste secrets or tokens you wouldn’t share.</b> Signature is <u>not</u> verified.</p>
+  <textarea class="mono" id="jwt" placeholder="Paste JWT here: header.payload.signature" rows="4"></textarea>
+  <div class="row" style="margin-top:8px">
+    <button class="primary" id="decode">Decode</button>
+    <button id="clear">Clear</button>
+  </div>
+</section>
+
+<section class="card">
+  <h3 id="hTitle" style="margin:0 0 8px">Header</h3>
+  <pre class="mono" id="h">—</pre>
+  <div class="row"><button id="copyH">Copy Header JSON</button></div>
+</section>
+
+<section class="card">
+  <h3 id="pTitle" style="margin:0 0 8px">Payload</h3>
+  <pre class="mono" id="p">—</pre>
+  <div class="row"><button id="copyP">Copy Payload JSON</button></div>
+</section>
+
+<section class="card">
+  <h3 id="sTitle" style="margin:0 0 8px">Signature (raw)</h3>
+  <pre class="mono" id="s">—</pre>
+  <div id="sigNote" class="muted">Note: This tool doesn’t validate signatures (no secret/public key).</div>
+</section>
+</main>
+
+<script>
+  // ---- i18n dictionary (9 languages) ----
+  const HTML_LANG = { en:'en', zh:'zh-CN', ph:'tl-PH', id:'id-ID', vi:'vi-VN', bn:'bn', ng:'en-NG', sw:'sw', ar:'ar' };
+  const I18N = {
+    en:{ back:"← Back to Home", pageTitle:"JWT Decoder — Local Only | GoToolOnline",
+         title:"JWT Decoder",
+         desc:'Decodes locally. <b>Do not paste secrets or tokens you wouldn’t share.</b> Signature is <u>not</u> verified.',
+         placeholder:"Paste JWT here: header.payload.signature",
+         decode:"Decode", clear:"Clear",
+         hTitle:"Header", pTitle:"Payload", sTitle:"Signature (raw)",
+         copyH:"Copy Header JSON", copyP:"Copy Payload JSON",
+         sigNote:"Note: This tool doesn’t validate signatures (no secret/public key).",
+         invalidB64:"(invalid base64url)", noSig:"(no signature part)" },
+    zh:{ back:"← 返回首页", pageTitle:"JWT 解码器 — 本地处理 | GoToolOnline",
+         title:"JWT 解码器",
+         desc:'在本地解码。<b>不要粘贴不愿分享的密钥或令牌。</b>签名<u>不会</u>被验证。',
+         placeholder:"在此粘贴 JWT：header.payload.signature",
+         decode:"解码", clear:"清空",
+         hTitle:"Header（头）", pTitle:"Payload（载荷）", sTitle:"签名（原始）",
+         copyH:"复制 Header JSON", copyP:"复制 Payload JSON",
+         sigNote:"说明：本工具不校验签名（无私钥/公钥）。",
+         invalidB64:"（无效的 base64url）", noSig:"（没有签名部分）" },
+    ph:{ back:"← Balik sa Home", pageTitle:"JWT Decoder — Lokal Lamang | GoToolOnline",
+         title:"JWT Decoder",
+         desc:'Lokal ang pag-decode. <b>Huwag i-paste ang mga lihim o token na hindi mo ibabahagi.</b> Hindi <u>tine-verify</u> ang lagda.',
+         placeholder:"I-paste ang JWT dito: header.payload.signature",
+         decode:"I-decode", clear:"I-clear",
+         hTitle:"Header", pTitle:"Payload", sTitle:"Lagda (raw)",
+         copyH:"Kopyahin ang Header JSON", copyP:"Kopyahin ang Payload JSON",
+         sigNote:"Tandaan: Hindi binavalidate ang mga pirma (walang sikreto/publikong susi).",
+         invalidB64:"(maling base64url)", noSig:"(walang bahagi ng lagda)" },
+    id:{ back:"← Kembali ke Beranda", pageTitle:"JWT Decoder — Lokal | GoToolOnline",
+         title:"JWT Decoder",
+         desc:'Dekode secara lokal. <b>Jangan tempel rahasia atau token yang tidak ingin Anda bagikan.</b> Tanda tangan <u>tidak</u> diverifikasi.',
+         placeholder:"Tempel JWT di sini: header.payload.signature",
+         decode:"Decode", clear:"Bersihkan",
+         hTitle:"Header", pTitle:"Payload", sTitle:"Tanda tangan (mentah)",
+         copyH:"Salin Header JSON", copyP:"Salin Payload JSON",
+         sigNote:"Catatan: Alat ini tidak memvalidasi tanda tangan (tanpa kunci rahasia/publik).",
+         invalidB64:"(base64url tidak valid)", noSig:"(tanpa bagian tanda tangan)" },
+    vi:{ back:"← Về Trang chủ", pageTitle:"Trình giải mã JWT — Cục bộ | GoToolOnline",
+         title:"Trình giải mã JWT",
+         desc:'Giải mã cục bộ. <b>Đừng dán bí mật hoặc token bạn không muốn chia sẻ.</b> Chữ ký <u>không</u> được xác minh.',
+         placeholder:"Dán JWT tại đây: header.payload.signature",
+         decode:"Giải mã", clear:"Xóa",
+         hTitle:"Header", pTitle:"Payload", sTitle:"Chữ ký (thô)",
+         copyH:"Sao chép Header JSON", copyP:"Sao chép Payload JSON",
+         sigNote:"Lưu ý: Công cụ không xác thực chữ ký (không có khóa bí mật/công khai).",
+         invalidB64:"(base64url không hợp lệ)", noSig:"(không có phần chữ ký)" },
+    bn:{ back:"← হোমে ফিরে যান", pageTitle:"JWT ডিকোডার — লোকাল | GoToolOnline",
+         title:"JWT ডিকোডার",
+         desc:'স্থানীয়ভাবে ডিকোড হয়। <b>শেয়ার করতে না চাওয়া সিক্রেট বা টোকেন পেস্ট করবেন না।</b> স্বাক্ষর <u>যাচাই করা হয় না</u>।',
+         placeholder:"এখানে JWT পেস্ট করুন: header.payload.signature",
+         decode:"ডিকোড", clear:"ক্লিয়ার",
+         hTitle:"হেডার", pTitle:"পে-লোড", sTitle:"স্বাক্ষর (র’)",
+         copyH:"হেডার JSON কপি", copyP:"পে-লোড JSON কপি",
+         sigNote:"নোট: এই টুল স্বাক্ষর যাচাই করে না (গোপন/পাবলিক কী নেই)।",
+         invalidB64:"(অবৈধ base64url)", noSig:"(স্বাক্ষর অংশ নেই)" },
+    ng:{ back:"← Back to Home", pageTitle:"JWT Decoder — Local Only | GoToolOnline",
+         title:"JWT Decoder",
+         desc:'Decodes locally. <b>Do not paste secrets or tokens you wouldn’t share.</b> Signature is <u>not</u> verified.',
+         placeholder:"Paste JWT here: header.payload.signature",
+         decode:"Decode", clear:"Clear",
+         hTitle:"Header", pTitle:"Payload", sTitle:"Signature (raw)",
+         copyH:"Copy Header JSON", copyP:"Copy Payload JSON",
+         sigNote:"Note: This tool doesn’t validate signatures (no secret/public key).",
+         invalidB64:"(invalid base64url)", noSig:"(no signature part)" },
+    sw:{ back:"← Rudi Nyumbani", pageTitle:"Kifungua JWT — Ndani ya Kifaa | GoToolOnline",
+         title:"Kifungua JWT",
+         desc:'Huchanganua hapa ndani ya kifaa. <b>Usibandike siri au tokeni usizotaka kushiriki.</b> Saini <u>haithibitishwi</u>.',
+         placeholder:"Bandika JWT hapa: header.payload.signature",
+         decode:"Dekodi", clear:"Futa",
+         hTitle:"Kichwa (Header)", pTitle:"Payload", sTitle:"Saini (raw)",
+         copyH:"Nakili Header JSON", copyP:"Nakili Payload JSON",
+         sigNote:"Kumbuka: Zana hii haithibitishi saini (hakuna ufunguo wa siri/wa umma).",
+         invalidB64:"(base64url si sahihi)", noSig:"(hakuna sehemu ya saini)" },
+    ar:{ back:"← الرجوع إلى الصفحة الرئيسية", pageTitle:"مُفكِّك JWT — محلي فقط | GoToolOnline",
+         title:"مُفكِّك JWT",
+         desc:'يتم فك الترميز محليًا. <b>لا تُلصق أسرارًا أو رموزًا لا تود مشاركتها.</b> لا يتم <u>التحقق</u> من التوقيع.',
+         placeholder:"ألصِق JWT هنا: header.payload.signature",
+         decode:"فكّ الترميز", clear:"مسح",
+         hTitle:"الرأس", pTitle:"الحمولة", sTitle:"التوقيع (خام)",
+         copyH:"نسخ رأس JSON", copyP:"نسخ حمولة JSON",
+         sigNote:"ملاحظة: هذه الأداة لا تتحقق من التواقيع (لا مفتاح سرّي/عام).",
+         invalidB64:"(base64url غير صالح)", noSig:"(لا يوجد جزء توقيع)" }
+  };
+
+  function getLang(){
+    const u = new URL(location.href);
+    return u.searchParams.get('lang') || localStorage.getItem('lang') || 'en';
+  }
+
+  function setHomeLinks(lang){
+    // mirror your existing home computation but with ?lang preserved
+    var path = location.pathname.replace(/\/+$/,'');
+    var parts = path.split('/');
+    if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+    else parts = [''];
+    var home = parts.join('/') + '/';
+    if (lang){
+      var u = new URL(home, location.origin);
+      u.searchParams.set('lang', lang);
+      home = u.pathname + u.search + u.hash;
+    }
+    document.querySelectorAll('a[data-home]').forEach(a=>a.setAttribute('href', home));
+  }
+
+  function applyLang(lang){
+    const t = I18N[lang] || I18N.en;
+    // html attrs
+    document.documentElement.lang = HTML_LANG[lang] || 'en';
+    document.documentElement.dir  = (lang === 'ar') ? 'rtl' : 'ltr';
+    // visible strings
+    document.title = t.pageTitle;
+    document.getElementById('backLink').textContent = t.back;
+    document.getElementById('title').textContent = t.title;
+    document.getElementById('desc').innerHTML = t.desc;
+    const jwtEl = document.getElementById('jwt'); jwtEl.placeholder = t.placeholder;
+    document.getElementById('decode').textContent = t.decode;
+    document.getElementById('clear').textContent  = t.clear;
+    document.getElementById('hTitle').textContent = t.hTitle;
+    document.getElementById('pTitle').textContent = t.pTitle;
+    document.getElementById('sTitle').textContent = t.sTitle;
+    document.getElementById('copyH').textContent  = t.copyH;
+    document.getElementById('copyP').textContent  = t.copyP;
+    document.getElementById('sigNote').textContent= t.sigNote;
+
+    // expose bits needed by runtime
+    window._i18n = t;
+
+    // persist + URL + home links
+    localStorage.setItem('lang', lang);
+    const url = new URL(location.href);
+    url.searchParams.set('lang', lang);
+    history.replaceState({}, '', url.pathname + '?' + url.searchParams.toString());
+    setHomeLinks(lang);
+  }
+
+  const sel = document.getElementById('lang');
+  const cur = getLang();
+  sel.value = I18N[cur] ? cur : 'en';
+  applyLang(sel.value);
+  sel.addEventListener('change', ()=>applyLang(sel.value));
+</script>
+
+<script>
+  // ---- core logic (uses i18n for messages) ----
+  function b64urlToBytes(b64url){
+    let pad = b64url.replace(/-/g,'+').replace(/_/g,'/');
+    const m = pad.length % 4; if (m) pad += '='.repeat(4-m);
+    const bin = atob(pad);
+    const bytes = new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+    return bytes;
+  }
+  function bytesToUtf8(bytes){
+    try { return new TextDecoder().decode(bytes); }
+    catch { return String.fromCharCode(...bytes); }
+  }
+  function pretty(obj){ try{ return JSON.stringify(JSON.parse(obj), null, 2); }catch{ return obj; } }
+
+  function decodeJWT(){
+    const raw = document.getElementById('jwt').value.trim();
+    const outH = document.getElementById('h'), outP = document.getElementById('p'), outS = document.getElementById('s');
+    if(!raw || raw.split('.').length<2){ outH.textContent='—'; outP.textContent='—'; outS.textContent='—'; return; }
+    const [h,p,s=''] = raw.split('.');
+    try{
+      const hStr = bytesToUtf8(b64urlToBytes(h));
+      const pStr = bytesToUtf8(b64urlToBytes(p));
+      outH.textContent = pretty(hStr);
+      outP.textContent = pretty(pStr);
+      outS.textContent = s || (window._i18n ? window._i18n.noSig : '(no signature part)');
+    }catch{
+      outH.textContent = (window._i18n ? window._i18n.invalidB64 : '(invalid base64url)');
+      outP.textContent = (window._i18n ? window._i18n.invalidB64 : '(invalid base64url)');
+      outS.textContent = s || '';
+    }
+  }
+
+  document.getElementById('decode').onclick = decodeJWT;
+  document.getElementById('clear').onclick  = ()=>{
+    document.getElementById('jwt').value='';
+    ['h','p','s'].forEach(id=>document.getElementById(id).textContent='—');
+  };
+  document.getElementById('copyH').onclick  = ()=> navigator.clipboard?.writeText(document.getElementById('h').textContent||'');
+  document.getElementById('copyP').onclick  = ()=> navigator.clipboard?.writeText(document.getElementById('p').textContent||'');
+</script>
+
+<!-- keep your existing home-link resolver; our i18n also updates it on lang change -->
+<script>
+(function(){
+  // Compute site root by removing the last two segments (category/tool)
+  var path = location.pathname.replace(/\/+$/,''); // strip trailing slashes
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = ['']; // already at root
+  var home = parts.join('/') + '/';
+
+  // preserve ?lang if present
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+
+  document.querySelectorAll('a[data-home]').forEach(function(a){
+    a.setAttribute('href', home);
+  });
+})();
+</script>
+</body>
+</html>

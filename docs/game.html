@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<title>Flappy Mini · buildyourside</title>
+<style>
+  html,body{
+    margin:0;height:100%;background:#0d1117;color:#e6edf3;
+    font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;
+    touch-action:none; overscroll-behavior:none; -webkit-user-select:none; user-select:none;
+  }
+  .wrap{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px}
+  #c{background:#121826;border:2px solid #222a3a;border-radius:12px;touch-action:none;}
+  .hud{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center;position:relative;z-index:3}
+  .btn{cursor:pointer;border:1px solid #2a3245;border-radius:10px;padding:6px 10px;background:#141a26}
+  .btn:active{transform:translateY(1px)}
+  .score{font-weight:700}
+</style>
+
+<!-- 硬拦截：任何网页层面的双击全屏与 dblclick 行为（不影响 F11 这种浏览器级全屏） -->
+<script>
+(function hardBlockDblClickFS(){
+  const stop = (e)=>{ e.preventDefault(); e.stopImmediatePropagation(); };
+  // 阻止双击事件在捕获阶段就被处理（覆盖第三方脚本）
+  window.addEventListener('dblclick', stop, {capture:true});
+  document.addEventListener('dblclick', stop, {capture:true});
+  // 若仍被拉进 Fullscreen API（来自扩展/其他脚本），立刻退出
+  document.addEventListener('fullscreenchange', ()=>{
+    if (document.fullscreenElement) document.exitFullscreen?.();
+  });
+  // iOS pinch 手势
+  ['gesturestart','gesturechange','gestureend'].forEach(ev=>{
+    document.addEventListener(ev, e=>e.preventDefault(), {passive:false});
+  });
+  // 双击放大：两次 touchend 间隔 < 300ms 时拦截
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function(e){
+    const now = Date.now();
+    if (now - lastTouchEnd <= 300) e.preventDefault();
+    lastTouchEnd = now;
+  }, {passive:false, capture:true});
+})();
+</script>
+
+  <meta name="description" content="Useful online tools—fast, free, and multilingual."/>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/game.html"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/game.html"/>
+
+<link rel="canonical" href="https://gotoolonline.com/game.html">
+</head>
+<body>
+<div class="wrap">
+  <div class="hud">
+    <span class="score">Score: <span id="score">0</span></span>
+    <span>Best: <span id="best">0</span></span>
+    <button id="start" class="btn">▶︎ Start</button>
+    <button id="pause" class="btn">⏸ Pause</button>
+    <button id="restart" class="btn">↺ Restart</button>
+  </div>
+  <canvas id="c" width="420" height="680" aria-label="Flappy Mini"></canvas>
+</div>
+
+<script>
+(function(){
+  const cvs = document.getElementById('c');
+  const ctx = cvs.getContext('2d', { alpha: false });
+  const $score = document.getElementById('score');
+  const $best = document.getElementById('best');
+  const $start = document.getElementById('start');
+  const $pause = document.getElementById('pause');
+  const $restart = document.getElementById('restart');
+  const BEST_KEY = 'flappy_best_v1';
+
+  // 响应式：小屏自动缩放到窗口宽度
+  function fitCanvas(){
+    const maxW = Math.min(480, window.innerWidth - 20);
+    const scale = Math.max(0.5, maxW / cvs.width);
+    cvs.style.width = (cvs.width * scale) + 'px';
+    cvs.style.height= (cvs.height* scale) + 'px';
+  }
+  window.addEventListener('resize', fitCanvas, {passive:true}); fitCanvas();
+
+  // 游戏参数
+  const W = cvs.width, H = cvs.height;
+  const GRAV = 1500;       // 重力 px/s^2
+  const JUMP_V = -420;     // 跳跃初速度
+  const BIRD_X = W*0.28;
+
+  // —— 难度：前 2 根超宽；第 3 根起变窄，10 根内收敛到常规难度 —— 
+  const PIPE_GAP_MIN = 150, PIPE_GAP_MAX = 190; // 常规难度范围
+  const GAP_START_MIN = 260, GAP_START_MAX = 300; // 开局更宽
+  const EASY_COUNT = 2;     // 前 2 根特别宽
+  const RAMP_COUNT = 10;    // 接下来 10 根内线性收敛
+  const PIPE_W = 70;
+  const PIPE_SPEED = 160;      // px/s
+  const PIPE_INTERVAL = 1450;  // ms
+
+  // 状态
+  let birdY, birdV, score, best, running=false, paused=false, gameOver=false;
+  let lastTS=0, accInterval=0, pipeCount=0;
+  let mMsg='', mTTL=0;          // 里程碑提示
+  const pipes = []; // {x, topH, gap, passed}
+
+  // 里程碑文案（按你给的）
+  const MILESTONES = new Map([
+    [10, '上班摸鱼的人手感来了！'],
+    [20, '冲冲冲冲冲，继续保持！'],
+    [30, '老板在你后面！'],
+    [40, '已入佳境！'],
+    [50, '你快下班了 ！'],
+    [60, '节奏拿捏！丝滑走位！'],
+    [70, '高手下凡，稳定发挥！'],
+    [80, '飞得漂亮，这是最高等级了！']
+  ]);
+
+  // 背景渐变
+  const skyGrad = ctx.createLinearGradient(0,0,0,H);
+  skyGrad.addColorStop(0,'#0b1224');
+  skyGrad.addColorStop(1,'#0f172a');
+
+  function reset(){
+    pipes.length = 0;
+    birdY = H/2;
+    birdV = 0;
+    score = 0;
+    gameOver = false;
+    paused = false;
+    running = false;
+    pipeCount = 0;
+    accInterval = 0;
+    lastTS = 0;
+    mMsg=''; mTTL=0;
+    $score.textContent = score;
+    best = parseInt(localStorage.getItem(BEST_KEY)||'0',10);
+    $best.textContent = best;
+    draw();
+  }
+
+  function start(){
+    if (running) return;
+    running = true;
+    paused = false;
+    requestAnimationFrame(frame);
+  }
+
+  // 重开（重置并立即开始）
+  function restartGame(){
+    running = false;
+    paused = false;
+    gameOver = false;
+    reset();
+    start();
+  }
+
+  // 当前难度下应使用的 gap
+  function currentGap(){
+    if (pipeCount < EASY_COUNT){
+      return rand(GAP_START_MIN, GAP_START_MAX);
+    }
+    // 在 RAMP_COUNT 根内线性过渡到常规难度
+    const t = Math.min(1, (pipeCount - EASY_COUNT) / RAMP_COUNT);
+    const curMin = Math.round(lerp(GAP_START_MIN, PIPE_GAP_MIN, t));
+    const curMax = Math.round(lerp(GAP_START_MAX, PIPE_GAP_MAX, t));
+    return rand(curMin, curMax);
+  }
+
+  function spawnPipe(){
+    const gap = currentGap();
+    const margin = 40;
+    const topH = rand(margin, Math.max(margin, H - margin - gap));
+    pipes.push({ x: W + PIPE_W, topH, gap, passed:false });
+    pipeCount++;
+  }
+
+  function update(dt){
+    if (paused || gameOver) return;
+
+    // 鸟物理
+    birdV += GRAV * dt;
+    birdY += birdV * dt;
+
+    // 管道生成&移动
+    accInterval += dt*1000;
+    if (accInterval >= PIPE_INTERVAL){
+      accInterval -= PIPE_INTERVAL;
+      spawnPipe();
+    }
+    for (let i=0;i<pipes.length;i++){
+      const p = pipes[i];
+      p.x -= PIPE_SPEED * dt;
+      // 计分：鸟中心越过管道中心一次
+      if (!p.passed && p.x + PIPE_W < BIRD_X){
+        p.passed = true;
+        score++;
+        $score.textContent = score;
+
+        // 触发里程碑提示
+        if (MILESTONES.has(score)) {
+          flashMsg(MILESTONES.get(score));
+        }
+      }
+    }
+    // 清理离开屏幕的管道（最多保留6个以内）
+    while (pipes.length && pipes[0].x + PIPE_W < -10) pipes.shift();
+    if (pipes.length > 6) pipes.shift();
+
+    // 碰撞检测
+    if (birdY < 0 || birdY > H){
+      endGame();
+      return;
+    }
+    for (let i=0;i<pipes.length;i++){
+      const p = pipes[i];
+      if (AABB(BIRD_X-16, birdY-16, 32,32, p.x,0, PIPE_W, p.topH) ||
+          AABB(BIRD_X-16, birdY-16, 32,32, p.x, p.topH + p.gap, PIPE_W, H)){
+        endGame();
+        return;
+      }
+    }
+
+    // 里程碑提示计时衰减
+    if (mTTL > 0) mTTL -= dt * 1000;
+  }
+
+  function draw(){
+    // 背景
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0,0,W,H);
+
+    // 星点
+    ctx.globalAlpha = 0.08;
+    for (let i=0;i<60;i++){
+      const x = (i*73)%W, y=(i*127)%H;
+      ctx.fillStyle = '#b6c5ff';
+      ctx.fillRect(x, y, 2, 2);
+    }
+    ctx.globalAlpha = 1;
+
+    // 地面
+    ctx.fillStyle = '#0b132b';
+    ctx.fillRect(0, H-40, W, 40);
+
+    // 管道
+    for (let i=0;i<pipes.length;i++){
+      const p = pipes[i];
+      pipeRect(p.x, 0, PIPE_W, p.topH);
+      pipeRect(p.x, p.topH + p.gap, PIPE_W, H - (p.topH + p.gap));
+    }
+
+    // 鸟
+    drawBird(BIRD_X, birdY);
+
+    // 顶部里程碑提示（淡入淡出）
+    if (mTTL > 0) toast(mMsg);
+
+    // 提示
+    if (!running && !gameOver){
+      banner('点击 / 空格 开始', H*0.42);
+    }
+    if (paused){
+      banner('已暂停 · 按 P 或 点击继续', H*0.42);
+    }
+    if (gameOver){
+      banner('Game Over  ·  ↺ Restart', H*0.40);
+      smallText(`Score ${score}  ·  Best ${best}`, H*0.40 + 40);
+    }
+  }
+
+  function frame(ts){
+    if (!running){ draw(); return; }
+    if (!lastTS) lastTS = ts;
+    const dt = Math.min(0.033, (ts - lastTS)/1000);
+    lastTS = ts;
+    update(dt);
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  // --- 绘制助手 ---
+  function pipeRect(x,y,w,h){
+    ctx.fillStyle = '#1f2937';
+    ctx.fillRect(x,y,w,h);
+    ctx.strokeStyle = '#2a364a';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(x+0.5,y+0.5,w-1,h-1);
+    // 边缘高光
+    ctx.globalAlpha = 0.12;
+    ctx.fillStyle = '#9fb5ff';
+    ctx.fillRect(x+4,y+4,w-8,6);
+    ctx.globalAlpha = 1;
+  }
+  function drawBird(x,y){
+    ctx.beginPath();
+    ctx.arc(x, y, 16, 0, Math.PI*2);
+    ctx.closePath();
+    ctx.fillStyle = '#ffd166';
+    ctx.fill();
+    ctx.strokeStyle = '#e0a800';
+    ctx.stroke();
+    // 翅膀
+    const flap = Math.sin(perf())*4;
+    ctx.beginPath();
+    ctx.ellipse(x-6, y+flap, 10,6, 0, 0, Math.PI*2);
+    ctx.fillStyle = '#f9c74f';
+    ctx.fill();
+    // 眼睛
+    ctx.beginPath();
+    ctx.arc(x+6, y-6, 4, 0, Math.PI*2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x+6, y-6, 2, 0, Math.PI*2);
+    ctx.fillStyle = '#000';
+    ctx.fill();
+    // 嘴
+    ctx.beginPath();
+    ctx.moveTo(x+14, y-2);
+    ctx.lineTo(x+22, y+1);
+    ctx.lineTo(x+14, y+4);
+    ctx.closePath();
+    ctx.fillStyle = '#f77f00';
+    ctx.fill();
+  }
+  function banner(text, y){
+    ctx.font = 'bold 28px system-ui,Arial';
+    ctx.fillStyle = 'rgba(0,0,0,.35)';
+    const w = ctx.measureText(text).width + 28;
+    const x = (W - w)/2;
+    ctx.fillRect(x, y-30, w, 48);
+    ctx.fillStyle = '#e6edf3';
+    ctx.fillText(text, (W - ctx.measureText(text).width)/2, y);
+  }
+  function smallText(text, y){
+    ctx.font = '600 18px system-ui,Arial';
+    ctx.fillStyle = '#cbd5e1';
+    ctx.fillText(text, (W - ctx.measureText(text).width)/2, y);
+  }
+  function toast(text){
+    const alpha = Math.max(0, Math.min(1, mTTL / 2200)); // 渐隐
+    ctx.font = 'bold 22px system-ui,Arial';
+    const tw = ctx.measureText(text).width + 24;
+    const x = (W - tw)/2, y = 60;
+    ctx.fillStyle = `rgba(0,0,0,${0.25 * alpha})`;
+    ctx.fillRect(x, y-26, tw, 40);
+    ctx.fillStyle = `rgba(230,237,243,${alpha})`;
+    ctx.fillText(text, (W - (tw-24))/2, y);
+  }
+  function flashMsg(msg){
+    mMsg = msg;
+    mTTL = 2200; // 显示 2.2 秒
+  }
+  function AABB(ax,ay,aw,ah, bx,by,bw,bh){
+    return ax < bx+bw && ax+aw > bx && ay < by+bh && ay+ah > by;
+  }
+  function rand(a,b){ return (a + Math.random()*(b-a))|0; }
+  function lerp(a,b,t){ return a + (b-a)*t; }
+  function perf(){ return (performance.now()/180); }
+
+  // --- 控制 ---
+  function endGame(){
+    gameOver = true;
+    running = false;
+    if (score > best){
+      best = score;
+      localStorage.setItem(BEST_KEY, String(best));
+      $best.textContent = best;
+    }
+    draw();
+  }
+  function togglePause(){
+    if (!running || gameOver) return;
+    paused = !paused;
+    if (!paused){
+      lastTS = 0;
+      requestAnimationFrame(frame);
+    } else {
+      draw();
+    }
+  }
+  function jump(){
+    if (!running){ start(); return; }
+    if (gameOver){ restartGame(); return; }
+    if (paused){ paused=false; }
+    birdV = JUMP_V;
+  }
+
+  // 事件
+  cvs.addEventListener('pointerdown', jump, {passive:true});
+  // 兜底：部分老机型无 PointerEvents
+  cvs.addEventListener('touchstart', (e)=>{ e.preventDefault(); jump(); }, {passive:false});
+
+  window.addEventListener('keydown', (e)=>{
+    if (e.code === 'Space') { e.preventDefault(); jump(); }
+    if (e.key.toLowerCase() === 'p') togglePause();
+    if (e.key.toLowerCase() === 'r') restartGame();
+  });
+
+  // 按钮事件
+  $start.addEventListener('click', (e)=>{ e.preventDefault(); start(); });
+  $pause.addEventListener('click', (e)=>{ e.preventDefault(); togglePause(); });
+  $restart.addEventListener('click', (e)=>{ e.preventDefault(); restartGame(); });
+
+  // 初始渲染
+  reset(); draw();
+})();
+</script>
+</body>
+</html>

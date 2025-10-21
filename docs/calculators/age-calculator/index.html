@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Age Calculator — Exact years, months, days | GoToolOnline</title>
+  <meta name="description" content="Free age calculator: exact years, months, and days between two dates (end date optional). Mobile-friendly." />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+
+  <!-- Social -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Age Calculator — Exact years, months, days">
+  <meta property="og:description" content="Free age calculator for precise difference between two dates.">
+  <meta property="og:url" content="https://gotoolonline.com/calculators/age-calculator/">
+  <meta name="twitter:card" content="summary">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text x='6' y='52' font-size='48'>🗓️</text></svg>'">
+  <style>
+    :root { --bg:#0a0f1e; --card:#0f1830; --muted:#9fb0c3; --fg:#eaf3ff; --acc:#4fb3ff; }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+    a{color:var(--fg);text-decoration:none}
+    header{max-width:900px;margin:20px auto 8px;display:flex;gap:12px;align-items:center;padding:0 16px}
+    .pill{padding:8px 12px;border:1px solid #24365b;background:#0f1a2f;border-radius:999px}
+    .lang-trigger{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+    .lang-panel{position:fixed; top:64px; right:18px; z-index:1200;background:#0f1830; border:1px solid #1a2843; border-radius:16px;padding:12px; display:none; width:min(420px, calc(100vw - 24px));box-shadow:0 20px 60px rgba(0,0,0,.45)}
+    .lang-panel.open{ display:block }
+    .lang-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px }
+    .lang-grid button{display:block;width:100%;text-align:center;padding:10px 10px;border:1px solid #24365b;background:#0f1a2f;border-radius:12px;color:var(--fg);font-size:14px;cursor:pointer}
+    .lang-grid button.active{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+    main{max-width:900px;margin:8px auto 56px;padding:0 16px}
+    .card{background:var(--card);border:1px solid #1a2843;border-radius:18px;padding:16px}
+    h1{margin:4px 0 6px}
+    .lede{font-size:16px;color:var(--muted);margin:.25rem 0 0.75rem}
+    label{display:block;margin:.5rem 0 .25rem}
+    input,button,select{padding:12px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:var(--fg);font-size:16px}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .row > div{display:flex;flex-direction:column}
+    .actions{margin-top:12px;display:flex;flex-wrap:wrap;gap:10px}
+    button{cursor:pointer;background:linear-gradient(180deg,#2a78ff,#0050d4);border:none;font-weight:700;letter-spacing:.2px}
+    button:hover{filter:brightness(1.06)}
+    .result{margin-top:16px;padding:12px 14px;background:#0d142a;border:1px solid #1c2d55;border-radius:14px;min-height:48px}
+    .muted{color:var(--muted)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+    .tool a{display:block;background:#0d142a;border:1px solid #1b2c52;border-radius:16px;padding:12px}
+    .tool a:hover{border-color:var(--acc);box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+    .top-links{margin-left:auto;display:flex;gap:8px;align-items:center}
+    @media (max-width:600px){ .row{grid-template-columns:1fr} }
+  </style>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/calculators/age-calculator/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/calculators/age-calculator/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/calculators/age-calculator/">
+</head>
+<body>
+  <header>
+    <a class="pill" data-home href="#"><span>🛠️</span> <strong>GoToolOnline</strong></a>
+    <div class="top-links">
+      <a class="pill" data-home data-i18n="ui.back" href="#">← Back to Home</a>
+      <button id="langBtn" class="pill lang-trigger" aria-haspopup="dialog" aria-expanded="false" data-i18n="ui.lang">🌐 Language</button>
+    </div>
+    <div class="lang-panel" id="langPanel" role="dialog" aria-label="Select language">
+      <div class="lang-grid" id="langGrid"></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="card">
+      <h1 data-i18n="title">Age Calculator</h1>
+      <p class="lede" data-i18n="intro">Exact difference in <strong>years, months, and days</strong>. End date is optional (defaults to today).</p>
+
+      <div class="row">
+        <div>
+          <label for="dob" data-i18n="labels.dob">Date of birth</label>
+          <input id="dob" type="date" aria-label="Date of birth">
+        </div>
+        <div>
+          <label for="end"><span data-i18n="labels.end">End date</span> <span class="muted" data-i18n="labels.optional">(optional)</span></label>
+          <input id="end" type="date" aria-label="End date">
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="calc" data-i18n="buttons.calc">Calculate age</button>
+        <button id="clear" data-i18n="buttons.clear">Clear</button>
+      </div>
+
+      <div id="out" class="result muted" data-i18n="result.placeholder">Result will appear here.</div>
+    </section>
+
+    <h2 class="muted" style="margin:22px 0 10px" data-i18n="related.title">Related tools</h2>
+    <div class="grid">
+      <div class="tool"><a href="../date-difference/" data-i18n="related.dateDiff">📅 Date Difference</a></div>
+      <div class="tool"><a href="../../time/timezone-converter/" data-i18n="related.worldTime">🌍 World Time (by Country)</a></div>
+      <div class="tool"><a href="../../converter/unit-converter/" data-i18n="related.unit">🔁 Unit Converter</a></div>
+    </div>
+  </main>
+
+  <!-- i18n core -->
+  <script>
+  (function(){
+    const LANGS = ['en','zh','ph','id','vi','bn','ng','sw','ar'];
+    const NAMES = {en:'English', zh:'简体中文', ph:'Tagalog', id:'Bahasa Indonesia', vi:'Tiếng Việt', bn:'বাংলা', ng:'English (NG)', sw:'Kiswahili', ar:'العربية'};
+
+    function getCookie(name){ return ('; '+document.cookie).split('; '+name+'=').pop().split(';')[0] || ''; }
+    function setCookie(name, val){ document.cookie = name+'='+val+';path=/;max-age=31536000'; }
+
+    function pickLang(){
+      const url = new URL(location.href);
+      const qLang = (url.searchParams.get('lang')||'').toLowerCase();
+      const cookieLang = getCookie('lang');
+      const nav = (navigator.language||'en').toLowerCase();
+      const MAP = {en:'en', tl:'ph', fil:'ph', id:'id', vi:'vi', bn:'bn', sw:'sw', ar:'ar', zh:'zh', 'zh-cn':'zh', 'zh-hans':'zh'};
+      let lang = 'en';
+      if (qLang && LANGS.includes(qLang)) lang = qLang;
+      else if (cookieLang && LANGS.includes(cookieLang)) lang = cookieLang;
+      else lang = MAP[nav] || MAP[nav.split('-')[0]] || 'en';
+      setCookie('lang', lang);
+      document.documentElement.lang = (lang==='ph'?'tl':(lang==='ng'?'en':lang));
+      document.documentElement.dir = (lang==='ar'?'rtl':'ltr');
+      return lang;
+    }
+
+    function merge(base, over){
+      const out = Array.isArray(base)? base.slice() : {...base};
+      if (!over) return out;
+      for (const k of Object.keys(over)){
+        if (over[k] && typeof over[k]==='object' && !Array.isArray(over[k]) && base && typeof base[k]==='object'){
+          out[k] = merge(base[k], over[k]);
+        } else {
+          out[k] = over[k];
+        }
+      }
+      return out;
+    }
+
+    function get(obj, path){
+      return String(path).split('.').reduce((o,k)=> (o && k in o)? o[k] : undefined, obj);
+    }
+
+    function applyI18N(D){
+      document.querySelectorAll('[data-i18n]').forEach(el=>{
+        const v = get(D, el.getAttribute('data-i18n'));
+        if (v==null) return;
+        if (/<[a-z][\s\S]*>/i.test(v)) el.innerHTML = v;
+        else el.textContent = v;
+      });
+      if (get(D,'meta.title')) document.title = get(D,'meta.title');
+      const desc = document.querySelector('meta[name="description"]');
+      if (desc && get(D,'meta.desc')) desc.setAttribute('content', get(D,'meta.desc'));
+    }
+
+    function keepLangInLinks(lang){
+      document.querySelectorAll('a[href]').forEach(a=>{
+        const href = a.getAttribute('href')||'';
+        if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+        const u = new URL(href, location.origin);
+        if (!u.searchParams.get('lang')) u.searchParams.set('lang', lang);
+        a.setAttribute('href', u.pathname + u.search + u.hash);
+      });
+    }
+
+    // ===== dictionary =====
+    const EN = {
+      meta: { title: "Age Calculator — Exact years, months, days | GoToolOnline",
+              desc: "Free age calculator: exact years, months, and days between two dates (end date optional). Mobile-friendly." },
+      ui: { back: "← Back to Home", lang: "Language" },
+      title: "Age Calculator",
+      intro: "Exact difference in <strong>years, months, and days</strong>. End date is optional (defaults to today).",
+      labels: { dob: "Date of birth", end: "End date", optional: "(optional)" },
+      buttons: { calc: "Calculate age", clear: "Clear" },
+      result: { placeholder: "Result will appear here." },
+      msg: {
+        invalidDob: "Please enter a valid date of birth.",
+        endBefore: "End date must be after date of birth."
+      },
+      related: {
+        title: "Related tools",
+        dateDiff: "📅 Date Difference",
+        worldTime: "🌍 World Time (by Country)",
+        unit: "🔁 Unit Converter"
+      }
+    };
+
+    const ZH = {
+      meta: { title:"年龄计算器 — 精确到年/月/日 | GoToolOnline",
+              desc:"免费年龄计算器：两日期间的年、月、日差；结束日期可选（默认今天）。" },
+      ui: { back:"← 返回首页", lang:"语言" },
+      title:"年龄计算器",
+      intro:"精确计算<strong>年、月、日</strong>差。结束日期可选（默认今天）。",
+      labels:{ dob:"出生日期", end:"结束日期", optional:"（可选）" },
+      buttons:{ calc:"计算年龄", clear:"清空" },
+      result:{ placeholder:"结果会显示在这里。" },
+      msg:{ invalidDob:"请输入有效的出生日期。", endBefore:"结束日期必须晚于出生日期。" },
+      related:{ title:"相关工具", dateDiff:"📅 日期差", worldTime:"🌍 世界时间（按国家）", unit:"🔁 单位换算" }
+    };
+
+    const PH = {
+      ui:{ back:"← Bumalik sa Home", lang:"Wika" },
+      title:"Tagabilang ng Edad",
+      intro:"Eksaktong pagkakaiba sa <strong>taon, buwan, at araw</strong>. Opsyonal ang petsa ng pagtatapos (default: ngayon).",
+      labels:{ dob:"Petsa ng kapanganakan", end:"Petsa ng pagtatapos", optional:"(opsyonal)" },
+      buttons:{ calc:"Kuwentahin ang edad", clear:"I-clear" },
+      result:{ placeholder:"Lalabas dito ang resulta." },
+      msg:{ invalidDob:"Pakilagay ang wastong petsa ng kapanganakan.", endBefore:"Dapat mas huli ang petsa ng pagtatapos kaysa sa kapanganakan." },
+      related:{ title:"Kaugnay na mga tool" }
+    };
+
+    const ID = {
+      ui:{ back:"← Kembali ke Beranda", lang:"Bahasa" },
+      title:"Kalkulator Umur",
+      intro:"Selisih tepat dalam <strong>tahun, bulan, dan hari</strong>. Tanggal akhir opsional (bawaan hari ini).",
+      labels:{ dob:"Tanggal lahir", end:"Tanggal akhir", optional:"(opsional)" },
+      buttons:{ calc:"Hitung umur", clear:"Bersihkan" },
+      result:{ placeholder:"Hasil akan tampil di sini." },
+      msg:{ invalidDob:"Masukkan tanggal lahir yang valid.", endBefore:"Tanggal akhir harus setelah tanggal lahir." },
+      related:{ title:"Alat terkait" }
+    };
+
+    const VI = {
+      ui:{ back:"← Về trang chủ", lang:"Ngôn ngữ" },
+      title:"Tính tuổi",
+      intro:"Chênh lệch chính xác theo <strong>năm, tháng, ngày</strong>. Ngày kết thúc là tuỳ chọn (mặc định hôm nay).",
+      labels:{ dob:"Ngày sinh", end:"Ngày kết thúc", optional:"(tuỳ chọn)" },
+      buttons:{ calc:"Tính tuổi", clear:"Xóa" },
+      result:{ placeholder:"Kết quả hiển thị tại đây." },
+      msg:{ invalidDob:"Vui lòng nhập ngày sinh hợp lệ.", endBefore:"Ngày kết thúc phải sau ngày sinh." },
+      related:{ title:"Công cụ liên quan" }
+    };
+
+    const BN = {
+      ui:{ back:"← হোমে ফিরে যান", lang:"ভাষা" },
+      title:"বয়স ক্যালকুলেটর",
+      intro:"<strong>বছর, মাস, দিন</strong> অনুযায়ী সঠিক পার্থক্য। শেষ তারিখ ঐচ্ছিক (ডিফল্ট আজ)।",
+      labels:{ dob:"জন্মতারিখ", end:"শেষ তারিখ", optional:"(ঐচ্ছিক)" },
+      buttons:{ calc:"বয়স হিসাব করুন", clear:"সাফ করুন" },
+      result:{ placeholder:"ফলাফল এখানে দেখাবে।" },
+      msg:{ invalidDob:"একটি বৈধ জন্মতারিখ দিন।", endBefore:"শেষ তারিখ জন্মতারিখের পরে হতে হবে।" },
+      related:{ title:"সম্পর্কিত টুল" }
+    };
+
+    const NG = {
+      ui:{ back:"← Back to Home", lang:"Language" }
+    };
+
+    const SW = {
+      ui:{ back:"← Rudi nyumbani", lang:"Lugha" },
+      title:"Kikokotoo cha Umri",
+      intro:"Tofauti sahihi kwa <strong>miaka, miezi, na siku</strong>. Tarehe ya mwisho si lazima (chaguo-msingi leo).",
+      labels:{ dob:"Tarehe ya kuzaliwa", end:"Tarehe ya mwisho", optional:"(hiari)" },
+      buttons:{ calc:"Kokotoa umri", clear:"Futa" },
+      result:{ placeholder:"Matokeo yataonekana hapa." },
+      msg:{ invalidDob:"Weka tarehe sahihi ya kuzaliwa.", endBefore:"Tarehe ya mwisho lazima iwe baada ya tarehe ya kuzaliwa." },
+      related:{ title:"Zana zinazohusiana" }
+    };
+
+    const AR = {
+      ui:{ back:"← العودة إلى الصفحة الرئيسية", lang:"اللغة" },
+      title:"حاسبة العمر",
+      intro:"فارق دقيق بـ<strong>السنوات والأشهر والأيام</strong>. تاريخ النهاية اختياري (الافتراضي اليوم).",
+      labels:{ dob:"تاريخ الميلاد", end:"تاريخ النهاية", optional:"(اختياري)" },
+      buttons:{ calc:"احسب العمر", clear:"مسح" },
+      result:{ placeholder:"ستظهر النتيجة هنا." },
+      msg:{ invalidDob:"رجاءً أدخل تاريخ ميلاد صالحًا.", endBefore:"يجب أن يكون تاريخ النهاية بعد تاريخ الميلاد." },
+      related:{ title:"أدوات ذات صلة", dateDiff:"📅 فرق التاريخ", worldTime:"🌍 الوقت العالمي (حسب البلد)", unit:"🔁 محول الوحدات" }
+    };
+
+    const MAP = { en:EN, zh:ZH, ph:PH, id:ID, vi:VI, bn:BN, ng:NG, sw:SW, ar:AR };
+
+    // init
+    const lang = pickLang();
+    const D = merge(EN, MAP[lang]||{});
+    applyI18N(D);
+    keepLangInLinks(lang);
+
+    // language UI
+    const panel = document.getElementById('langPanel');
+    const btn = document.getElementById('langBtn');
+    const grid = document.getElementById('langGrid');
+    if (grid){
+      LANGS.forEach(code=>{
+        const b = document.createElement('button');
+        b.textContent = NAMES[code] || code;
+        if (code===lang) b.className='active';
+        b.addEventListener('click', ()=>{
+          const u = new URL(location.href);
+          u.searchParams.set('lang', code);
+          setCookie('lang', code);
+          location.href = u.toString();
+        });
+        grid.appendChild(b);
+      });
+    }
+    function openLang(open){ panel.classList.toggle('open', !!open); btn.setAttribute('aria-expanded', !!open); }
+    if (btn) btn.addEventListener('click', (e)=>{ e.stopPropagation(); openLang(!panel.classList.contains('open')); });
+    document.addEventListener('click', (e)=>{ if(panel && panel.classList.contains('open')){ const within = panel.contains(e.target) || (btn && btn.contains(e.target)); if(!within) openLang(false); } });
+
+    // expose lang
+    window.__PAGE_LANG__ = lang;
+
+    // === force <input type="date"> locale & placeholders ===
+    const INPUT_LOCALE = {
+      en: 'en-US',
+      zh: 'zh-CN',
+      ph: 'tl-PH',
+      id: 'id-ID',
+      vi: 'vi-VN',
+      bn: 'bn-BD-u-nu-latn',
+      ng: 'en-NG',
+      sw: 'sw',
+      ar: 'ar-u-nu-latn'
+    };
+    const DATE_PH = {
+      en: 'YYYY/MM/DD',
+      zh: '年 / 月 / 日',
+      ph: 'DD/MM/YYYY',
+      id: 'DD/MM/YYYY',
+      vi: 'ngày/tháng/năm',
+      bn: 'DD/MM/YYYY',
+      ng: 'DD/MM/YYYY',
+      sw: 'YYYY-MM-DD',
+      ar: 'يوم/شهر/سنة'
+    };
+
+    (function applyDateInputLocale(selected){
+      var locale = INPUT_LOCALE[selected] || 'en-US';
+      var ph = DATE_PH[selected] || DATE_PH.en;
+      document.querySelectorAll('input[type="date"]').forEach(function(el){
+        el.setAttribute('lang', locale);                 // native picker language
+        // placeholders are ignored by some browsers for type=date; still set as a fallback
+        el.setAttribute('placeholder', ph);
+        // strip old hard-coded Chinese placeholder if present
+        if (/年|月|日/.test(el.getAttribute('placeholder')||'')) el.setAttribute('placeholder', ph);
+        if (selected === 'ar') el.setAttribute('dir','rtl'); else el.removeAttribute('dir');
+        // make sure IME doesn't force non-latin numbers for ar/bn
+        el.setAttribute('inputmode','numeric');
+        el.setAttribute('autocomplete','bday');
+      });
+    })(window.__PAGE_LANG__ || 'en');
+  })();
+  </script>
+
+  <!-- logic -->
+  <script>
+  (function(){
+    function parseDate(v){
+      if(!v) return null;
+      var t = v.split('-').map(Number);
+      if(t.length!==3) return null;
+      return new Date(t[0], t[1]-1, t[2]);
+    }
+    function diffYMD(a, b){
+      if(b < a){ var tmp=a; a=b; b=tmp; }
+      var y = b.getFullYear() - a.getFullYear();
+      var m = b.getMonth() - a.getMonth();
+      var d = b.getDate() - a.getDate();
+      if (d < 0){
+        var pm = new Date(b.getFullYear(), b.getMonth(), 0);
+        d += pm.getDate();
+        m -= 1;
+      }
+      if (m < 0){ m += 12; y -= 1; }
+      return {y:y, m:m, d:d};
+    }
+    function fmtYMD(lang, o){
+      switch(lang){
+        case 'zh': return o.y+' 年 '+o.m+' 个月 '+o.d+' 天';
+        case 'ar': return o.y+' سنة، '+o.m+' شهر، '+o.d+' يوم';
+        case 'id': return o.y+' tahun, '+o.m+' bulan, '+o.d+' hari';
+        case 'vi': return o.y+' năm, '+o.m+' tháng, '+o.d+' ngày';
+        case 'bn': return o.y+' বছর, '+o.m+' মাস, '+o.d+' দিন';
+        case 'ph': return o.y+' taon, '+o.m+' buwan, '+o.d+' araw';
+        case 'sw': return o.y+' miaka, '+o.m+' miezi, '+o.d+' siku';
+        case 'ng':
+        case 'en':
+        default:   return o.y+' years, '+o.m+' months, '+o.d+' days';
+      }
+    }
+    var $ = function(id){ return document.getElementById(id); };
+    function t(key){
+      var el = document.querySelector('[data-i18n="'+key+'"]');
+      return el ? (el.textContent || el.innerText || '') : '';
+    }
+    $('calc').addEventListener('click', function(){
+      var dob = parseDate($('dob').value);
+      var end = parseDate($('end').value) || new Date();
+      var out = $('out');
+      if(!dob){ out.textContent = t('msg.invalidDob') || 'Please enter a valid date of birth.'; out.classList.add('muted'); return; }
+      if(end < dob){ out.textContent = t('msg.endBefore') || 'End date must be after date of birth.'; out.classList.add('muted'); return; }
+      var diff = diffYMD(dob, end);
+      out.classList.remove('muted');
+      out.textContent = fmtYMD(window.__PAGE_LANG__||'en', diff);
+    });
+    $('clear').addEventListener('click', function(){
+      $('dob').value = '';
+      $('end').value = '';
+      $('out').textContent = t('result.placeholder') || 'Result will appear here.';
+      $('out').classList.add('muted');
+    });
+  })();
+  </script>
+
+  <!-- back to home (preserve ?lang) -->
+  <script>
+  (function(){
+    var path = location.pathname.replace(/\/+$/,''); 
+    var parts = path.split('/');
+    if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+    else parts = [''];
+    var home = parts.join('/') + '/';
+    var cur = new URL(location.href);
+    var lang = cur.searchParams.get('lang');
+    if (lang) {
+      var u = new URL(home, location.origin);
+      u.searchParams.set('lang', lang);
+      home = u.pathname + u.search + u.hash;
+    }
+    document.querySelectorAll('a[data-home]').forEach(function(a){
+      a.setAttribute('href', home);
+    });
+  })();
+  </script>
+</body>
+</html>

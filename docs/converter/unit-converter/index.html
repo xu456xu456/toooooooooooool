@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Ultimate Unit Converter (US/UK/Metric, Data Decimal/Binary/IEC) | GoToolOnline</title>
+<meta content="Free all-in-one unit converter for US/UK/Metric units. Length, area, volume (US/UK/metric cups), weight, temperature, speed, pressure (psi/mmHg/inHg/cmH2O), energy (Wh/kWh/BTU/eV/therm/toe), power (hp/PS), data (decimal/binary/IEC), RPM, angle (turn/mil NATO), fuel economy and more." name="description"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<!-- Canonical & Social -->
+
+<meta content="website" property="og:type"/>
+<meta content="Ultimate Unit Converter — US/UK/Metric, Data Decimal/Binary/IEC" property="og:title"/>
+<meta content="Convert length, volume, weight, temperature, speed, pressure, energy, power, data (decimal/binary/IEC), angle, fuel economy, etc. Free and fast." property="og:description"/>
+<meta content="https://gotoolonline.com/converter/unit-converter/" property="og:url"/>
+<meta content="summary" name="twitter:card"/>
+<!-- Structured data: WebApplication -->
+<script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebApplication","name":"Ultimate Unit Converter","url":"https://gotoolonline.com/converter/unit-converter/","applicationCategory":"Converter","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"GoToolOnline","url":"https://gotoolonline.com"}}
+</script>
+<!-- Structured data: FAQPage -->
+<script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+    {"@type":"Question","name":"Does this converter support US and UK volume units?","acceptedAnswer":{"@type":"Answer","text":"Yes. It includes US liquid and UK imperial units plus metric cups (200/250 mL) and the US legal cup (240 mL)."}},
+    {"@type":"Question","name":"What data size systems are supported?","acceptedAnswer":{"@type":"Answer","text":"All three: Decimal (kB/MB/GB at powers of 1000), Binary (KB/MB/GB at powers of 1024), and IEC (KiB/MiB/GiB)."}},
+    {"@type":"Question","name":"Can I convert horsepower to PS (metric hp)?","acceptedAnswer":{"@type":"Answer","text":"Yes. Power includes W, kW, hp (mechanical), and PS (metric horsepower)."}}
+  ]}
+</script>
+<!-- Structured data: Breadcrumbs -->
+<script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://gotoolonline.com/"},
+    {"@type":"ListItem","position":2,"name":"Converters","item":"https://gotoolonline.com/#converter"},
+    {"@type":"ListItem","position":3,"name":"Unit Converter","item":"https://gotoolonline.com/converter/unit-converter/"}
+  ]}
+</script>
+<style>
+  :root { --bg:#0a0f1e; --card:#0f1830; --muted:#9fb0c3; --fg:#eaf3ff; --acc:#4fb3ff; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg);}
+  header{max-width:1200px;margin:24px auto 8px;display:flex;gap:14px;align-items:center;padding:0 18px;}
+  header a.logo{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--fg);font-weight:800;font-size:24px}
+  header a.navbtn{margin-left:auto;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:12px;color:#eaf3ff;text-decoration:none;font-size:16px}
+  header a.navbtn:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  main{max-width:1000px;margin:10px auto 72px;padding:0 18px}
+  h1{font-size:34px;margin:10px 0 12px}
+  p,label{font-size:18px;line-height:1.6}
+  .muted{color:#9fb0c3}
+  .card{background:var(--card);border:1px solid #1a2843;border-radius:20px;padding:20px;margin:16px 0}
+  input,select,button{width:100%;padding:14px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:var(--fg);font-size:18px}
+  button{cursor:pointer;background:linear-gradient(180deg,#2a78ff,#0050d4);border:none;font-weight:700;letter-spacing:.2px}
+  button:hover{filter:brightness(1.06)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .result{padding:14px;background:#0c1426;border:1px dashed #2a3c64;border-radius:12px;margin-top:16px;font-size:20px}
+  .toolbar{display:flex;gap:12px;flex-wrap:wrap;margin-top:12px}
+  .swap{width:auto;padding:14px 18px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .chip{padding:8px 12px;border:1px solid #24365b;background:#0f1a2f;border-radius:999px;cursor:pointer;font-size:16px}
+  .chip:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  @media (max-width:760px){ .row{grid-template-columns:1fr} .swap{width:100%} }
+  .note{font-size:14px;color:#9fb0c3;margin-top:8px}
+  .sep{height:1px;background:#1a2843;margin:16px 0}
+  /* lang ui */
+  .pill{padding:8px 12px;border:1px solid #24365b;background:#0f1a2f;border-radius:999px;color:var(--fg);text-decoration:none}
+  #langBtn{margin-left:8px}
+  .lang-panel{position:fixed; top:72px; right:18px; z-index:1200;background:#0f1830;border:1px solid #1a2843;border-radius:16px;padding:12px;display:none;width:min(420px,calc(100vw - 24px));box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  .lang-panel.open{display:block}
+  .lang-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .lang-grid button{display:block;width:100%;text-align:center;padding:10px;border:1px solid #24365b;background:#0f1a2f;border-radius:12px;color:var(--fg);font-size:14px;cursor:pointer}
+  .lang-grid button.active{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+</style>
+
+  <meta name="description" content="Useful online tools—fast, free, and multilingual."/>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/converter/unit-converter/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/converter/unit-converter/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/converter/unit-converter/">
+</head>
+<body>
+<header>
+  <a aria-label="GoToolOnline home" class="logo" data-home href="#"><span>🛠️</span><strong>GoToolOnline</strong></a>
+  <a aria-label="Back to Home" class="navbtn" data-home href="#" data-i18n="ui.back">← Back to Home</a>
+  <button id="langBtn" class="pill" aria-haspopup="dialog" aria-expanded="false" data-i18n="ui.lang">🌐 Language</button>
+  <div class="lang-panel" id="langPanel" role="dialog" aria-label="Select language">
+    <div class="lang-grid" id="langGrid"></div>
+  </div>
+</header>
+
+<main>
+<section class="card">
+  <h1 data-i18n="title">Unit Converter — Extended (US/UK/Metric, Data: Decimal/Binary/IEC)</h1>
+  <p class="muted" data-i18n="lede">Convert <strong>length, area, volume, weight, temperature, speed, pressure</strong> (psi/mmHg/inHg/cmH2O), <strong>energy</strong> (Wh/kWh/BTU/eV/therm/toe), <strong>power</strong> (hp/PS), <strong>data</strong> (decimal, binary, IEC), <strong>frequency/RPM</strong>, <strong>angle</strong> (turn/mil NATO), <strong>fuel economy</strong> and more — fast and private.</p>
+  <div class="row">
+    <div>
+      <label for="category" data-i18n="form.category">Category</label>
+      <select aria-label="Unit category" id="category"></select>
+    </div>
+    <div>
+      <label for="value" data-i18n="form.value">Value</label>
+      <input aria-label="Input value" id="value" placeholder="Enter value" step="any" type="number"/>
+    </div>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <div>
+      <label for="fromUnit" data-i18n="form.from">From</label>
+      <select aria-label="From unit" id="fromUnit"></select>
+    </div>
+    <div>
+      <label for="toUnit" data-i18n="form.to">To</label>
+      <select aria-label="To unit" id="toUnit"></select>
+    </div>
+  </div>
+  <div class="toolbar">
+    <button class="swap" id="swapBtn" title="Swap units" data-i18n="btn.swap">⇄ Swap</button>
+    <button class="swap" id="copyBtn" title="Copy result" data-i18n="btn.copy">Copy Result</button>
+    <span class="muted" id="note" style="align-self:center"></span>
+  </div>
+  <div aria-live="polite" class="result" id="output" role="status">—</div>
+  <div aria-label="Quick pairs" class="chips" id="quickPairs">
+    <span class="chip" data-a="cm" data-b="in" data-cat="length">cm → in</span>
+    <span class="chip" data-a="km" data-b="mi" data-cat="length">km → mi</span>
+    <span class="chip" data-a="kg" data-b="lb" data-cat="weight">kg → lb</span>
+    <span class="chip" data-a="L" data-b="gal_US" data-cat="volume">L → gal (US)</span>
+    <span class="chip" data-a="L" data-b="gal_UK" data-cat="volume">L → gal (UK)</span>
+    <span class="chip" data-a="km_h" data-b="mph" data-cat="speed">km/h → mph</span>
+    <span class="chip" data-a="bar" data-b="psi" data-cat="pressure">bar → psi</span>
+    <span class="chip" data-a="MB10" data-b="GB10" data-cat="data_dec">MB (decimal) → GB</span>
+    <span class="chip" data-a="L_per_100km" data-b="mpg_US" data-cat="fuel">L/100 km → mpg (US)</span>
+  </div>
+  <div class="sep"></div>
+  <p class="note" data-i18n="notes.bottom1">
+    Notes: Avoid non-constant units like month/year. Volumes include US liquid &amp; UK imperial + metric cups (200/250 mL) and US legal cup (240 mL). Data covers Decimal (1000), Binary (1024), and IEC (KiB/MiB/GiB).
+  </p>
+  <p class="note" style="margin-top:12px">
+    <span data-i18n="related.title">Related tools:</span>
+    <a href="/currency/currency-converter/">Currency Converter</a> ·
+    <a href="/time/timezone-converter/">World Time (by Country)</a> ·
+    <a href="/developer/json-formatter/">JSON Formatter</a>
+  </p>
+</section>
+</main>
+
+<script>
+  const nf = new Intl.NumberFormat(undefined, { maximumFractionDigits: 10 });
+
+  // alias helper
+  const alias = (base, pairs) => { const o = {...base}; (pairs||[]).forEach(([a,b]) => { if (o[b] != null) o[a] = o[b]; }); return o; };
+
+  const CATEGORIES = {
+    length: { name: "Length", base: "m",
+      units: alias({"pm":1e-12,"Å":1e-10,"A":1e-10,"nm":1e-9,"µm":1e-6,"um":1e-6,"mm":1e-3,"cm":1e-2,"dm":0.1,"m":1,"km":1e3,"thou":0.0000254,"inch":0.0254,"foot":0.3048,"yard":0.9144,"link":0.201168,"chain":20.1168,"furlong":201.168,"mile":1609.344,"nmi":1852}, [["mil_in","thou"],["in","inch"],["ft","foot"],["yd","yard"],["mi","mile"]]) },
+    area: { name: "Area", base: "m2",
+      units: alias({"mm2":1e-6,"cm2":1e-4,"dm2":0.01,"m2":1,"km2":1e6,"in2":0.00064516,"ft2":0.09290304,"yd2":0.83612736,"mi2":2589988.110336,"are":100,"decare":1000,"hectare":10000,"acre":4046.8564224}, [["sqin","in2"],["sqft","ft2"],["sqyd","yd2"],["sqmi","mi2"],["ha","hectare"],["daa","decare"]]) },
+    volume: { name: "Volume (US/UK/Metric)", base: "L",
+      units: alias({"mL":1e-3,"L":1,"m3":1000,"cup_metric_200mL":0.2,"cup_metric_250mL":0.25,"cup_US_legal_240mL":0.24,"tsp_US":0.00492892159375,"tbsp_US":0.01478676478125,"fl_oz_US":0.0295735295625,"cup_US":0.2365882365,"pt_US":0.473176473,"qt_US":0.946352946,"gal_US":3.785411784,"tsp_UK":0.00591939,"tbsp_UK":0.0177582,"fl_oz_UK":0.0284130625,"pt_UK":0.56826125,"qt_UK":1.1365225,"gal_UK":4.54609}, [["ml","mL"],["liter","L"],["litre","L"],["cup","cup_US"],["pt","pt_US"],["qt","qt_US"],["gal","gal_US"]]) },
+    weight: { name: "Weight / Mass", base: "g",
+      units: alias({"µg":1e-6,"ug":1e-6,"mg":1e-3,"g":1,"kg":1e3,"tonne":1e6,"grain":0.06479891,"drachm_ap":3.8879346,"ounce":28.349523125,"pound":453.59237,"stone":6350.29318,"ton_US":907184.74,"ton_UK":1016046.9088,"carat":0.2}, [["µg","ug"],["oz","ounce"],["lb","pound"],["t","tonne"],["ct","carat"]]) },
+    temperature: { name: "Temperature", custom:true, units:["C","F","K","R"],
+      toBase:(v,u)=> u==="K"?v : (u==="C"? v+273.15 : (u==="F"? (v-32)*5/9+273.15 : v*5/9)),
+      fromBase:(k,u)=> u==="K"?k : (u==="C"? k-273.15 : (k-273.15)*9/5+32) },
+    speed: { name: "Speed", base:"m_s",
+      units: alias({"m_s":1,"km_h":1000/3600,"mph":1609.344/3600,"ft_s":0.3048,"knot":1852/3600,"c":299792458}, [["kmh","km_h"],["km/hr","km_h"],["mi_h","mph"],["kn","knot"]]) },
+    pressure: { name: "Pressure", base:"Pa",
+      units: alias({"Pa":1,"hPa":100,"mbar":100,"kPa":1e3,"bar":1e5,"atm":101325,"psi":6894.757293168,"mmHg":133.322387415,"Torr":133.3223684211,"inHg":3386.38815789,"mmH2O":9.80665,"cmH2O":98.0665,"inH2O":249.08891}, [["mb","mbar"]]) },
+    energy: { name: "Energy", base:"J",
+      units: alias({"J":1,"kJ":1e3,"cal":4.184,"kcal":4184,"Wh":3600,"kWh":3.6e6,"BTU_IT":1055.05585262,"eV":1.602176634e-19,"therm_US":105480400,"toe":41.868e9}, [["btu","BTU_IT"]]) },
+    power: { name: "Power", base:"W",
+      units: alias({"W":1,"kW":1e3,"MW":1e6,"hp":745.6998715822702,"PS":735.49875,"BTU_h":0.29307107}, [["bhp","hp"],["btu/h","BTU_h"]]) },
+    time: { name: "Time", base:"s",
+      units: alias({"µs":1e-6,"us":1e-6,"ms":1e-3,"s":1,"min":60,"hr":3600,"day":86400,"week":604800}, [["sec","s"],["h","hr"],["hour","hr"]]) },
+    data_dec: { name:"Data (Decimal, 1000)", base:"B", units:{ "B":1,"kB":1e3,"MB10":1e6,"GB10":1e9,"TB10":1e12 } },
+    data_bin: { name:"Data (Binary, 1024)", base:"B",
+      units: alias({"bit":1/8,"B":1,"KB":1024,"MB":1024**2,"GB":1024**3,"TB":1024**4}, [["kB_bin","KB"]]) },
+    data_iec: { name:"Data (IEC, KiB)", base:"B", units:{ "KiB":1024,"MiB":1024**2,"GiB":1024**3,"TiB":1024**4 } },
+    datarate: { name:"Data Rate", base:"bit_s",
+      units: alias({"bit/s":1,"kbit/s":1e3,"Mbit/s":1e6,"Gbit/s":1e9,"B/s":8,"KB/s":8*1e3,"MB/s":8*1e6,"GB/s":8*1e9}, [["bps","bit/s"],["kbps","kbit/s"],["mbps","Mbit/s"],["gbps","Gbit/s"]]) },
+    frequency: { name:"Frequency", base:"Hz", units:{ "Hz":1,"kHz":1e3,"MHz":1e6,"GHz":1e9,"RPM":1/60 } },
+    angle: { name:"Angle", custom:true, units:["deg","rad","grad","arcmin","arcsec","turn","mil_NATO"],
+      toBase:(v,u)=>{ if(u==="rad")return v; if(u==="deg")return v*Math.PI/180; if(u==="grad")return v*Math.PI/200; if(u==="arcmin")return (v/60)*Math.PI/180; if(u==="arcsec")return (v/3600)*Math.PI/180; if(u==="turn")return v*2*Math.PI; if(u==="mil_NATO")return v*(2*Math.PI/6400); },
+      fromBase:(r,u)=>{ if(u==="rad")return r; if(u==="deg")return r*180/Math.PI; if(u==="grad")return r*200/Math.PI; if(u==="arcmin")return r*180/Math.PI*60; if(u==="arcsec")return r*180/Math.PI*3600; if(u==="turn")return r/(2*Math.PI); if(u==="mil_NATO")return r/(2*Math.PI)*6400; } },
+    fuel: { name:"Fuel Economy", custom:true, units:["L_per_100km","km_per_L","mpg_US","mpg_UK"],
+      toBase:(v,u)=>{ if(u==="km_per_L")return v; if(u==="L_per_100km")return 100/v; if(u==="mpg_US")return v*1.609344/3.785411784; if(u==="mpg_UK")return v*1.609344/4.54609; },
+      fromBase:(kmL,u)=>{ if(u==="km_per_L")return kmL; if(u==="L_per_100km")return 100/kmL; if(u==="mpg_US")return kmL*3.785411784/1.609344; if(u==="mpg_UK")return kmL*4.54609/1.609344; } },
+    force: { name:"Force", base:"N", units:{ "N":1,"kN":1000,"dyn":1e-5,"lbf":4.4482216152605,"gf":0.00980665 } },
+    torque: { name:"Torque", base:"N_m",
+      units: alias({"N·m":1,"kN·m":1000,"lb·ft":1.3558179483314004,"lb·in":0.1129848290276167}, [["Nm","N·m"],["kNm","kN·m"],["lbf·ft","lb·ft"],["lbf·in","lb·in"]]) },
+    density: { name:"Density", base:"kg_m3",
+      units: alias({"kg/m³":1,"g/cm³":1000,"g/mL":1000,"g/L":1,"lb/ft³":16.01846337396,"lb/in³":27679.904710191,"lb/gal_US":119.826427316}, [["kg/m3","kg/m³"],["g/cc","g/cm³"]]) }
+  };
+
+  // Elements
+  const catSel = document.getElementById('category');
+  const fromSel = document.getElementById('fromUnit');
+  const toSel   = document.getElementById('toUnit');
+  const inputEl = document.getElementById('value');
+  const outputEl= document.getElementById('output');
+  const noteEl  = document.getElementById('note');
+  const swapBtn = document.getElementById('swapBtn');
+  const copyBtn = document.getElementById('copyBtn');
+
+  function fmt(n){
+    if (!isFinite(n)) return "—";
+    const abs = Math.abs(n);
+    if (abs < 1e-12) n = 0;
+    return nf.format(n);
+  }
+
+  function fillCategories(){
+    catSel.innerHTML = "";
+    Object.entries(CATEGORIES).forEach(([key, cfg])=>{
+      const opt = document.createElement('option');
+      opt.value = key; opt.textContent = cfg.name;
+      catSel.appendChild(opt);
+    });
+  }
+
+  function fillUnits(){
+    const cfg = CATEGORIES[catSel.value];
+    fromSel.innerHTML = ""; toSel.innerHTML = "";
+
+    let unitsList = [];
+    if (cfg.custom && Array.isArray(cfg.units)) unitsList = cfg.units;
+    else unitsList = Object.keys(cfg.units);
+
+    unitsList.sort((a,b)=>a.localeCompare(b));
+    unitsList.forEach(u=>{
+      const o1 = document.createElement('option'); o1.value = u; o1.textContent = u;
+      const o2 = document.createElement('option'); o2.value = u; o2.textContent = u;
+      fromSel.appendChild(o1); toSel.appendChild(o2);
+    });
+
+    const defaults = {
+      length:["cm","in"], weight:["kg","lb"], temperature:["C","F"], area:["m2","ft2"],
+      volume:["L","gal_US"], speed:["km_h","mph"], pressure:["bar","psi"], energy:["kcal","kJ"],
+      power:["kW","hp"], time:["hr","min"], data_dec:["MB10","GB10"], data_bin:["MB","GB"],
+      data_iec:["MiB","GiB"], datarate:["Mbit/s","MB/s"], frequency:["MHz","GHz"],
+      angle:["deg","rad"], fuel:["L_per_100km","mpg_US"], force:["N","lbf"], torque:["N·m","lb·ft"], density:["kg/m³","g/cm³"]
+    };
+    const d = defaults[catSel.value];
+    if (d){ fromSel.value = d[0]; toSel.value = d[1]; }
+    else { fromSel.selectedIndex = 0; toSel.selectedIndex = Math.min(1, toSel.options.length-1); }
+
+    showNotes();
+  }
+
+  function showNotes(){
+    const k = catSel.value;
+    const D = window.__DICT__ || {};
+    const hints = D.hints || {};
+    noteEl.textContent = hints[k] || "";
+  }
+
+  function convert(){
+    const key = catSel.value;
+    const cfg = CATEGORIES[key];
+    const v = parseFloat(inputEl.value);
+    if (isNaN(v)) { outputEl.textContent = "—"; return; }
+
+    const from = fromSel.value, to = toSel.value;
+    let result;
+
+    if (cfg.custom){
+      if (cfg.toBase && cfg.fromBase){
+        const base = cfg.toBase(v, from);
+        result = cfg.fromBase(base, to);
+      } else { outputEl.textContent = "—"; return; }
+    } else {
+      const fromFactor = cfg.units[from];
+      const toFactor   = cfg.units[to];
+      if (!fromFactor || !toFactor){ outputEl.textContent = "—"; return; }
+      const baseVal = v * fromFactor;
+      result = baseVal / toFactor;
+    }
+
+    outputEl.innerHTML = `<strong>${fmt(v)} ${from}</strong> = <strong>${fmt(result)} ${to}</strong>`;
+  }
+
+  function swapUnits(){
+    const a = fromSel.value;
+    fromSel.value = toSel.value;
+    toSel.value = a;
+    convert();
+  }
+
+  function copyResult(){
+    const text = outputEl.textContent.trim();
+    if (!text || text === "—") return;
+    const D = window.__DICT__ || { btn:{copied:"Copied!", copy:"Copy Result"} };
+    navigator.clipboard.writeText(text).then(()=>{
+      copyBtn.textContent = D.btn?.copied || "Copied!";
+      setTimeout(()=>copyBtn.textContent = D.btn?.copy || "Copy Result", 900);
+    });
+  }
+
+  document.getElementById('quickPairs')?.addEventListener('click', (e)=>{
+    const t = e.target.closest('.chip');
+    if (!t) return;
+    const cat = t.dataset.cat, a = t.dataset.a, b = t.dataset.b;
+    if (!CATEGORIES[cat]) return;
+    catSel.value = cat;
+    fillUnits();
+    if (a) fromSel.value = a;
+    if (b) toSel.value = b;
+    if (!inputEl.value) inputEl.value = 1;
+    convert();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ------ i18n ------
+  const EN = {
+    meta:{title:"Ultimate Unit Converter (US/UK/Metric, Data Decimal/Binary/IEC) | GoToolOnline",
+          desc:"Free all-in-one unit converter for US/UK/Metric units. Length, area, volume (US/UK/metric cups), weight, temperature, speed, pressure, energy, power, data (decimal/binary/IEC), RPM, angle, fuel economy and more."},
+    ui:{back:"← Back to Home", lang:"Language"},
+    title:"Unit Converter — Extended (US/UK/Metric, Data: Decimal/Binary/IEC)",
+    lede:"Convert <strong>length, area, volume, weight, temperature, speed, pressure</strong> (psi/mmHg/inHg/cmH2O), <strong>energy</strong> (Wh/kWh/BTU/eV/therm/toe), <strong>power</strong> (hp/PS), <strong>data</strong> (decimal, binary, IEC), <strong>frequency/RPM</strong>, <strong>angle</strong> (turn/mil NATO), <strong>fuel economy</strong> and more — fast and private.",
+    form:{category:"Category", value:"Value", from:"From", to:"To"},
+    btn:{swap:"⇄ Swap", copy:"Copy Result", copied:"Copied!"},
+    related:{title:"Related tools:"},
+    notes:{bottom1:"Notes: Avoid non-constant units like month/year. Volumes include US liquid & UK imperial + metric cups (200/250 mL) and US legal cup (240 mL). Data covers Decimal (1000), Binary (1024), and IEC (KiB/MiB/GiB)."},
+    categories:{
+      length:"Length", area:"Area", volume:"Volume (US/UK/Metric)", weight:"Weight / Mass",
+      temperature:"Temperature", speed:"Speed", pressure:"Pressure", energy:"Energy",
+      power:"Power", time:"Time", data_dec:"Data (Decimal, 1000)", data_bin:"Data (Binary, 1024)",
+      data_iec:"Data (IEC, KiB)", datarate:"Data Rate", frequency:"Frequency", angle:"Angle",
+      fuel:"Fuel Economy", force:"Force", torque:"Torque", density:"Density"
+    },
+    hints:{
+      temperature:"C/F/K/Rankine (exact formulas).",
+      volume:"US liquid, UK imperial, metric & US legal cups.",
+      data_dec:"Decimal (1000): kB/MB/GB/TB.",
+      data_bin:"Binary (1024): KB/MB/GB/TB.",
+      data_iec:"IEC: KiB/MiB/GiB/TiB.",
+      fuel:"Fuel economy is reciprocal between L/100km and mpg.",
+      angle:"Includes turn (rev) and mil_NATO (6400 per turn)."
+    }
+  };
+
+  const ZH = {
+    meta:{title:"单位换算器（US/UK/公制，含十进制/二进制/IEC 数据）| GoToolOnline",
+          desc:"全能单位换算：长度、面积、体积（美制/英制/公制杯）、重量、温度、速度、压力、能量、功率、数据（十进制/二进制/IEC）、频率/RPM、角度（圈/密位 NATO）、油耗等。"},
+    ui:{back:"← 返回首页", lang:"语言"},
+    title:"单位换算器 — 扩展版（US/UK/公制，数据：十进制/二进制/IEC）",
+    lede:"支持<strong>长度、面积、体积、重量、温度、速度、压力</strong>（psi/mmHg/inHg/cmH2O）、<strong>能量</strong>（Wh/kWh/BTU/eV/therm/toe）、<strong>功率</strong>（hp/PS）、<strong>数据</strong>（十进制/二进制/IEC）、<strong>频率/RPM</strong>、<strong>角度</strong>（turn/mil NATO）、<strong>油耗</strong>等——本地计算、快速私密。",
+    form:{category:"类别", value:"数值", from:"从", to:"到"},
+    btn:{swap:"⇄ 交换", copy:"复制结果", copied:"已复制"},
+    related:{title:"相关工具："},
+    notes:{bottom1:"提示：避免“月/年”等非恒定单位。体积包含美制/英制，以及公制杯（200/250 mL）和美制法定杯（240 mL）。数据含十进制（1000）、二进制（1024）与 IEC（KiB/MiB/GiB）。"},
+    categories:{
+      length:"长度", area:"面积", volume:"体积（美/英/公制）", weight:"重量/质量",
+      temperature:"温度", speed:"速度", pressure:"压力", energy:"能量",
+      power:"功率", time:"时间", data_dec:"数据（十进制 1000）", data_bin:"数据（二进制 1024）",
+      data_iec:"数据（IEC KiB）", datarate:"数据速率", frequency:"频率", angle:"角度",
+      fuel:"油耗", force:"力", torque:"扭矩", density:"密度"
+    },
+    hints:{
+      temperature:"摄氏/华氏/开尔文/兰金（精确公式）。",
+      volume:"含美制液量、英制与公制/美制法定杯。",
+      data_dec:"十进制（1000）：kB/MB/GB/TB。",
+      data_bin:"二进制（1024）：KB/MB/GB/TB。",
+      data_iec:"IEC：KiB/MiB/GiB/TiB。",
+      fuel:"L/100km 与 mpg 互为倒数。",
+      angle:"含圈（turn）与 NATO 密位（每圈 6400）。"
+    }
+  };
+
+  const PH = {
+    ui:{back:"← Bumalik sa Home", lang:"Wika"},
+    title:"Unit Converter — Pinalawig (US/UK/Metric, Data: Decimal/Binary/IEC)",
+    lede:"I-convert ang haba, area, volume, bigat, temperatura, bilis, presyon, enerhiya, power, data (decimal/binary/IEC), dalas/RPM, anggulo, at tipid sa gasolina — mabilis at pribado.",
+    form:{category:"Kategorya", value:"Halaga", from:"Mula", to:"Sa"},
+    btn:{swap:"⇄ Palitan", copy:"Kopyahin ang Resulta", copied:"Nakopya!"},
+    related:{title:"Kaugnay na tools:"},
+    notes:{bottom1:"Tala: Iwasan ang buwan/taon bilang yunit. Volume: US/UK at metric/US legal cups. Data: Decimal (1000), Binary (1024), IEC (KiB/MiB/GiB)."},
+    categories:{
+      length:"Haba", area:"Lawak", volume:"Dami (US/UK/Metric)", weight:"Bigat/Masa",
+      temperature:"Temperatura", speed:"Bilis", pressure:"Presyon", energy:"Enerhiya",
+      power:"Power", time:"Oras", data_dec:"Data (Decimal, 1000)", data_bin:"Data (Binary, 1024)",
+      data_iec:"Data (IEC, KiB)", datarate:"Bilis ng Data", frequency:"Dalas", angle:"Anggulo",
+      fuel:"Tipid sa Gasolina", force:"Puwersa", torque:"Torque", density:"Densidad"
+    },
+    hints:{temperature:"C/F/K/Rankine.", volume:"US liquid, UK imperial, metric & US legal cups.", data_dec:"Decimal (1000).", data_bin:"Binary (1024).", data_iec:"IEC (KiB…).", fuel:"L/100km ↔ mpg.", angle:"May turn at mil_NATO (6400/turn)."}
+  };
+
+  const ID = {
+    ui:{back:"← Kembali ke Beranda", lang:"Bahasa"},
+    title:"Konverter Satuan — Ekstensi (US/UK/Metric, Data: Decimal/Binary/IEC)",
+    lede:"Konversi panjang, luas, volume, massa, suhu, kecepatan, tekanan, energi, daya, data (decimal/binary/IEC), frekuensi/RPM, sudut, konsumsi bahan bakar, dll.",
+    form:{category:"Kategori", value:"Nilai", from:"Dari", to:"Ke"},
+    btn:{swap:"⇄ Tukar", copy:"Salin Hasil", copied:"Tersalin!"},
+    related:{title:"Terkait:"},
+    notes:{bottom1:"Catatan: Hindari unit tak konstan seperti bulan/tahun. Volume mencakup US/UK dan cangkir metric/US legal. Data: Decimal (1000), Binary (1024), IEC (KiB/MiB/GiB)."},
+    categories:{length:"Panjang", area:"Luas", volume:"Volume (US/UK/Metric)", weight:"Berat/Massa", temperature:"Suhu", speed:"Kecepatan", pressure:"Tekanan", energy:"Energi", power:"Daya", time:"Waktu", data_dec:"Data (Desimal, 1000)", data_bin:"Data (Biner, 1024)", data_iec:"Data (IEC, KiB)", datarate:"Laju Data", frequency:"Frekuensi", angle:"Sudut", fuel:"Konsumsi BBM", force:"Gaya", torque:"Torsi", density:"Massa Jenis"},
+    hints:{temperature:"C/F/K/Rankine.", volume:"US liquid, UK imperial, metric & US legal cups.", data_dec:"Desimal (1000).", data_bin:"Biner (1024).", data_iec:"IEC (KiB…).", fuel:"L/100km ↔ mpg.", angle:"turn & mil_NATO (6400/putaran)."}
+  };
+
+  const VI = {
+    ui:{back:"← Về trang chủ", lang:"Ngôn ngữ"},
+    title:"Bộ đổi đơn vị — mở rộng (US/UK/Metric, Dữ liệu: Decimal/Binary/IEC)",
+    lede:"Đổi chiều dài, diện tích, thể tích, khối lượng, nhiệt độ, tốc độ, áp suất, năng lượng, công suất, dữ liệu (thập phân/nhị phân/IEC), tần số/RPM, góc, tiêu hao nhiên liệu…",
+    form:{category:"Danh mục", value:"Giá trị", from:"Từ", to:"Sang"},
+    btn:{swap:"⇄ Đổi", copy:"Sao chép kết quả", copied:"Đã sao chép!"},
+    related:{title:"Liên quan:"},
+    notes:{bottom1:"Lưu ý: Tránh tháng/năm. Thể tích gồm US/UK và cốc metric/US legal. Dữ liệu: Decimal (1000), Binary (1024), IEC (KiB/MiB/GiB)."},
+    categories:{length:"Chiều dài", area:"Diện tích", volume:"Thể tích (US/UK/Metric)", weight:"Khối lượng", temperature:"Nhiệt độ", speed:"Tốc độ", pressure:"Áp suất", energy:"Năng lượng", power:"Công suất", time:"Thời gian", data_dec:"Dữ liệu (thập phân 1000)", data_bin:"Dữ liệu (nhị phân 1024)", data_iec:"Dữ liệu (IEC, KiB)", datarate:"Băng thông", frequency:"Tần số", angle:"Góc", fuel:"Tiêu hao nhiên liệu", force:"Lực", torque:"Mô-men xoắn", density:"Khối lượng riêng"},
+    hints:{temperature:"C/F/K/Rankine.", volume:"US liquid, UK imperial, cốc metric & US legal.", data_dec:"Thập phân (1000).", data_bin:"Nhị phân (1024).", data_iec:"IEC (KiB…).", fuel:"L/100km ↔ mpg.", angle:"turn & mil_NATO (6400/vòng)."}
+  };
+
+  const BN = {
+    ui:{back:"← হোমে ফিরে যান", lang:"ভাষা"},
+    title:"ইউনিট কনভার্টার — এক্সটেন্ডেড (US/UK/Metric, ডাটা: Decimal/Binary/IEC)",
+    lede:"লম্বা, ক্ষেত্রফল, আয়তন, ওজন, তাপমাত্রা, গতি, চাপ, শক্তি, পাওয়ার, ডাটা (ডেসিমাল/বাইনারি/IEC), ফ্রিকোয়েন্সি/RPM, কোণ, জ্বালানি দক্ষতা ইত্যাদি রূপান্তর করুন।",
+    form:{category:"ধরণ", value:"মান", from:"থেকে", to:"তে"},
+    btn:{swap:"⇄ অদলবদল", copy:"ফল কপি করুন", copied:"কপি হয়েছে!"},
+    related:{title:"সম্পর্কিত টুলস:"},
+    notes:{bottom1:"নোট: মাস/বছরের মতো পরিবর্তনশীল ইউনিট এড়িয়ে চলুন। আয়তনে US/UK ও metric/US legal cups অন্তর্ভুক্ত। ডাটা: Decimal (1000), Binary (1024), IEC (KiB/MiB/GiB)."},
+    categories:{length:"দৈর্ঘ্য", area:"ক্ষেত্রফল", volume:"আয়তন (US/UK/Metric)", weight:"ওজন/ভর", temperature:"তাপমাত্রা", speed:"গতি", pressure:"চাপ", energy:"শক্তি", power:"পাওয়ার", time:"সময়", data_dec:"ডাটা (ডেসিমাল 1000)", data_bin:"ডাটা (বাইনারি 1024)", data_iec:"ডাটা (IEC, KiB)", datarate:"ডাটা রেট", frequency:"ফ্রিকোয়েন্সি", angle:"কোণ", fuel:"জ্বালানি দক্ষতা", force:"বল", torque:"টর্ক", density:"ঘনত্ব"},
+    hints:{temperature:"C/F/K/Rankine.", volume:"US liquid, UK imperial, metric ও US legal cups.", data_dec:"ডেসিমাল (1000).", data_bin:"বাইনারি (1024).", data_iec:"IEC (KiB…).", fuel:"L/100km ↔ mpg.", angle:"turn ও mil_NATO (6400/turn)."}
+  };
+
+  const NG = { // English (NG)
+    ...EN
+  };
+
+  const SW = {
+    ui:{back:"← Rudi nyumbani", lang:"Lugha"},
+    title:"Kigeuzi cha Vitengo — Kilicho Panuliwa (US/UK/Metric, Data: Decimal/Binary/IEC)",
+    lede:"Badilisha urefu, eneo, ujazo, uzito, halijoto, kasi, shinikizo, nishati, nguvu, data (decimal/binary/IEC), marudio/RPM, pembe, uchumi wa mafuta n.k.",
+    form:{category:"Aina", value:"Thamani", from:"Kutoka", to:"Kwenda"},
+    btn:{swap:"⇄ Badilisha", copy:"Nakili Matokeo", copied:"Imenakiliwa!"},
+    related:{title:"Vyombo vinavyohusiana:"},
+    notes:{bottom1:"Tanbihi: Epuka mwezi/mwaka kama vitengo. Ujazo ni US/UK na vikombe vya metric/US legal. Data: Decimal (1000), Binary (1024), IEC (KiB/MiB/GiB)."},
+    categories:{length:"Urefu", area:"Eneo", volume:"Ujazo (US/UK/Metric)", weight:"Uzito/Misa", temperature:"Halijoto", speed:"Kasi", pressure:"Shinikizo", energy:"Nishati", power:"Nguvu", time:"Muda", data_dec:"Data (Desimali 1000)", data_bin:"Data (Bainari 1024)", data_iec:"Data (IEC, KiB)", datarate:"Kiwango cha Data", frequency:"Marudio", angle:"Pembe", fuel:"Matumizi ya Mafuta", force:"Nguvu ya Msukumo", torque:"Torati", density:"Msongamano"},
+    hints:{temperature:"C/F/K/Rankine.", volume:"US liquid, UK imperial, metric & US legal cups.", data_dec:"Desimali (1000).", data_bin:"Bainari (1024).", data_iec:"IEC (KiB…).", fuel:"L/100km ↔ mpg.", angle:"turn & mil_NATO (6400/kuzunguka)."}
+  };
+
+  const AR = {
+    meta:{title:"محول الوحدات الشامل (أمريكي/بريطاني/متري، بيانات Decimal/Binary/IEC) | GoToolOnline",
+          desc:"محول وحدات شامل: الطول، المساحة، الحجم (أمريكي/بريطاني/أكواب مترية)، الكتلة، الحرارة، السرعة، الضغط، الطاقة، القدرة، البيانات (عشري/ثنائي/IEC)، التردد/RPM، الزاوية، كفاءة الوقود وغير ذلك."},
+    ui:{back:"← العودة إلى الصفحة الرئيسية", lang:"اللغة"},
+    title:"محول الوحدات — موسّع (أمريكي/بريطاني/متري، البيانات: Decimal/Binary/IEC)",
+    lede:"حوّل <strong>الطول، المساحة، الحجم، الكتلة، الحرارة، السرعة، الضغط</strong>، <strong>الطاقة</strong>، <strong>القدرة</strong>، <strong>البيانات</strong> (عشري/ثنائي/IEC)، <strong>التردد/RPM</strong>، <strong>الزاوية</strong>، <strong>استهلاك الوقود</strong> وغير ذلك — بسرعة وخصوصية.",
+    form:{category:"الفئة", value:"القيمة", from:"من", to:"إلى"},
+    btn:{swap:"⇄ تبديل", copy:"نسخ النتيجة", copied:"تم النسخ!"},
+    related:{title:"أدوات ذات صلة:"},
+    notes:{bottom1:"ملاحظة: تجنّب وحدات غير ثابتة مثل الشهر/السنة. الحجم يشمل الأمريكي والبريطاني وأكواب المتري والقانوني الأمريكي. البيانات: Decimal (1000)، Binary (1024)، IEC (KiB/MiB/GiB)."},
+    categories:{length:"الطول", area:"المساحة", volume:"الحجم (أمريكي/بريطاني/متري)", weight:"الوزن/الكتلة", temperature:"الحرارة", speed:"السرعة", pressure:"الضغط", energy:"الطاقة", power:"القدرة", time:"الزمن", data_dec:"البيانات (عشري 1000)", data_bin:"البيانات (ثنائي 1024)", data_iec:"البيانات (IEC, KiB)", datarate:"معدل البيانات", frequency:"التردد", angle:"الزاوية", fuel:"استهلاك الوقود", force:"القوة", torque:"عزم الدوران", density:"الكثافة"},
+    hints:{temperature:"C/F/K/Rankine.", volume:"سعات أمريكية/بريطانية وأكواب مترية/قانونية أمريكية.", data_dec:"عشري (1000).", data_bin:"ثنائي (1024).", data_iec:"IEC (KiB…).", fuel:"L/100km ↔ mpg.", angle:"turn و mil_NATO (6400/دورة)."}
+  };
+
+  const MAP = {en:EN, zh:ZH, ph:PH, id:ID, vi:VI, bn:BN, ng:NG, sw:SW, ar:AR};
+  const LANGS = ['en','zh','ph','id','vi','bn','ng','sw','ar'];
+  const NAMES = {en:'English', zh:'简体中文', ph:'Tagalog', id:'Bahasa Indonesia', vi:'Tiếng Việt', bn:'বাংলা', ng:'English (NG)', sw:'Kiswahili', ar:'العربية'};
+
+  function getCookie(name){ return ('; '+document.cookie).split('; '+name+'=').pop().split(';')[0] || ''; }
+  function setCookie(name,val){ document.cookie = name+'='+val+';path=/;max-age=31536000'; }
+  function get(obj, path){ return String(path).split('.').reduce((o,k)=> (o && (k in o))? o[k] : undefined, obj); }
+  function merge(base, over){ const out={...base}; if(!over) return out; for(const k in over){ if(typeof over[k]==='object' && !Array.isArray(over[k])) out[k]=merge(base[k]||{},over[k]); else out[k]=over[k]; } return out; }
+
+  function pickLang(){
+    const url = new URL(location.href);
+    const q = (url.searchParams.get('lang')||'').toLowerCase();
+    const c = (getCookie('lang')||'').toLowerCase();
+    const nav = (navigator.language||'en').toLowerCase();
+    const MAPG = {en:'en', tl:'ph', fil:'ph', id:'id', vi:'vi', bn:'bn', sw:'sw', ar:'ar', zh:'zh', 'zh-cn':'zh', 'zh-hans':'zh'};
+    let lang='en';
+    if (q && LANGS.includes(q)) lang=q;
+    else if (c && LANGS.includes(c)) lang=c;
+    else lang = MAPG[nav] || MAPG[nav.split('-')[0]] || 'en';
+    setCookie('lang', lang);
+    document.documentElement.lang = (lang==='ph'?'tl':(lang==='ng'?'en':lang));
+    document.documentElement.dir = (lang==='ar'?'rtl':'ltr');
+    return lang;
+  }
+
+  function applyI18N(D){
+    // meta
+    if (get(D,'meta.title')) document.title = get(D,'meta.title');
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc && get(D,'meta.desc')) desc.setAttribute('content', get(D,'meta.desc'));
+
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      const val = get(D, key);
+      if (val == null) return;
+      if (/<[a-z][\s\S]*>/i.test(val)) el.innerHTML = val; else el.textContent = val;
+    });
+
+    // localize category names
+    if (D.categories){
+      Object.keys(CATEGORIES).forEach(k=>{
+        if (D.categories[k]) CATEGORIES[k].name = D.categories[k];
+      });
+    }
+
+    // refresh UI bits
+    fillCategories();
+    showNotes();
+  }
+
+  function keepLangInLinks(lang){
+    document.querySelectorAll('a[href]').forEach(a=>{
+      const href = a.getAttribute('href')||'';
+      if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+      const u = new URL(href, location.origin);
+      if (!u.searchParams.get('lang')) u.searchParams.set('lang', lang);
+      a.setAttribute('href', u.pathname + u.search + u.hash);
+    });
+  }
+
+  // Init base UI then i18n
+  function init(){
+    // initial population
+    fillCategories();
+    catSel.value = "length";
+    fillUnits();
+    inputEl.value = 1;
+    convert();
+
+    // Events
+    catSel.addEventListener('change', ()=>{ fillUnits(); convert(); });
+    fromSel.addEventListener('change', convert);
+    toSel.addEventListener('change', convert);
+    inputEl.addEventListener('input', convert);
+    document.getElementById('swapBtn').addEventListener('click', swapUnits);
+    document.getElementById('copyBtn').addEventListener('click', copyResult);
+
+    // language boot
+    const lang = pickLang();
+    const D = merge(EN, MAP[lang]||{});
+    window.__LANG__ = lang;
+    window.__DICT__ = D;
+    applyI18N(D);
+    keepLangInLinks(lang);
+
+    // build language panel
+    const panel = document.getElementById('langPanel');
+    const btn = document.getElementById('langBtn');
+    const grid = document.getElementById('langGrid');
+    if (grid){
+      LANGS.forEach(code=>{
+        const b=document.createElement('button');
+        b.textContent = NAMES[code]||code;
+        if (code===lang) b.className='active';
+        b.addEventListener('click', ()=>{
+          const u=new URL(location.href);
+          u.searchParams.set('lang', code);
+          setCookie('lang', code);
+          location.href=u.toString();
+        });
+        grid.appendChild(b);
+      });
+    }
+    function openLang(open){ panel.classList.toggle('open', !!open); btn.setAttribute('aria-expanded', !!open); }
+    if (btn) btn.addEventListener('click', (e)=>{ e.stopPropagation(); openLang(!panel.classList.contains('open')); });
+    document.addEventListener('click', (e)=>{ if(panel && panel.classList.contains('open')){ const within = panel.contains(e.target) || (btn && btn.contains(e.target)); if(!within) openLang(false); } });
+
+    // restore query state
+    const q = new URLSearchParams(location.search);
+    if (q.has('cat')) { const c=q.get('cat'); if (CATEGORIES[c]) { catSel.value=c; fillUnits(); } }
+    convert();
+  }
+
+  init();
+</script>
+
+<!-- Back-to-home resolver (preserve ?lang) -->
+<script>
+(function(){
+  var path = location.pathname.replace(/\/+$/,'');
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = [''];
+  var home = parts.join('/') + '/';
+
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+  document.querySelectorAll('a[data-home]').forEach(function(a){
+    a.setAttribute('href', home);
+  });
+})();
+</script>
+</body>
+</html>

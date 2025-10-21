@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Word Counter | GoToolOnline</title>
+<meta charset="utf-8"/>
+<meta name="description" content="Count words, characters, lines, paragraphs, and more — supports 9 languages."/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text x='6' y='52' font-size='48'>🛠️</text></svg>'"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+<style>
+  :root { --bg:#0a0f1e; --card:#0f1830; --muted:#9fb0c3; --fg:#eaf3ff; --acc:#4fb3ff; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg);}
+  header{max-width:1200px;margin:24px auto 8px;display:flex;gap:14px;align-items:center;padding:0 18px;}
+  header a.logo{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--fg);font-weight:800;font-size:24px}
+  header a.navbtn{margin-left:auto;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:12px;color:#eaf3ff;text-decoration:none;font-size:16px}
+  header a.navbtn:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  main{max-width:1200px;margin:10px auto 64px;padding:0 18px}
+  h1{font-size:34px;margin:10px 0 10px}
+  p,label,.muted{font-size:18px; line-height:1.6}
+  .card{background:#0f1830;border:1px solid #1a2843;border-radius:20px;padding:20px;margin:16px 0}
+  textarea,input,select,button{width:100%;padding:14px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;font-size:18px}
+  textarea{min-height:200px;resize:vertical}
+  .result{padding:14px;background:#0c1426;border:1px dashed #2a3c64;border-radius:12px;margin-top:12px;font-size:18px}
+  .muted{color:#9fb0c3}
+  .pill{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border:1px solid #2a3d67;border-radius:999px;background:#0f1a2f}
+  footer{max-width:1200px;margin:40px auto;padding:0 18px;color:#9fb0c3;font-size:15px}
+  .backTop{margin-top:12px;display:inline-block;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:10px;color:#eaf3ff;text-decoration:none}
+  .backTop:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+</style>
+<script>function backToTop(){window.scrollTo({top:0,behavior:'smooth'});}</script>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/writing/word-counter/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/writing/word-counter/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/writing/word-counter/">
+</head>
+<body>
+<header>
+  <a class="logo" data-home href="#"><span>🛠️</span><strong>GoToolOnline</strong></a>
+  <a class="navbtn" data-home href="#">← Back to Home</a>
+</header>
+
+<main>
+  <section class="card">
+    <h1>Word Counter</h1>
+
+    <label class="pill">Language
+      <select id="locale" style="width:auto">
+        <option value="auto">Auto (browser)</option>
+        <option value="en">English</option>
+        <option value="fil">Tagalog</option>
+        <option value="id">Bahasa Indonesia</option>
+        <option value="vi">Tiếng Việt</option>
+        <option value="bn">বাংলা</option>
+        <option value="en-NG">English (NG)</option>
+        <option value="sw">Kiswahili</option>
+        <option value="ar">العربية</option>
+        <option value="zh-CN">简体中文</option>
+      </select>
+    </label>
+
+    <textarea id="txt" oninput="count()" placeholder="Type or paste your text..."></textarea>
+
+    <div class="result" id="resultBox">
+      <div id="wc">Words: 0</div>
+      <div id="cc">Characters: 0</div>
+      <div id="ccns">Characters (no spaces): 0</div>
+      <div id="lc">Lines: 0</div>
+      <div id="pc">Paragraphs: 0</div>
+      <div id="sc">Sentences (approx.): 0</div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <a class="backTop" href="javascript:void(0)" onclick="backToTop()">Back to Top ↑</a>
+  <div style="margin-top:10px">© 2025 GoToolOnline.com · Free online tools for everyone.</div>
+</footer>
+
+<script>
+(function(){
+  const txt = document.getElementById('txt');
+  const localeSel = document.getElementById('locale');
+
+  function getLocale(){
+    const val = localeSel.value;
+    return val === 'auto' ? (navigator.language || 'en') : val;
+  }
+
+  function segmentWords(text, locale){
+    if ('Segmenter' in Intl){
+      try{
+        const seg = new Intl.Segmenter(locale, {granularity:'word'});
+        return Array.from(seg.segment(text)).filter(s=>s.isWordLike).length;
+      }catch{ /* fallback below */ }
+    }
+    return text.trim().split(/\s+/).filter(Boolean).length;
+  }
+
+  window.count = function(){
+    const val = txt.value || '';
+    const loc = getLocale();
+    const chars = val.length;
+    const charsNoSpace = val.replace(/\s+/g,'').length;
+    const words = val.trim() ? segmentWords(val, loc) : 0;
+    const lines = val ? val.split(/\n/).length : 0;
+    const paras = val ? val.split(/\n\s*\n/).filter(p=>p.trim()).length : 0;
+    const sentences = val ? (val.match(/[.!?。！？]+/g) || []).length : 0;
+
+    wc.textContent = 'Words: ' + words;
+    cc.textContent = 'Characters: ' + chars;
+    ccns.textContent = 'Characters (no spaces): ' + charsNoSpace;
+    lc.textContent = 'Lines: ' + lines;
+    pc.textContent = 'Paragraphs: ' + paras;
+    sc.textContent = 'Sentences (approx.): ' + sentences;
+  };
+
+  const langParam = new URLSearchParams(location.search).get('lang');
+  if (langParam && Array.from(localeSel.options).some(o=>o.value===langParam)) {
+    localeSel.value = langParam;
+  }
+
+})();
+</script>
+
+<script>
+(function(){
+  // 保留回首页功能并透传 ?lang
+  var path = location.pathname.replace(/\/+$/,'');
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = [''];
+  var home = parts.join('/') + '/';
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+  document.querySelectorAll('a[data-home]').forEach(a=>a.setAttribute('href', home));
+})();
+</script>
+
+</body>
+</html>

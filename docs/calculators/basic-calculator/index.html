@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Basic Calculator — Free Online with Big Buttons | GoToolOnline</title>
+<meta name="description" content="Free basic calculator with + − × ÷, percent, memory keys, and history. Mobile-friendly big buttons and keyboard support."/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+
+<!-- Social (OG/Twitter) -->
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Basic Calculator — Free Online with Big Buttons"/>
+<meta property="og:description" content="Free basic calculator with + − × ÷, percent, memory keys, and history. Mobile-friendly big buttons and keyboard support."/>
+<meta property="og:url" content="https://gotoolonline.com/calculators/basic-calculator/"/>
+<meta name="twitter:card" content="summary"/>
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text x='6' y='52' font-size='48'>🧮</text></svg>'"/>
+
+<style>
+  :root { --bg:#0a0f1e; --card:#0f1830; --muted:#9fb0c3; --fg:#eaf3ff; --acc:#4fb3ff; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+  a{color:var(--fg);text-decoration:none}
+  header{max-width:900px;margin:20px auto 8px;display:flex;gap:12px;align-items:center;padding:0 16px}
+  .pill{padding:8px 12px;border:1px solid #24365b;background:#0f1a2f;border-radius:999px}
+  .top-links{margin-left:auto;display:flex;gap:8px;align-items:center}
+
+  /* language panel */
+  .lang-trigger{display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+  .lang-panel{position:fixed; top:64px; right:18px; z-index:1200;background:#0f1830; border:1px solid #1a2843; border-radius:16px;padding:12px; display:none; width:min(420px, calc(100vw - 24px));box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  .lang-panel.open{ display:block }
+  .lang-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px }
+  .lang-grid button{display:block;width:100%;text-align:center;padding:10px 10px;border:1px solid #24365b;background:#0f1a2f;border-radius:12px;color:var(--fg);font-size:14px;cursor:pointer}
+  .lang-grid button.active{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+
+  main{max-width:900px;margin:8px auto 56px;padding:0 16px}
+  .wrap{display:grid;grid-template-columns:1fr;gap:16px}
+  .card{background:var(--card);border:1px solid #1a2843;border-radius:18px;padding:16px}
+  h1{margin:4px 0 6px}
+  .lede{font-size:16px;color:var(--muted);margin:.25rem 0 0.75rem}
+  .display{background:#0d142a;border:1px solid #1c2d55;border-radius:14px;padding:12px 14px}
+  .expr{font-size:18px;color:var(--muted);min-height:22px;word-break:break-all}
+  .out{font-size:36px;font-weight:800;letter-spacing:.5px;min-height:44px;word-break:break-all}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  button{padding:16px;border-radius:14px;border:1px solid #2a3d67;background:#0f1a2f;color:#eaf3ff;font-size:20px;font-weight:700;cursor:pointer}
+  button.op{background:#13264a}
+  button.equal{background:linear-gradient(180deg,#2a78ff,#0050d4);border:none}
+  button:active{transform:translateY(1px)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .small{font-size:13px;color:var(--muted)}
+  @media (min-width: 700px){ .wrap{grid-template-columns:1fr 300px} }
+  footer{max-width:900px;margin:32px auto 24px;padding:0 16px;color:var(--muted);font-size:14px}
+  .backTop{margin-top:12px;display:inline-block;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:10px;color:#eaf3ff;text-decoration:none}
+  .backTop:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+</style>
+
+<!-- Structured data -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Basic Calculator","url":"https://gotoolonline.com/calculators/basic-calculator/","applicationCategory":"Calculator","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"GoToolOnline","url":"https://gotoolonline.com"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"Does the calculator support keyboard input?","acceptedAnswer":{"@type":"Answer","text":"Yes. Use digits, + - * /, Enter for equals, and Backspace to delete."}},
+  {"@type":"Question","name":"How does the percent key work?","acceptedAnswer":{"@type":"Answer","text":"Percent applies to the current number. Example: 50 × 10 % = 5."}}
+]}
+</script>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/calculators/basic-calculator/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/calculators/basic-calculator/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/calculators/basic-calculator/">
+</head>
+<body>
+<header>
+  <a class="pill" data-home href="#" data-i18n="ui.brand">🛠 GoToolOnline</a>
+  <div class="top-links">
+    <a class="pill" data-home href="#" data-i18n="ui.back">← Back to Home</a>
+    <button id="langBtn" class="pill lang-trigger" aria-haspopup="dialog" aria-expanded="false" data-i18n="ui.lang">🌐 Language</button>
+  </div>
+  <div class="lang-panel" id="langPanel" role="dialog" aria-label="Select language">
+    <div class="lang-grid" id="langGrid"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card">
+    <h1 data-i18n="title">Basic Calculator</h1>
+    <p class="lede" data-i18n="intro">Simple four-function calculator with percent, memory and history — big buttons, mobile-friendly.</p>
+
+    <div class="display" aria-label="Calculator display" aria-live="polite">
+      <div class="expr" id="expr"></div>
+      <div class="out" id="out">0</div>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <button class="pill" id="mc" aria-label="Memory clear" data-i18n-aria="aria.mc">MC</button>
+      <button class="pill" id="mr" aria-label="Memory recall" data-i18n-aria="aria.mr">MR</button>
+      <button class="pill" id="mplus" aria-label="Memory add" data-i18n-aria="aria.mplus">M+</button>
+      <button class="pill" id="mminus" aria-label="Memory subtract" data-i18n-aria="aria.mminus">M-</button>
+      <span class="small" id="mstat" data-i18n-prefix="ui.memory">Memory</span>
+    </div>
+
+    <div class="grid" role="group" aria-label="Calculator keys" style="margin-top:12px">
+      <button class="op" data-k="C" aria-label="Clear" data-i18n-aria="aria.clear">C</button>
+      <button class="op" data-k="⌫" aria-label="Backspace" data-i18n-aria="aria.backspace">⌫</button>
+      <button class="op" data-k="%" aria-label="Percent" data-i18n-aria="aria.percent">%</button>
+      <button class="op" data-k="÷" aria-label="Divide" data-i18n-aria="aria.divide">÷</button>
+
+      <button data-k="7">7</button>
+      <button data-k="8">8</button>
+      <button data-k="9">9</button>
+      <button class="op" data-k="×" aria-label="Multiply" data-i18n-aria="aria.multiply">×</button>
+
+      <button data-k="4">4</button>
+      <button data-k="5">5</button>
+      <button data-k="6">6</button>
+      <button class="op" data-k="−" aria-label="Minus" data-i18n-aria="aria.minus">−</button>
+
+      <button data-k="1">1</button>
+      <button data-k="2">2</button>
+      <button data-k="3">3</button>
+      <button class="op" data-k="+" aria-label="Plus" data-i18n-aria="aria.plus">+</button>
+
+      <button class="op" data-k="±" aria-label="Toggle sign" data-i18n-aria="aria.sign">±</button>
+      <button data-k="0">0</button>
+      <button data-k="." aria-label="Decimal" data-i18n-aria="aria.decimal">.</button>
+      <button class="equal" data-k="=" aria-label="Equals" data-i18n-aria="aria.equals">=</button>
+    </div>
+
+    <p class="small" style="margin-top:10px" data-i18n="hint">
+      % applies to the current number (e.g., 50 × 10 % = 5). Keyboard: digits, + − × ÷, Enter (=), Backspace (⌫).
+    </p>
+  </section>
+
+  <aside class="card">
+    <h2 style="margin:0 0 8px 0" data-i18n="history.title">History</h2>
+    <div class="small" id="hist" aria-live="polite"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="pill" id="clearHist" data-i18n="history.clear">Clear History</button>
+    </div>
+  </aside>
+</main>
+
+<section class="card" style="max-width:900px;margin:0 auto 28px; padding:16px">
+  <h2 style="margin:0 0 8px 0" data-i18n="related.title">Related tools</h2>
+  <ul>
+    <li><a href="/calculators/scientific-calculator/" data-i18n="related.sci">Scientific Calculator</a></li>
+    <li><a href="/calculators/percentage-calculator/" data-i18n="related.pct">Percentage Calculator</a></li>
+    <li><a href="/calculators/date-difference/" data-i18n="related.date">Date Difference</a></li>
+  </ul>
+</section>
+
+<footer>
+  <a class="backTop" href="javascript:void(0)" data-i18n="ui.top" onclick="window.scrollTo({top:0, behavior:'smooth'})">Back to Top ↑</a>
+  <div style="margin-top:10px">© <span id="y"></span> GoToolOnline.com · <span data-i18n="ui.tagline">Free online tools for everyone.</span></div>
+</footer>
+
+<script>
+/* ================== i18n core ================== */
+(function(){
+  const LANGS = ['en','zh','ph','id','vi','bn','ng','sw','ar'];
+  const NAMES = {en:'English', zh:'简体中文', ph:'Tagalog', id:'Bahasa Indonesia', vi:'Tiếng Việt', bn:'বাংলা', ng:'English (NG)', sw:'Kiswahili', ar:'العربية'};
+
+  function getCookie(name){ return ('; '+document.cookie).split('; '+name+'=').pop().split(';')[0] || ''; }
+  function setCookie(name, val){ document.cookie = name+'='+val+';path=/;max-age=31536000'; }
+
+  function pickLang(){
+    const url = new URL(location.href);
+    const q = (url.searchParams.get('lang')||'').toLowerCase();
+    const c = (getCookie('lang')||'').toLowerCase();
+    const nav = (navigator.language||'en').toLowerCase();
+    const MAP = {en:'en', tl:'ph', fil:'ph', id:'id', vi:'vi', bn:'bn', sw:'sw', ar:'ar', zh:'zh', 'zh-cn':'zh', 'zh-hans':'zh'};
+    let lang = 'en';
+    if (q && LANGS.includes(q)) lang = q;
+    else if (c && LANGS.includes(c)) lang = c;
+    else lang = MAP[nav] || MAP[nav.split('-')[0]] || 'en';
+    setCookie('lang', lang);
+    document.documentElement.lang = (lang==='ph'?'tl':(lang==='ng'?'en':lang));
+    document.documentElement.dir = (lang==='ar'?'rtl':'ltr');
+    return lang;
+  }
+
+  function merge(base, over){
+    const out = Array.isArray(base)? base.slice() : {...base};
+    if (!over) return out;
+    for (const k of Object.keys(over)){
+      if (over[k] && typeof over[k]==='object' && !Array.isArray(over[k]) && base && typeof base[k]==='object'){
+        out[k] = merge(base[k], over[k]);
+      } else {
+        out[k] = over[k];
+      }
+    }
+    return out;
+  }
+
+  const EN = {
+    meta:{title:"Basic Calculator — Free Online with Big Buttons | GoToolOnline",
+          desc:"Free basic calculator with + − × ÷, percent, memory keys, and history. Mobile-friendly big buttons and keyboard support."},
+    ui:{brand:"🛠 GoToolOnline", back:"← Back to Home", lang:"Language", top:"Back to Top ↑", tagline:"Free online tools for everyone.", memory:"Memory"},
+    title:"Basic Calculator",
+    intro:"Simple four-function calculator with percent, memory and history — big buttons, mobile-friendly.",
+    hint:"% applies to the current number (e.g., 50 × 10 % = 5). Keyboard: digits, + − × ÷, Enter (=), Backspace (⌫).",
+    history:{title:"History", clear:"Clear History"},
+    related:{title:"Related tools", sci:"Scientific Calculator", pct:"Percentage Calculator", date:"Date Difference"},
+    aria:{ mc:"Memory clear", mr:"Memory recall", mplus:"Memory add", mminus:"Memory subtract", clear:"Clear", backspace:"Backspace", percent:"Percent", divide:"Divide", multiply:"Multiply", minus:"Minus", plus:"Plus", sign:"Toggle sign", decimal:"Decimal", equals:"Equals" }
+  };
+
+  const ZH = {
+    meta:{title:"标准计算器 — 大按钮在线版 | GoToolOnline", desc:"免费标准计算器：加减乘除、百分比、内存与历史。大按钮，移动端友好，支持键盘。"},
+    ui:{brand:"🛠 GoToolOnline", back:"← 返回首页", lang:"语言", top:"返回顶部 ↑", tagline:"免费、好用、对隐私友好", memory:"内存"},
+    title:"标准计算器",
+    intro:"简单四则运算，带百分比、内存与历史记录；大按钮，移动端友好。",
+    hint:"% 作用于当前数字（例：50 × 10 % = 5）。键盘：数字、+ − × ÷、Enter（=）、Backspace（⌫）。",
+    history:{title:"历史记录", clear:"清空历史"},
+    related:{title:"相关工具", sci:"科学计算器", pct:"百分比计算器", date:"日期差"}
+  };
+
+  const PH = {
+    ui:{brand:"🛠 GoToolOnline", back:"← Bumalik sa Home", lang:"Wika", top:"Bumalik sa Itaas ↑", tagline:"Libreng online na mga tool", memory:"Memory"},
+    title:"Pangunahing Kalkulador",
+    intro:"Apat na pangunahing operasyon, may percent, memory at history — malalaking button, mobile-friendly.",
+    hint:"% ay para sa kasalukuyang numero (hal: 50 × 10 % = 5). Keyboard: digits, + − × ÷, Enter (=), Backspace (⌫).",
+    history:{title:"Kasaysayan", clear:"I-clear ang Kasaysayan"},
+    related:{title:"Kaugnay na mga tool", sci:"Scientific Calculator", pct:"Percentage Calculator", date:"Date Difference"},
+    aria:{ mc:"Burahin ang memory", mr:"Recall memory", mplus:"Dagdagan sa memory", mminus:"Bawasan sa memory", clear:"Clear", backspace:"Backspace", percent:"Percent", divide:"Divide", multiply:"Multiply", minus:"Minus", plus:"Plus", sign:"Toggle sign", decimal:"Decimal", equals:"Equals" }
+  };
+
+  const ID = {
+    ui:{brand:"🛠 GoToolOnline", back:"← Kembali ke Beranda", lang:"Bahasa", top:"Kembali ke Atas ↑", tagline:"Alat online gratis untuk semua", memory:"Memori"},
+    title:"Kalkulator Dasar",
+    intro:"Empat operasi sederhana dengan persen, memori, dan riwayat — tombol besar, ramah seluler.",
+    hint:"% berlaku pada angka saat ini (mis: 50 × 10 % = 5). Keyboard: angka, + − × ÷, Enter (=), Backspace (⌫).",
+    history:{title:"Riwayat", clear:"Hapus Riwayat"},
+    related:{title:"Alat terkait", sci:"Kalkulator Ilmiah", pct:"Kalkulator Persentase", date:"Selisih Tanggal"}
+  };
+
+  const VI = {
+    ui:{brand:"🛠 GoToolOnline", back:"← Về trang chủ", lang:"Ngôn ngữ", top:"Lên đầu trang ↑", tagline:"Công cụ miễn phí cho mọi người", memory:"Bộ nhớ"},
+    title:"Máy tính cơ bản",
+    intro:"4 phép tính đơn giản, có phần trăm, bộ nhớ và lịch sử — nút lớn, thân thiện di động.",
+    hint:"% áp dụng cho số hiện tại (vd: 50 × 10 % = 5). Bàn phím: số, + − × ÷, Enter (=), Backspace (⌫).",
+    history:{title:"Lịch sử", clear:"Xóa lịch sử"},
+    related:{title:"Công cụ liên quan", sci:"Máy tính khoa học", pct:"Máy tính phần trăm", date:"Chênh lệch ngày"}
+  };
+
+  const BN = {
+    ui:{brand:"🛠 GoToolOnline", back:"← হোমে ফিরে যান", lang:"ভাষা", top:"উপরে ফিরে যান ↑", tagline:"সবার জন্য ফ্রি টুল", memory:"মেমরি"},
+    title:"বেসিক ক্যালকুলেটর",
+    intro:"সহজ চার গণিত, শতাংশ, মেমরি ও হিস্টরি — বড় বোতাম, মোবাইল-ফ্রেন্ডলি।",
+    hint:"% বর্তমান সংখ্যার উপর প্রযোজ্য (যেমন: 50 × 10 % = 5)। কিবোর্ড: সংখ্যা, + − × ÷, Enter (=), Backspace (⌫)।",
+    history:{title:"হিস্টরি", clear:"হিস্টরি সাফ করুন"},
+    related:{title:"সম্পর্কিত টুল", sci:"সায়েন্টিফিক ক্যালকুলেটর", pct:"পার্সেন্টেজ ক্যালকুলেটর", date:"তারিখের পার্থক্য"}
+  };
+
+  const NG = { // Nigeria English
+    ui:{brand:"🛠 GoToolOnline", back:"← Back to Home", lang:"Language", top:"Back to Top ↑", tagline:"Fast, free tools for everyone", memory:"Memory"}
+  };
+
+  const SW = {
+    ui:{brand:"🛠 GoToolOnline", back:"← Rudi nyumbani", lang:"Lugha", top:"Rudi Juu ↑", tagline:"Zana za bure kwa kila mtu", memory:"Kumbukumbu"},
+    title:"Kikokotoo cha Msingi",
+    intro:"Shughuliza nne rahisi zikiwa na asilimia, kumbukumbu na historia — vitufe vikubwa, rafiki kwa simu.",
+    hint:"% inatumika kwenye namba ya sasa (mf: 50 × 10 % = 5). Kibodi: namba, + − × ÷, Enter (=), Backspace (⌫).",
+    history:{title:"Historia", clear:"Futa Historia"},
+    related:{title:"Zana zinazohusiana", sci:"Kikokotoo cha Kisayansi", pct:"Kikokotoo cha Asilimia", date:"Tofauti ya Tarehe"}
+  };
+
+  const AR = {
+    meta:{title:"آلة حاسبة أساسية — أزرار كبيرة | GoToolOnline", desc:"آلة حاسبة بسيطة: جمع/طرح/ضرب/قسمة، نسبة مئوية، ذاكرة وسجل. أزرار كبيرة ودعم لوحة المفاتيح."},
+    ui:{brand:"🛠 GoToolOnline", back:"← العودة إلى الصفحة الرئيسية", lang:"اللغة", top:"العودة للأعلى ↑", tagline:"أدوات مجانية للجميع", memory:"الذاكرة"},
+    title:"آلة حاسبة أساسية",
+    intro:"عمليات أساسية مع النسبة المئوية والذاكرة والسجل — أزرار كبيرة وملائمة للجوال.",
+    hint:"% تنطبق على الرقم الحالي (مثال: ‎50 × 10 % = 5). لوحة المفاتيح: أرقام، ‎+ − × ÷‎، Enter (=)، Backspace (⌫).",
+    history:{title:"السجل", clear:"مسح السجل"},
+    related:{title:"أدوات ذات صلة", sci:"آلة حاسبة علمية", pct:"حاسبة النسبة المئوية", date:"فرق التاريخ"},
+    aria:{ mc:"مسح الذاكرة", mr:"استدعاء الذاكرة", mplus:"إضافة للذاكرة", mminus:"طرح من الذاكرة", clear:"مسح", backspace:"حذف للخلف", percent:"النسبة المئوية", divide:"قسمة", multiply:"ضرب", minus:"طرح", plus:"جمع", sign:"تبديل الإشارة", decimal:"فاصلة عشرية", equals:"يساوي" }
+  };
+
+  const MAP = {en:EN, zh:ZH, ph:PH, id:ID, vi:VI, bn:BN, ng:NG, sw:SW, ar:AR};
+
+  function get(obj, path){
+    return String(path).split('.').reduce((o,k)=> (o && k in o)? o[k] : undefined, obj);
+  }
+
+  function applyI18N(D){
+    // text/html targets
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      const val = get(D, key);
+      if (val == null) return;
+      if (/<[a-z][\s\S]*>/i.test(val)) el.innerHTML = val; else el.textContent = val;
+    });
+    // aria targets
+    document.querySelectorAll('[data-i18n-aria]').forEach(el=>{
+      const key = el.getAttribute('data-i18n-aria');
+      const val = get(D, key);
+      if (val != null) el.setAttribute('aria-label', val);
+    });
+    // prefix label (for Memory)
+    document.querySelectorAll('[data-i18n-prefix]').forEach(el=>{
+      const key = el.getAttribute('data-i18n-prefix');
+      const p = get(D, key);
+      if (p != null) el.dataset.prefixText = p; // save
+    });
+
+    // meta
+    if (get(D,'meta.title')) document.title = get(D,'meta.title');
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc && get(D,'meta.desc')) desc.setAttribute('content', get(D,'meta.desc'));
+  }
+
+  function keepLangInLinks(lang){
+    document.querySelectorAll('a[href]').forEach(a=>{
+      const href = a.getAttribute('href')||'';
+      if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+      const u = new URL(href, location.origin);
+      if (!u.searchParams.get('lang')) u.searchParams.set('lang', lang);
+      a.setAttribute('href', u.pathname + u.search + u.hash);
+    });
+  }
+
+  // init
+  const lang = pickLang();
+  const D = merge(EN, MAP[lang]||{});
+  applyI18N(D);
+  keepLangInLinks(lang);
+
+  // expose for runtime
+  window.__LANG__ = lang;
+  window.__DICT__ = D;
+  window.__t = function(path, fallback){ const v = get(D, path); return (v==null? (fallback||'') : v); };
+
+  // language UI
+  const panel = document.getElementById('langPanel');
+  const btn = document.getElementById('langBtn');
+  const grid = document.getElementById('langGrid');
+  if (grid){
+    ['en','zh','ph','id','vi','bn','ng','sw','ar'].forEach(code=>{
+      const b = document.createElement('button');
+      b.textContent = NAMES[code] || code;
+      if (code===lang) b.className='active';
+      b.addEventListener('click', ()=>{
+        const u = new URL(location.href);
+        u.searchParams.set('lang', code);
+        setCookie('lang', code);
+        location.href = u.toString();
+      });
+      grid.appendChild(b);
+    });
+  }
+  function openLang(open){ panel.classList.toggle('open', !!open); btn.setAttribute('aria-expanded', !!open); }
+  if (btn) btn.addEventListener('click', (e)=>{ e.stopPropagation(); openLang(!panel.classList.contains('open')); });
+  document.addEventListener('click', (e)=>{ if(panel && panel.classList.contains('open')){ const within = panel.contains(e.target) || (btn && btn.contains(e.target)); if(!within) openLang(false); } });
+
+})();
+</script>
+
+<script>
+/* ================== Calculator logic ================== */
+(function(){
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  const outEl = document.getElementById('out');
+  const exprEl = document.getElementById('expr');
+  const histEl = document.getElementById('hist');
+  const mstat = document.getElementById('mstat');
+
+  let current = '0';
+  let expr = '';
+  let lastOp = null;
+  let acc = null;
+  let memory = 0;
+
+  function memLabel(){
+    const p = (mstat.dataset.prefixText || window.__t('ui.memory','Memory'));
+    return p + ': ' + memory;
+  }
+
+  function render(){
+    outEl.textContent = current;
+    exprEl.textContent = expr;
+    mstat.textContent = memLabel();
+  }
+
+  function pushHist(line){
+    const p = document.createElement('div');
+    p.textContent = line;
+    histEl.prepend(p);
+  }
+
+  function compute(a, op, b){
+    a = parseFloat(a); b = parseFloat(b);
+    if (op === '+') return a + b;
+    if (op === '−') return a - b;
+    if (op === '×') return a * b;
+    if (op === '÷') return b === 0 ? NaN : a / b;
+    return b;
+  }
+
+  function inputDigit(d){
+    if (current === '0' && d !== '.') current = d;
+    else current += d;
+    render();
+  }
+
+  function handlePercent(){
+    const n = parseFloat(current || '0') / 100;
+    current = String(n);
+    render();
+  }
+
+  function handleUnarySign(){
+    if (current.startsWith('-')) current = current.slice(1);
+    else if (current !== '0') current = '-' + current;
+    render();
+  }
+
+  function handleOp(op){
+    if (acc === null){ acc = parseFloat(current); }
+    else if (lastOp){ acc = compute(acc, lastOp, current); }
+    lastOp = op;
+    expr = acc + ' ' + op;
+    current = '0';
+    render();
+  }
+
+  function equals(){
+    if (lastOp === null){
+      pushHist((expr?expr+' ':'') + current + ' = ' + current);
+      return;
+    }
+    const prevAcc = acc;
+    acc = compute(acc, lastOp, current);
+    pushHist(prevAcc + ' ' + lastOp + ' ' + current + ' = ' + acc);
+    current = String(acc);
+    expr = '';
+    lastOp = null;
+    acc = null;
+    render();
+  }
+
+  function backspace(){
+    if (current.length <= 1 || (current.length===2 && current.startsWith('-'))) current = '0';
+    else current = current.slice(0,-1);
+    render();
+  }
+
+  function clearAll(){
+    current='0'; expr=''; lastOp=null; acc=null;
+    render();
+  }
+
+  // Memory keys
+  document.getElementById('mc').onclick = ()=>{ memory = 0; render(); };
+  document.getElementById('mr').onclick = ()=>{ current = String(memory); render(); };
+  document.getElementById('mplus').onclick = ()=>{ memory += parseFloat(current||'0'); render(); };
+  document.getElementById('mminus').onclick = ()=>{ memory -= parseFloat(current||'0'); render(); };
+
+  // Buttons
+  document.querySelectorAll('button[data-k]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const k = btn.getAttribute('data-k');
+      if (/^\d$/.test(k)) return inputDigit(k);
+      if (k === '.') { if (!current.includes('.')) current += '.'; render(); return; }
+      if (k === '%') return handlePercent();
+      if (k === '±') return handleUnarySign();
+      if (k === '⌫') return backspace();
+      if (k === 'C') return clearAll();
+      if (k === '=') return equals();
+      if (['+','−','×','÷'].includes(k)) return handleOp(k);
+    });
+  });
+
+  // Keyboard
+  window.addEventListener('keydown', (e)=>{
+    const key = e.key;
+    if (/^\d$/.test(key)) return inputDigit(key);
+    if (key === '.') { if (!current.includes('.')) current += '.'; render(); return; }
+    if (key === 'Enter' || key === '=') return equals();
+    if (key === 'Backspace') return backspace();
+    if (key === '%') return handlePercent();
+    if (['+','-','*','/'].includes(key)){
+      const map = {'+':'+','-':'−','*':'×','/':'÷'};
+      return handleOp(map[key]);
+    }
+  });
+
+  // Clear history
+  document.getElementById('clearHist').onclick = ()=>{ histEl.innerHTML=''; };
+
+  render();
+})();
+</script>
+
+<!-- Back to home (preserve ?lang) -->
+<script>
+(function(){
+  var path = location.pathname.replace(/\/+$/,'');
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = [''];
+  var home = parts.join('/') + '/';
+
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+
+  document.querySelectorAll('a[data-home]').forEach(function(a){
+    a.setAttribute('href', home);
+  });
+
+  // footer year
+  var y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>

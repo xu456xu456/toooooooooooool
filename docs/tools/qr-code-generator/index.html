@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>QR Code Generator | GoToolOnline</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="description" content="Create QR codes instantly in your browser. No downloads required."/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text x='6' y='52' font-size='48'>🛠️</text></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+<style>
+  :root { --bg:#0a0f1e; --card:#0f1830; --muted:#9fb0c3; --fg:#eaf3ff; --acc:#4fb3ff; --ok:#61d095; --warn:#ffb86b; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg);}
+  header{max-width:1200px;margin:24px auto 8px;display:flex;gap:14px;align-items:center;padding:0 18px;}
+  header a.logo{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--fg);font-weight:800;font-size:24px}
+  header a.navbtn{margin-left:auto;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:12px;color:#eaf3ff;text-decoration:none;font-size:16px}
+  header a.navbtn:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  select.lang{margin-left:8px;padding:10px 12px;background:#0f1a2f;border:1px solid #24365b;border-radius:12px;color:#eaf3ff;font-size:14px}
+  main{max-width:1200px;margin:10px auto 64px;padding:0 18px}
+  h1{font-size:34px;margin:10px 0 10px}
+  p,label,.muted{font-size:18px; line-height:1.6}
+  .card{background:var(--card);border:1px solid #1a2843;border-radius:20px;padding:20px;margin:16px 0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-top:12px}
+  label{display:block;margin:10px 0 6px;color:var(--muted)}
+  input,select,button,textarea{width:100%;padding:14px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;font-size:18px}
+  button{cursor:pointer;background:linear-gradient(180deg,#2a78ff,#0050d4);border:none;font-weight:700;letter-spacing:.2px}
+  button:hover{filter:brightness(1.06)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .muted{color:#9fb0c3}
+  .note{font-size:14px;color:#9fb0c3}
+  .preview{display:flex;justify-content:center;align-items:center;min-height:260px}
+  .chip{padding:10px 12px;border:1px solid #2a3d67;background:#0f1a2f;border-radius:12px}
+  footer{max-width:1200px;margin:40px auto;padding:0 18px;color:#9fb0c3;font-size:15px}
+  .backTop{margin-top:12px;display:inline-block;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:10px;color:#eaf3ff;text-decoration:none}
+  .backTop:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  @media (max-width:760px){ .row{grid-template-columns:1fr} }
+  @media print{ header,footer,.no-print{display:none!important} body{background:#fff;color:#000} .card{border:none} }
+</style>
+<script>function backToTop(){ window.scrollTo({top:0, behavior:'smooth'}); }</script>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/tools/qr-code-generator/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/tools/qr-code-generator/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/tools/qr-code-generator/">
+</head>
+\1
+
+    <div id="topnav-return-home" style="position:sticky;top:0;padding:10px 14px;border-bottom:1px solid #eee;background:#fff;z-index:999;font-family:system-ui,Segoe UI,Roboto,Arial;">
+      <a href="../../index.html" style="text-decoration:none;">← 返回首页</a>
+    </div>
+    
+<header>
+  <a class="logo" data-home href="#"><span>🛠️</span><strong>GoToolOnline</strong></a>
+  <a class="navbtn" data-home href="#" id="back">← Back to Home</a>
+  <select id="lang" class="lang" aria-label="Language">
+    <option value="en">English</option>
+    <option value="zh">简体中文</option>
+    <option value="ph">Tagalog</option>
+    <option value="id">Bahasa Indonesia</option>
+    <option value="vi">Tiếng Việt</option>
+    <option value="bn">বাংলা</option>
+    <option value="ng">English (NG)</option>
+    <option value="sw">Kiswahili</option>
+    <option value="ar">العربية</option>
+  </select>
+</header>
+<main>
+<section class="card">
+  <h1 id="title">QR Code Generator</h1>
+  <div class="row">
+    <div>
+      <label id="labText">Text / URL</label>
+      <textarea id="text" rows="3" placeholder="Type something…"></textarea>
+    </div>
+    <div class="controls" role="group" aria-label="Options">
+      <label><span id="labSize">Size (px)</span>
+        <input id="size" type="number" min="120" max="1024" value="240"/>
+      </label>
+      <label><span id="labECC">Error correction</span>
+        <select id="ecc">
+          <option value="L">L (low)</option>
+          <option value="M" selected>M</option>
+          <option value="Q">Q</option>
+          <option value="H">H (high)</option>
+        </select>
+      </label>
+      <label><span id="labMargin">Margin</span>
+        <input id="margin" type="number" min="0" max="20" value="2"/>
+      </label>
+      <label><span id="labFg">Foreground</span>
+        <input id="fg" type="color" value="#000000"/>
+      </label>
+      <label><span id="labBg">Background</span>
+        <input id="bg" type="color" value="#ffffff"/>
+      </label>
+      <label><span id="labFmt">Format</span>
+        <select id="fmt">
+          <option value="png" selected>PNG</option>
+          <option value="svg">SVG</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <div class="actions" style="margin-top:10px">
+    <button id="gen">Generate</button>
+    <button id="copy" class="chip">Copy</button>
+    <button id="dl" class="chip">Download</button>
+    <span id="msg" class="note" role="status" aria-live="polite"></span>
+  </div>
+
+  <div class="card preview" style="margin-top:12px">
+    <img id="qrImg" alt="QR code preview" decoding="async" referrerpolicy="no-referrer" crossorigin="anonymous"/>
+  </div>
+
+  <div class="note" style="margin-top:8px" id="tip">
+    Tip: Higher error correction (Q/H) makes codes more robust but increases density.
+  </div>
+</section>
+</main>
+<footer>
+  <a class="backTop" href="javascript:void(0)" onclick="backToTop()">Back to Top ↑</a>
+  <div style="margin-top:10px">© <span id="y"></span> GoToolOnline.com · Free online tools for everyone.</div>
+</footer>
+
+<script>
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  // ---------- i18n (9 languages) ----------
+  const I18N = {
+    en:{title:"QR Code Generator", back:"← Back to Home", text:"Text / URL", size:"Size (px)", ecc:"Error correction", margin:"Margin", fg:"Foreground", bg:"Background", fmt:"Format", gen:"Generate", copy:"Copy", dl:"Download", tip:"Tip: Higher error correction (Q/H) makes codes more robust but increases density.", copied:"Copied.", copiedFail:"Copy not supported.", ready:"Ready.", need:"Enter some text first."},
+    zh:{title:"二维码生成器", back:"← 返回首页", text:"文本 / 链接", size:"尺寸（像素）", ecc:"纠错级别", margin:"边距", fg:"前景色", bg:"背景色", fmt:"格式", gen:"生成", copy:"复制", dl:"下载", tip:"提示：更高的纠错级别（Q/H）更稳健，但二维码会更密。", copied:"已复制。", copiedFail:"浏览器不支持复制。", ready:"已生成。", need:"请先输入内容。"},
+    ph:{title:"QR Code Generator", back:"← Balik sa Home", text:"Teksto / URL", size:"Sukat (px)", ecc:"Error correction", margin:"Margin", fg:"Kulay (harap)", bg:"Kulay (likod)", fmt:"Format", gen:"Gumawa", copy:"Kopya", dl:"I-download", tip:"Tip: Mas mataas na correction (Q/H) mas matibay pero mas siksik.", copied:"Nakopya.", copiedFail:"Hindi suportado ang kopya.", ready:"Handa na.", need:"Maglagay muna ng teksto."},
+    id:{title:"Pembuat Kode QR", back:"← Kembali", text:"Teks / URL", size:"Ukuran (px)", ecc:"Koreksi galat", margin:"Margin", fg:"Warna depan", bg:"Warna belakang", fmt:"Format", gen:"Buat", copy:"Salin", dl:"Unduh", tip:"Tips: Koreksi lebih tinggi (Q/H) lebih kuat namun lebih padat.", copied:"Tersalin.", copiedFail:"Salin tidak didukung.", ready:"Siap.", need:"Masukkan teks dulu."},
+    vi:{title:"Trình tạo mã QR", back:"← Về trang chủ", text:"Văn bản / URL", size:"Kích thước (px)", ecc:"Sửa lỗi", margin:"Lề", fg:"Màu trước", bg:"Màu nền", fmt:"Định dạng", gen:"Tạo", copy:"Sao chép", dl:"Tải xuống", tip:"Mẹo: Sửa lỗi cao (Q/H) giúp ổn định hơn nhưng mã dày hơn.", copied:"Đã sao chép.", copiedFail:"Không hỗ trợ sao chép.", ready:"Sẵn sàng.", need:"Nhập nội dung trước."},
+    bn:{title:"কিউআর কোড জেনারেটর", back:"← হোমে ফিরে যান", text:"টেক্সট / URL", size:"সাইজ (px)", ecc:"এরর কারেকশন", margin:"মার্জিন", fg:"ফোরগ্রাউন্ড", bg:"ব্যাকগ্রাউন্ড", fmt:"ফরম্যাট", gen:"তৈরি করুন", copy:"কপি", dl:"ডাউনলোড", tip:"টিপ: বেশি কারেকশন (Q/H) আরও মজবুত কিন্তু বেশি ঘন।", copied:"কপি হয়েছে।", copiedFail:"কপি সমর্থিত নয়।", ready:"রেডি।", need:"আগে টেক্সট লিখুন।"},
+    ng:{title:"QR Code Generator", back:"← Back to Home", text:"Text / URL", size:"Size (px)", ecc:"Error correction", margin:"Margin", fg:"Foreground", bg:"Background", fmt:"Format", gen:"Generate", copy:"Copy", dl:"Download", tip:"Tip: Q/H gives more robustness but denser code.", copied:"Copied.", copiedFail:"Copy not supported.", ready:"Ready.", need:"Type some text first."},
+    sw:{title:"Kijenzi cha QR", back:"← Rudi Nyumbani", text:"Maandishi / URL", size:"Ukubwa (px)", ecc:"Urekebishaji wa hitilafu", margin:"Ukingo", fg:"Rangi ya mbele", bg:"Rangi ya nyuma", fmt:"Muundo", gen:"Tengeneza", copy:"Nakili", dl:"Pakua", tip:"Kidokezo: Urekebishaji wa juu (Q/H) ni thabiti zaidi lakini mnene.", copied:"Imenakiliwa.", copiedFail:"Kunakili hakusaidiwi.", ready:"Tayari.", need:"Weka maandishi kwanza."},
+    ar:{title:"مولِّد رمز الاستجابة السريعة", back:"← الرجوع إلى الرئيسية", text:"نص / رابط", size:"الحجم (بكسل)", ecc:"تصحيح الخطأ", margin:"الهامش", fg:"اللون الأمامي", bg:"اللون الخلفي", fmt:"الصيغة", gen:"توليد", copy:"نسخ", dl:"تنزيل", tip:"معلومة: كلما زاد التصحيح (Q/H) زادت المتانة لكن يصبح الرمز أكثر كثافة.", copied:"تم النسخ.", copiedFail:"النسخ غير مدعوم.", ready:"جاهز.", need:"أدخل نصًا أولاً."}
+  };
+  const HTML_LANG = {en:'en', zh:'zh-CN', ph:'tl-PH', id:'id-ID', vi:'vi-VN', bn:'bn', ng:'en-NG', sw:'sw', ar:'ar'};
+  const qs = new URLSearchParams(location.search);
+
+  function setHomeLinksForLang(lang){
+    var path = location.pathname.replace(/\/+$/,'');
+    var parts = path.split('/');
+    if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+    else parts = [''];
+    var home = parts.join('/') + '/';
+    const u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    document.querySelectorAll('a[data-home]').forEach(a=>a.setAttribute('href', u.pathname+u.search+u.hash));
+  }
+
+  function applyLang(lang){
+    const t = I18N[lang] || I18N.en;
+    document.title = t.title + " | GoToolOnline";
+    document.documentElement.lang = HTML_LANG[lang] || 'en';
+    document.documentElement.dir = (lang==='ar') ? 'rtl' : 'ltr';
+
+    document.getElementById('back').textContent = t.back;
+    document.getElementById('title').textContent = t.title;
+    document.getElementById('labText').textContent = t.text;
+    document.getElementById('labSize').textContent = t.size;
+    document.getElementById('labECC').textContent  = t.ecc;
+    document.getElementById('labMargin').textContent = t.margin;
+    document.getElementById('labFg').textContent = t.fg;
+    document.getElementById('labBg').textContent = t.bg;
+    document.getElementById('labFmt').textContent = t.fmt;
+    document.getElementById('gen').textContent = t.gen;
+    document.getElementById('copy').textContent = t.copy;
+    document.getElementById('dl').textContent = t.dl;
+    document.getElementById('tip').textContent = t.tip;
+
+    localStorage.setItem('lang', lang);
+    qs.set('lang', lang);
+    history.replaceState({}, '', location.pathname + '?' + qs.toString());
+    setHomeLinksForLang(lang);
+  }
+
+  (function bootLang(){
+    const L = qs.get('lang') || localStorage.getItem('lang') || 'en';
+    const sel = document.getElementById('lang');
+    sel.value = I18N[L] ? L : 'en';
+    applyLang(sel.value);
+    sel.addEventListener('change', e=> applyLang(e.target.value));
+  })();
+
+  // ---------- QR build (using API; supports PNG/SVG, ecc, margin, color) ----------
+  const $ = s=>document.querySelector(s);
+  const img = $('#qrImg'), msg = $('#msg');
+
+  function hexNoHash(c){ return (c||'#000000').replace(/^#/,''); }
+
+  function buildURL(){
+    const data = ($('#text').value || '').trim();
+    if (!data) return null;
+    const size = Math.max(120, Math.min(1024, parseInt($('#size').value||'240',10)));
+    const ecc  = $('#ecc').value || 'M';
+    const margin = Math.max(0, Math.min(20, parseInt($('#margin').value||'2',10)));
+    const fg = hexNoHash($('#fg').value);
+    const bg = hexNoHash($('#bg').value);
+    const fmt = $('#fmt').value === 'svg' ? 'svg' : 'png';
+
+    const base = 'https://api.qrserver.com/v1/create-qr-code/';
+    const u = new URL(base);
+    u.searchParams.set('data', data);
+    u.searchParams.set('size', `${size}x${size}`);
+    u.searchParams.set('ecc', ecc);
+    u.searchParams.set('margin', String(margin));
+    u.searchParams.set('color', fg);
+    u.searchParams.set('bgcolor', bg);
+    if (fmt === 'svg') u.searchParams.set('format', 'svg');
+
+    // persist shareable state (except colors which we also persist)
+    const lang = document.getElementById('lang').value;
+    qs.set('lang', lang);
+    qs.set('data', encodeURIComponent(data));
+    qs.set('size', String(size));
+    qs.set('ecc', ecc);
+    qs.set('margin', String(margin));
+    qs.set('fmt', fmt);
+    qs.set('fg', fg);
+    qs.set('bg', bg);
+    history.replaceState({}, '', location.pathname + '?' + qs.toString());
+
+    return { url: u.toString(), fmt };
+  }
+
+  function render(){
+    const lang = document.getElementById('lang').value;
+    const t = I18N[lang] || I18N.en;
+
+    const built = buildURL();
+    if (!built){ img.removeAttribute('src'); msg.textContent = t.need; return; }
+    img.width = img.height = Math.max(120, Math.min(1024, parseInt($('#size').value||'240',10)));
+    img.src = built.url;
+    msg.textContent = t.ready;
+  }
+
+  // Copy: try Clipboard API with blob
+  async function copyImg(){
+    const lang = document.getElementById('lang').value;
+    const t = I18N[lang] || I18N.en;
+    const built = buildURL();
+    if (!built){ msg.textContent = t.need; return; }
+    try{
+      const res = await fetch(built.url, {mode:'cors', cache:'no-cache'});
+      const blob = await res.blob();
+      if (!('ClipboardItem' in window)) throw new Error('no clipboard item');
+      await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
+      msg.textContent = t.copied;
+    }catch(e){
+      msg.textContent = t.copiedFail;
+    }
+  }
+
+  function downloadImg(){
+    const lang = document.getElementById('lang').value;
+    const t = I18N[lang] || I18N.en;
+    const built = buildURL();
+    if (!built){ msg.textContent = t.need; return; }
+    const a = document.createElement('a');
+    a.href = built.url;
+    a.download = built.fmt === 'svg' ? 'qrcode.svg' : 'qrcode.png';
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  // Events
+  ['text','size','ecc','margin','fg','bg','fmt'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', render);
+  });
+  document.getElementById('gen').addEventListener('click', render);
+  document.getElementById('copy').addEventListener('click', copyImg);
+  document.getElementById('dl').addEventListener('click', downloadImg);
+
+  // Load from URL if present
+  (function loadFromURL(){
+    const d = qs.get('data'); if (d) document.getElementById('text').value = decodeURIComponent(d);
+    const size = qs.get('size'); if (size) document.getElementById('size').value = size;
+    const ecc = qs.get('ecc'); if (ecc) document.getElementById('ecc').value = ecc;
+    const margin = qs.get('margin'); if (margin) document.getElementById('margin').value = margin;
+    const fmt = qs.get('fmt'); if (fmt) document.getElementById('fmt').value = fmt;
+    const fg = qs.get('fg'); if (fg) document.getElementById('fg').value = '#'+fg;
+    const bg = qs.get('bg'); if (bg) document.getElementById('bg').value = '#'+bg;
+    render();
+  })();
+</script>
+
+<!-- Keep your home link resolver with ?lang passthrough -->
+<script>
+(function(){
+  var path = location.pathname.replace(/\/+$/,'');
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = [''];
+  var home = parts.join('/') + '/';
+
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+
+  document.querySelectorAll('a[data-home]').forEach(function(a){
+    a.setAttribute('href', home);
+  });
+})();
+</script>
+</body>
+</html>

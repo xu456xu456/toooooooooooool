@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Tip Calculator & Split Bill — Quick, Accurate, Mobile-Friendly | GoToolOnline</title>
+<meta name="description" content="Free online tip calculator to split bills fast. Enter bill, set tip %, optional tax %, number of people, and rounding. Works great on mobile."/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text x='2' y='14' font-size='14'>🍽️</text></svg>"/>
+
+<!-- Canonical & Social -->
+
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Tip Calculator & Split Bill — Quick, Accurate | GoToolOnline"/>
+<meta property="og:description" content="Enter bill, choose tip %, add tax if needed, split among people, and optionally round. Clean UI and instant results."/>
+<meta property="og:url" content="https://gotoolonline.com/calculators/tip-split/"/>
+<meta name="twitter:card" content="summary"/>
+
+<!-- JSON-LD: WebApplication -->
+<script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"WebApplication","name":"Tip Calculator & Split Bill","url":"https://gotoolonline.com/calculators/tip-split/","applicationCategory":"Calculator","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"GoToolOnline","url":"https://gotoolonline.com"}}
+</script>
+
+<!-- JSON-LD: FAQPage -->
+<script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+    {"@type":"Question","name":"Does tip apply before or after tax?","acceptedAnswer":{"@type":"Answer","text":"By default tips are often calculated before tax. This tool lets you optionally enter a tax percentage so you can see both approaches."}},
+    {"@type":"Question","name":"How do I split a bill among friends?","acceptedAnswer":{"@type":"Answer","text":"Enter the bill amount, choose a tip percent, add tax if needed, set the number of people, and the calculator shows per-person totals instantly."}},
+    {"@type":"Question","name":"Can I round totals?","acceptedAnswer":{"@type":"Answer","text":"Yes. Use the rounding options to round the per-person total or the grand total to whole dollars."}}
+  ]}
+</script>
+
+<style>
+  :root { --bg:#0a0f1e; --card:#0f1830; --muted:#9fb0c3; --fg:#eaf3ff; --acc:#4fb3ff; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+  header{max-width:1100px;margin:20px auto 8px;display:flex;gap:12px;align-items:center;padding:0 16px}
+  header a{color:var(--fg);text-decoration:none}
+  .pill{padding:8px 12px;border:1px solid #24365b;background:#0f1a2f;border-radius:999px}
+  #langBtn{margin-left:8px}
+  .lang-panel{position:fixed; top:72px; right:18px; z-index:1200;background:#0f1830; border:1px solid #1a2843; border-radius:16px;padding:12px; display:none; width:min(420px, calc(100vw - 24px));box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  .lang-panel.open{ display:block }
+  .lang-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px }
+  .lang-grid button{display:block;width:100%;text-align:center;padding:10px 10px;border:1px solid #24365b;background:#0f1a2f;border-radius:12px;color:var(--fg);font-size:14px;cursor:pointer}
+  .lang-grid button.active{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+
+  main{max-width:1100px;margin:10px auto 80px;padding:0 16px}
+  .wrap{display:grid;grid-template-columns:1fr 360px;gap:16px}
+  .card{background:#0f1830;border:1px solid #1a2843;border-radius:18px;padding:16px}
+  h1{margin:4px 0 8px}
+  label{display:block;color:#9fb0c3;margin:8px 0 6px}
+  input,select,button{padding:12px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;font-size:16px;width:100%}
+  input[type="range"]{width:100%}
+  button{cursor:pointer;font-weight:800}
+  .primary{background:linear-gradient(180deg,#2a78ff,#0050d4);border:none}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .muted{color:#9fb0c3}
+  .bad{color:#ffb4b4}
+  .quick{display:flex;gap:8px;flex-wrap:wrap}
+  .quick button{border:1px solid #2a3d67;background:#10223f}
+  .side .k{color:#9fb0c3}
+  .side .v{font-weight:800}
+  .stack{display:grid;gap:8px}
+  .copyBtn{border:1px solid #2a3d67;background:#0f1a2f}
+  .divider{border-top:1px solid #223055;margin:10px 0}
+  @media (max-width:960px){ .wrap{grid-template-columns:1fr} }
+</style>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/calculators/tip-split/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/calculators/tip-split/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/calculators/tip-split/">
+</head>
+<body>
+<header>
+  <a class="pill" data-home href="#">🛠 GoToolOnline</a>
+  <a class="pill" data-home href="#" data-i18n="ui.back">← Back to Home</a>
+  <button id="langBtn" class="pill" aria-haspopup="dialog" aria-expanded="false" data-i18n="ui.lang">🌐 Language</button>
+  <div class="lang-panel" id="langPanel" role="dialog" aria-label="Select language">
+    <div class="lang-grid" id="langGrid"></div>
+  </div>
+</header>
+
+<main>
+<section class="wrap">
+  <!-- Left: Inputs -->
+  <section class="card">
+    <h1 data-i18n="title">Tip Calculator &amp; Split Bill</h1>
+    <p class="muted" style="margin:0 0 10px" data-i18n="lede">
+      Enter the bill, choose a tip %, optionally add tax, set people, and see per-person totals instantly.
+    </p>
+
+    <div class="row">
+      <div>
+        <label data-i18n="form.bill">Bill amount</label>
+        <input id="bill" type="number" placeholder="e.g., 120.00" step="0.01" min="0"/>
+      </div>
+      <div>
+        <label data-i18n="form.people">People</label>
+        <input id="people" type="number" min="1" value="2"/>
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label data-i18n="form.tip">Tip % <span class="muted" id="tipLbl">(15%)</span></label>
+        <input id="tip" type="range" min="0" max="35" value="15"/>
+      </div>
+      <div>
+        <label data-i18n="form.tax">Tax % (optional)</label>
+        <input id="tax" type="number" step="0.01" min="0" placeholder="e.g., 8.875"/>
+      </div>
+    </div>
+
+    <div class="quick" style="margin-top:8px">
+      <span class="muted" style="align-self:center" data-i18n="form.quick">Quick tip:</span>
+      <button data-tip="10">10%</button>
+      <button data-tip="12">12%</button>
+      <button data-tip="15">15%</button>
+      <button data-tip="18">18%</button>
+      <button data-tip="20">20%</button>
+      <button data-tip="25">25%</button>
+    </div>
+
+    <div class="row" style="margin-top:8px">
+      <div>
+        <label data-i18n="form.round">Round</label>
+        <select id="round">
+          <option value="none" data-i18n="round.none">No rounding</option>
+          <option value="per" data-i18n="round.per">Round per-person to whole $</option>
+          <option value="total" data-i18n="round.total">Round grand total to whole $</option>
+        </select>
+      </div>
+      <div>
+        <label data-i18n="form.tipon">Tip on</label>
+        <select id="tipBase">
+          <option value="pretax" data-i18n="tipon.pretax">Pre-tax amount</option>
+          <option value="posttax" data-i18n="tipon.posttax">Post-tax amount</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <div class="quick">
+      <button class="primary" id="calc" data-i18n="btn.calc">Calculate</button>
+      <button class="copyBtn" id="clear" data-i18n="btn.clear">Clear</button>
+      <a class="copyBtn" id="copy" style="display:inline-block; padding:12px 16px; text-decoration:none" data-i18n="btn.copy">Copy results</a>
+    </div>
+    <p class="bad" id="warn" style="display:none;margin-top:10px" data-i18n="warn">Please enter a valid bill and people ≥ 1.</p>
+  </section>
+
+  <!-- Right: Results -->
+  <aside class="card side">
+    <h2 style="margin:0 0 8px" data-i18n="results.title">Results</h2>
+    <div class="stack">
+      <div class="row" style="grid-template-columns:1fr auto">
+        <div class="k" data-i18n="results.base">Tip base</div><div class="v" id="rBase">—</div>
+      </div>
+      <div class="row" style="grid-template-columns:1fr auto">
+        <div class="k" data-i18n="results.tax">Tax</div><div class="v" id="rTax">—</div>
+      </div>
+      <div class="row" style="grid-template-columns:1fr auto">
+        <div class="k" data-i18n="results.tip">Tip</div><div class="v" id="rTip">—</div>
+      </div>
+      <div class="row" style="grid-template-columns:1fr auto">
+        <div class="k" data-i18n="results.total">Total</div><div class="v" id="rTotal">—</div>
+      </div>
+      <div class="divider"></div>
+      <div class="row" style="grid-template-columns:1fr auto">
+        <div class="k" data-i18n="results.each">Per-person</div><div class="v" id="rEach">—</div>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:12px;font-size:14px" data-i18n="note">
+      Tip is for guidance only. Always follow local etiquette and your own judgment.
+    </p>
+    <div class="divider"></div>
+    <p class="muted" style="margin:0;font-size:14px">
+      <span data-i18n="related.title">Related tools:</span>
+      <a href="/calculators/percentage-calculator/">Percentage</a> ·
+      <a href="/calculators/basic-calculator/">Basic Calculator</a> ·
+      <a href="/time/stopwatch/">Stopwatch</a>
+    </p>
+  </aside>
+</section>
+</main>
+
+<script>
+  // Elements
+  const $ = (s)=>document.querySelector(s);
+  const bill   = $('#bill');
+  const people = $('#people');
+  const tip    = $('#tip');
+  const tipLbl = $('#tipLbl');
+  const tax    = $('#tax');
+  const roundSel = $('#round');
+  const tipBase  = $('#tipBase');
+  const warn  = $('#warn');
+
+  const rBase  = $('#rBase');
+  const rTax   = $('#rTax');
+  const rTip   = $('#rTip');
+  const rTotal = $('#rTotal');
+  const rEach  = $('#rEach');
+
+  // Keep Latin digits & $ formatting regardless of UI language
+  const _fmtUSD = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:2});
+  function money(x){ return _fmtUSD.format(isFinite(x)? x:0); }
+  function parseNum(el){ const v = parseFloat(el.value); return isFinite(v)? v:0; }
+
+  function compute(){
+    const B = parseNum(bill);
+    const P = Math.max(1, Math.floor(parseNum(people)));
+    const Tpercent = Math.max(0, parseNum(tax));
+    const tipPct = parseFloat(tip.value);
+    const tipOnPost = (tipBase.value === 'posttax');
+
+    if (B<=0 || P<1){ warn.style.display='block'; return null; }
+    warn.style.display='none';
+
+    const taxAmt = B * (Tpercent/100);
+    const baseForTip = tipOnPost ? (B + taxAmt) : B;
+    const tipAmt = baseForTip * (tipPct/100);
+    let total = B + taxAmt + tipAmt;
+
+    let each = total / P;
+
+    // Rounding
+    const mode = roundSel.value;
+    if (mode === 'per'){
+      const roundedEach = Math.round(each);
+      total = roundedEach * P;
+      each = roundedEach;
+    } else if (mode === 'total'){
+      total = Math.round(total);
+      each = total / P;
+    }
+
+    return {baseForTip, taxAmt, tipAmt, total, each, tipPct, Tpercent, P, tipOnPost};
+  }
+
+  function render(){
+    tipLbl.textContent = `(${tip.value}%)`;
+    const r = compute(); 
+    if (!r){
+      rBase.textContent=rTax.textContent=rTip.textContent=rTotal.textContent=rEach.textContent='—'; 
+      return; 
+    }
+
+    const D = window.__DICT__ || {};
+    const post = (D.results?.post || 'post-tax');
+    const pre  = (D.results?.pre  || 'pre-tax');
+    const taxOfBillTpl = (D.results?.taxOfBill || '({p}% of bill)');
+    const taxOfBill = taxOfBillTpl.replace('{p}', String(r.Tpercent));
+
+    rBase.textContent  = money(r.baseForTip) + ' ' + (r.tipOnPost ? `(${post})` : `(${pre})`);
+    rTax.textContent   = money(r.taxAmt)  + '  ' + taxOfBill;
+    rTip.textContent   = money(r.tipAmt)  + `  (${r.tipPct}%)`;
+    rTotal.textContent = money(r.total);
+    rEach.textContent  = money(r.each);
+  }
+
+  // Events
+  ['input','change'].forEach(ev=>{
+    bill.addEventListener(ev, render);
+    people.addEventListener(ev, render);
+    tip.addEventListener(ev, render);
+    tax.addEventListener(ev, render);
+    roundSel.addEventListener(ev, render);
+    tipBase.addEventListener(ev, render);
+  });
+
+  // Quick tip buttons
+  document.querySelectorAll('[data-tip]').forEach(b=>{
+    b.addEventListener('click', ()=>{ tip.value = b.getAttribute('data-tip'); render(); });
+  });
+
+  // Buttons
+  document.getElementById('calc').addEventListener('click', render);
+  document.getElementById('clear').addEventListener('click', ()=>{
+    bill.value=''; people.value='2'; tip.value='15'; tax.value='';
+    roundSel.value='none'; tipBase.value='pretax'; render();
+  });
+  document.getElementById('copy').addEventListener('click', ()=>{
+    const D = window.__DICT__ || {};
+    const lines = [
+      `${D.copy?.bill || 'Bill'}: ${bill.value || 0}`,
+      `${D.copy?.people || 'People'}: ${people.value || 1}`,
+      `${D.copy?.tip || 'Tip %'}: ${tip.value}% (${tipBase.value})`,
+      `${D.copy?.tax || 'Tax %'}: ${tax.value || 0}%`,
+      `${D.copy?.each || 'Per person'}: ${rEach.textContent}`,
+      `${D.copy?.total || 'Total'}: ${rTotal.textContent}`
+    ];
+    navigator.clipboard?.writeText(lines.join('\n'));
+  });
+
+  render();
+</script>
+
+<!-- i18n (9 languages) + lang switch; preserve ?lang; RTL for ar -->
+<script>
+(function(){
+  const LANGS = ['en','zh','ph','id','vi','bn','ng','sw','ar'];
+  const NAMES = {en:'English', zh:'简体中文', ph:'Tagalog', id:'Bahasa Indonesia', vi:'Tiếng Việt', bn:'বাংলা', ng:'English (NG)', sw:'Kiswahili', ar:'العربية'};
+
+  function getCookie(name){ return ('; '+document.cookie).split('; '+name+'=').pop().split(';')[0] || ''; }
+  function setCookie(name,val){ document.cookie = name+'='+val+';path=/;max-age=31536000'; }
+
+  function pickLang(){
+    const url = new URL(location.href);
+    const q = (url.searchParams.get('lang')||'').toLowerCase();
+    const c = (getCookie('lang')||'').toLowerCase();
+    const nav = (navigator.language||'en').toLowerCase();
+    const MAP = {en:'en', tl:'ph', fil:'ph', id:'id', vi:'vi', bn:'bn', sw:'sw', ar:'ar', zh:'zh', 'zh-cn':'zh', 'zh-hans':'zh'};
+    let lang='en';
+    if (q && LANGS.includes(q)) lang=q;
+    else if (c && LANGS.includes(c)) lang=c;
+    else lang = MAP[nav] || MAP[nav.split('-')[0]] || 'en';
+    setCookie('lang', lang);
+    document.documentElement.lang = (lang==='ph'?'tl':(lang==='ng'?'en':lang));
+    document.documentElement.dir = (lang==='ar'?'rtl':'ltr');
+    return lang;
+  }
+
+  function merge(base, over){
+    const out = Array.isArray(base)? base.slice() : {...base};
+    if (!over) return out;
+    for (const k of Object.keys(over)){
+      if (over[k] && typeof over[k]==='object' && !Array.isArray(over[k]) && base && typeof base[k]==='object'){
+        out[k] = merge(base[k], over[k]);
+      } else { out[k] = over[k]; }
+    }
+    return out;
+  }
+  function get(obj, path){ return String(path).split('.').reduce((o,k)=> (o && (k in o))? o[k] : undefined, obj); }
+
+  // ===== Dictionaries =====
+  const EN = {
+    meta:{title:"Tip Calculator & Split Bill — Quick, Accurate, Mobile-Friendly | GoToolOnline",
+          desc:"Free online tip calculator to split bills fast. Enter bill, set tip %, optional tax %, number of people, and rounding. Works great on mobile."},
+    ui:{back:"← Back to Home", lang:"Language"},
+    title:"Tip Calculator & Split Bill",
+    lede:"Enter the bill, choose a tip %, optionally add tax, set people, and see per-person totals instantly.",
+    form:{bill:"Bill amount", people:"People", tip:"Tip %", tax:"Tax % (optional)", quick:"Quick tip:", round:"Round", tipon:"Tip on"},
+    round:{none:"No rounding", per:"Round per-person to whole $", total:"Round grand total to whole $"},
+    tipon:{pretax:"Pre-tax amount", posttax:"Post-tax amount"},
+    btn:{calc:"Calculate", clear:"Clear", copy:"Copy results"},
+    warn:"Please enter a valid bill and people ≥ 1.",
+    results:{title:"Results", base:"Tip base", tax:"Tax", tip:"Tip", total:"Total", each:"Per-person", pre:"pre-tax", post:"post-tax", taxOfBill:"({p}% of bill)"},
+    note:"Tip is for guidance only. Always follow local etiquette and your own judgment.",
+    related:{title:"Related tools:"},
+    copy:{bill:"Bill", people:"People", tip:"Tip %", tax:"Tax %", each:"Per person", total:"Total"}
+  };
+
+  const ZH = {
+    meta:{title:"小费/拼单计算器 — 快速准确，移动端友好 | GoToolOnline",
+          desc:"在线小费计算器：输入账单、设置小费%，可选税率、人数与取整；移动端友好。"},
+    ui:{back:"← 返回首页", lang:"语言"},
+    title:"小费计算器 / 拼单",
+    lede:"输入账单、选择小费%，可选添加税率，设置人数，立即得到人均总额。",
+    form:{bill:"账单金额", people:"人数", tip:"小费 %", tax:"税率 %（可选）", quick:"快捷小费：", round:"取整", tipon:"小费基于"},
+    round:{none:"不取整", per:"人均取整（到整数 $）", total:"总额取整（到整数 $）"},
+    tipon:{pretax:"税前金额", posttax:"税后金额"},
+    btn:{calc:"计算", clear:"清空", copy:"复制结果"},
+    warn:"请输入有效账单，并且人数 ≥ 1。",
+    results:{title:"结果", base:"小费基数", tax:"税额", tip:"小费", total:"总计", each:"人均", pre:"税前", post:"税后", taxOfBill:"（占账单 {p}%）"},
+    note:"小费仅供参考，请结合当地习惯与个人判断。",
+    related:{title:"相关工具："},
+    copy:{bill:"账单", people:"人数", tip:"小费 %", tax:"税率 %", each:"人均", total:"总计"}
+  };
+
+  const PH = {
+    ui:{back:"← Bumalik sa Home", lang:"Wika"},
+    title:"Tip Calculator / Hati ng Bill",
+    lede:"Ilagay ang bill, pumili ng tip %, opsyunal na buwis, tao, at tingnan agad ang per-person total.",
+    form:{bill:"Halaga ng bill", people:"Tao", tip:"Tip %", tax:"Tax % (opsyonal)", quick:"Mabilis na tip:", round:"Pag-round", tipon:"Tip batay sa"},
+    round:{none:"Walang round", per:"Round per-person sa buong $", total:"Round kabuuan sa buong $"},
+    tipon:{pretax:"Halagang bago ang buwis", posttax:"Halagang pagkatapos ng buwis"},
+    btn:{calc:"Kalkulahin", clear:"I-clear", copy:"Kopyahin ang resulta"},
+    warn:"Maglagay ng wastong bill at tao ≥ 1.",
+    results:{title:"Mga resulta", base:"Base ng tip", tax:"Buwis", tip:"Tip", total:"Kabuuan", each:"Bawat tao", pre:"bago ang buwis", post:"pagkatapos ng buwis", taxOfBill:"({p}% ng bill)"},
+    note:"Gabay lang ang tip; sundin ang nakagawian at sariling paghatol.",
+    related:{title:"Kaugnay na tool:"},
+    copy:{bill:"Bill", people:"Tao", tip:"Tip %", tax:"Tax %", each:"Bawat tao", total:"Kabuuan"}
+  };
+
+  const ID = {
+    ui:{back:"← Kembali ke Beranda", lang:"Bahasa"},
+    title:"Kalkulator Tip & Bagi Tagihan",
+    lede:"Masukkan tagihan, pilih % tip, pajak opsional, jumlah orang, dan lihat total per orang seketika.",
+    form:{bill:"Jumlah tagihan", people:"Orang", tip:"Tip %", tax:"Pajak % (opsional)", quick:"Tip cepat:", round:"Pembulatan", tipon:"Tip atas"},
+    round:{none:"Tanpa pembulatan", per:"Bulatkan per-orang ke $ utuh", total:"Bulatkan total ke $ utuh"},
+    tipon:{pretax:"Jumlah sebelum pajak", posttax:"Jumlah setelah pajak"},
+    btn:{calc:"Hitung", clear:"Bersihkan", copy:"Salin hasil"},
+    warn:"Masukkan tagihan valid dan orang ≥ 1.",
+    results:{title:"Hasil", base:"Dasar tip", tax:"Pajak", tip:"Tip", total:"Total", each:"Per orang", pre:"sebelum pajak", post:"setelah pajak", taxOfBill:"({p}% dari tagihan)"},
+    note:"Tip hanya panduan; ikuti etiket lokal dan penilaian Anda.",
+    related:{title:"Alat terkait:"},
+    copy:{bill:"Tagihan", people:"Orang", tip:"Tip %", tax:"Pajak %", each:"Per orang", total:"Total"}
+  };
+
+  const VI = {
+    ui:{back:"← Về trang chủ", lang:"Ngôn ngữ"},
+    title:"Tính tiền tip / chia hóa đơn",
+    lede:"Nhập hóa đơn, chọn % tip, thuế (tuỳ chọn), số người, và xem tổng mỗi người ngay.",
+    form:{bill:"Tiền hóa đơn", people:"Số người", tip:"Tip %", tax:"Thuế % (tuỳ chọn)", quick:"Tip nhanh:", round:"Làm tròn", tipon:"Tính tip trên"},
+    round:{none:"Không làm tròn", per:"Làm tròn mỗi người tới $ nguyên", total:"Làm tròn tổng tới $ nguyên"},
+    tipon:{pretax:"Số tiền trước thuế", posttax:"Số tiền sau thuế"},
+    btn:{calc:"Tính", clear:"Xoá", copy:"Sao chép kết quả"},
+    warn:"Vui lòng nhập hóa đơn hợp lệ và số người ≥ 1.",
+    results:{title:"Kết quả", base:"Cơ sở tip", tax:"Thuế", tip:"Tip", total:"Tổng", each:"Mỗi người", pre:"trước thuế", post:"sau thuế", taxOfBill:"({p}% của hóa đơn)"},
+    note:"Tip chỉ mang tính tham khảo; hãy theo tập quán địa phương và cân nhắc riêng.",
+    related:{title:"Công cụ liên quan:"},
+    copy:{bill:"Hóa đơn", people:"Số người", tip:"Tip %", tax:"Thuế %", each:"Mỗi người", total:"Tổng"}
+  };
+
+  const BN = {
+    ui:{back:"← হোমে ফিরে যান", lang:"ভাষা"},
+    title:"টিপ ক্যালকুলেটর / বিল ভাগ",
+    lede:"বিল দিন, টিপ %, ট্যাক্স (ঐচ্ছিক), লোকসংখ্যা দিন, সাথে সাথে প্রতি-ব্যক্তি মোট দেখুন।",
+    form:{bill:"বিলের পরিমাণ", people:"লোক", tip:"টিপ %", tax:"ট্যাক্স % (ঐচ্ছিক)", quick:"দ্রুত টিপ:", round:"রাউন্ড", tipon:"টিপ গণনা"},
+    round:{none:"রাউন্ড নয়", per:"প্রতি-ব্যক্তি $ পূর্ণসংখ্যায়", total:"মোট $ পূর্ণসংখ্যায়"},
+    tipon:{pretax:"ট্যাক্স-পূর্ব পরিমাণ", posttax:"ট্যাক্স-পরবর্তী পরিমাণ"},
+    btn:{calc:"হিসাব করুন", clear:"ক্লিয়ার", copy:"ফল কপি করুন"},
+    warn:"বৈধ বিল এবং লোকসংখ্যা ≥ 1 দিন।",
+    results:{title:"ফলাফল", base:"টিপের ভিত্তি", tax:"ট্যাক্স", tip:"টিপ", total:"মোট", each:"প্রতি-ব্যক্তি", pre:"ট্যাক্স-পূর্ব", post:"ট্যাক্স-পরবর্তী", taxOfBill:"(বিলের {p}%)"},
+    note:"টিপ কেবল নির্দেশক; স্থানীয় রীতি ও আপনার বিচক্ষণতা অনুসরণ করুন।",
+    related:{title:"সম্পর্কিত টুল:"},
+    copy:{bill:"বিল", people:"লোক", tip:"টিপ %", tax:"ট্যাক্স %", each:"প্রতি-ব্যক্তি", total:"মোট"}
+  };
+
+  const NG = {
+    ui:{back:"← Back to Home", lang:"Language"},
+    title:"Tip Calculator & Split Bill",
+    lede:"Enter the bill, choose a tip %, optionally add tax, set people, and see per-person totals instantly.",
+    form:{bill:"Bill amount", people:"People", tip:"Tip %", tax:"Tax % (optional)", quick:"Quick tip:", round:"Round", tipon:"Tip on"},
+    round: EN.round, tipon: EN.tipon, btn: EN.btn, warn: EN.warn,
+    results: EN.results, note: EN.note, related: EN.related, copy: EN.copy
+  };
+
+  const SW = {
+    ui:{back:"← Rudi nyumbani", lang:"Lugha"},
+    title:"Kikokotoo cha Bakshishi / Gawa Bili",
+    lede:"Weka bili, chagua % ya bakshishi, kodi (hiari), watu, na uone jumla kwa kila mtu papo hapo.",
+    form:{bill:"Kiasi cha bili", people:"Watu", tip:"Bakshishi %", tax:"Kodi % (hiari)", quick:"Bakshishi ya haraka:", round:"Mzunguko", tipon:"Bakshishi juu ya"},
+    round:{none:"Hakuna mzunguko", per:"Zungusha kwa kila mtu hadi $ kamili", total:"Zungusha jumla hadi $ kamili"},
+    tipon:{pretax:"Kabla ya kodi", posttax:"Baada ya kodi"},
+    btn:{calc:"Kokotoa", clear:"Futa", copy:"Nakili matokeo"},
+    warn:"Weka bili halali na watu ≥ 1.",
+    results:{title:"Matokeo", base:"Msingi wa bakshishi", tax:"Kodi", tip:"Bakshishi", total:"Jumla", each:"Kwa kila mtu", pre:"kabla ya kodi", post:"baada ya kodi", taxOfBill:"({p}% ya bili)"},
+    note:"Bakshishi ni mwongozo tu; fuata desturi za eneo na uamuzi wako.",
+    related:{title:"Zana zinazohusiana:"},
+    copy:{bill:"Bili", people:"Watu", tip:"Bakshishi %", tax:"Kodi %", each:"Kila mtu", total:"Jumla"}
+  };
+
+  const AR = {
+    meta:{title:"حاسبة البقشيش وتقسيم الفاتورة — سريعة ودقيقة | GoToolOnline",
+          desc:"احسب البقشيش بسرعة وقسّم الفاتورة. أدخل المبلغ، اختر نسبة البقشيش، ضريبة اختيارية، عدد الأشخاص وخيارات التقريب."},
+    ui:{back:"← العودة إلى الصفحة الرئيسية", lang:"اللغة"},
+    title:"آلة حساب البقشيش / تقسيم الفاتورة",
+    lede:"أدخل الفاتورة، اختر نسبة البقشيش، أضف الضريبة اختياريًا، حدّد عدد الأشخاص، وسترى المبالغ لكل شخص فورًا.",
+    form:{bill:"مبلغ الفاتورة", people:"الأشخاص", tip:"نسبة البقشيش %", tax:"الضريبة % (اختياري)", quick:"بقشيش سريع:", round:"التقريب", tipon:"حساب البقشيش على"},
+    round:{none:"بدون تقريب", per:"تقريب لكل شخص إلى دولار كامل", total:"تقريب الإجمالي إلى دولار كامل"},
+    tipon:{pretax:"المبلغ قبل الضريبة", posttax:"المبلغ بعد الضريبة"},
+    btn:{calc:"احسب", clear:"مسح", copy:"نسخ النتائج"},
+    warn:"الرجاء إدخال فاتورة صالحة وعدد أشخاص ≥ 1.",
+    results:{title:"النتائج", base:"أساس البقشيش", tax:"الضريبة", tip:"البقشيش", total:"الإجمالي", each:"لكل شخص", pre:"قبل الضريبة", post:"بعد الضريبة", taxOfBill:"({p}% من الفاتورة)"},
+    note:"البقشيش للإرشاد فقط؛ اتّبع العادات المحلية وتقديرك الشخصي.",
+    related:{title:"أدوات ذات صلة:"},
+    copy:{bill:"الفاتورة", people:"الأشخاص", tip:"نسبة البقشيش", tax:"الضريبة %", each:"لكل شخص", total:"الإجمالي"}
+  };
+
+  const MAP = {en:EN, zh:ZH, ph:PH, id:ID, vi:VI, bn:BN, ng:NG, sw:SW, ar:AR};
+
+  function applyI18N(D){
+    // meta
+    if (get(D,'meta.title')) document.title = get(D,'meta.title');
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc && get(D,'meta.desc')) desc.setAttribute('content', get(D,'meta.desc'));
+
+    // text nodes
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      const val = get(D, key);
+      if (val == null) return;
+      if (/<[a-z][\s\S]*>/i.test(val)) el.innerHTML = val; else el.textContent = val;
+    });
+
+    // update selects/options that may be cached by some browsers
+    ['round.none','round.per','round.total','tipon.pretax','tipon.posttax'].forEach(k=>{
+      const el = document.querySelector(`[data-i18n="${k}"]`);
+      if (el){ const v = get(D,k); if (v!=null) el.textContent = v; }
+    });
+  }
+
+  function keepLangInLinks(lang){
+    document.querySelectorAll('a[href]').forEach(a=>{
+      const href = a.getAttribute('href')||'';
+      if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+      const u = new URL(href, location.origin);
+      if (!u.searchParams.get('lang')) u.searchParams.set('lang', lang);
+      a.setAttribute('href', u.pathname + u.search + u.hash);
+    });
+  }
+
+  // Init
+  const lang = pickLang();
+  const D = merge(EN, MAP[lang]||{});
+  applyI18N(D);
+  keepLangInLinks(lang);
+
+  window.__LANG__ = lang;
+  window.__DICT__ = D;
+
+  // Language panel
+  const panel = document.getElementById('langPanel');
+  const btn = document.getElementById('langBtn');
+  const grid = document.getElementById('langGrid');
+  if (grid){
+    const ORDER = ['en','zh','ph','id','vi','bn','ng','sw','ar'];
+    ORDER.forEach(code=>{
+      const b=document.createElement('button');
+      b.textContent = NAMES[code]||code;
+      if (code===lang) b.className='active';
+      b.addEventListener('click', ()=>{
+        const u=new URL(location.href); u.searchParams.set('lang', code); setCookie('lang', code); location.href=u.toString();
+      });
+      grid.appendChild(b);
+    });
+  }
+  function openLang(open){ panel.classList.toggle('open', !!open); btn.setAttribute('aria-expanded', !!open); }
+  if (btn) btn.addEventListener('click', (e)=>{ e.stopPropagation(); openLang(!panel.classList.contains('open')); });
+  document.addEventListener('click', (e)=>{ if(panel && panel.classList.contains('open')){ const within = panel.contains(e.target) || (btn && btn.contains(e.target)); if(!within) openLang(false); } });
+})();
+</script>
+
+<!-- Back-to-home resolver (preserve ?lang) -->
+<script>
+(function(){
+  var path = location.pathname.replace(/\/+$/,'');
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = [''];
+  var home = parts.join('/') + '/';
+
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+  document.querySelectorAll('a[data-home]').forEach(function(a){
+    a.setAttribute('href', home);
+  });
+})();
+</script>
+</body>
+</html>

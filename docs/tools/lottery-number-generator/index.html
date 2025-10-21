@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Lottery Number Generator — AU & US | For Entertainment Only</title>
+<meta name="description" content="Quick-pick lottery numbers for Australia and the US. For entertainment only — not betting advice. Generate multiple lines, avoid duplicates, save history."/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text x='6' y='52' font-size='48'>🎟️</text></svg>"/>
+<style>
+  :root { --bg:#0a0f1e; --card:#0f1830; --muted:#9fb0c3; --fg:#eaf3ff; --acc:#4fb3ff; --accent2:#77e3a0; --danger:#ff5252;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+  header{max-width:1100px;margin:20px auto 8px;display:flex;gap:12px;align-items:center;padding:0 16px}
+  header a{color:var(--fg);text-decoration:none}
+  .pill{padding:8px 12px;border:1px solid #24365b;background:#0f1a2f;border-radius:999px}
+  .lang{margin-left:8px;padding:8px 12px;border:1px solid #24365b;background:#0f1a2f;border-radius:10px;color:#eaf3ff;font-size:14px}
+  .banner{max-width:1100px;margin:0 auto 8px;padding:10px 16px;color:#fff;background:linear-gradient(180deg,#982525,#5c1414);border:1px solid #7a1b1b;border-left:6px solid var(--danger);border-radius:12px;font-weight:700}
+  .sub{font-weight:600;opacity:.9}
+  main{max-width:1100px;margin:8px auto 56px;padding:0 16px}
+  h1{font-size:32px;margin:8px 0 4px}
+  p{font-size:16px;color:var(--muted);margin:6px 0 14px}
+  .card{background:var(--card);border:1px solid #1a2843;border-radius:18px;padding:16px;margin:14px 0}
+  label{font-size:16px}
+  input,select,button{padding:12px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;font-size:16px}
+  button{cursor:pointer;background:linear-gradient(180deg,#2a78ff,#0050d4);border:none;font-weight:700}
+  button.secondary{background:#0f1a2f;border:1px solid #2a3d67}
+  button:hover{filter:brightness(1.06)}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .result{display:flex;flex-wrap:wrap;gap:8px}
+  .ball{min-width:42px;height:42px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:2px solid #2a3d67;background:#0d142a;font-weight:800;font-size:18px}
+  .ball.sp{border-color:#ffb347;background:#2b1a0d}
+  .line{display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#0b1226;border:1px solid #1c2d55;border-radius:12px;padding:10px}
+  .small{font-size:13px;color:#9fb0c3}
+  .ok{color:var(--accent2)} .warn{color:#ffb3b3}
+  .note-box{background:#0f1a2f;border:1px dashed #7a1b1b;border-radius:12px;padding:10px}
+  @media print{
+    header,.web-only{display:none!important}
+    body{background:#fff;color:#000}
+    .card{border:none}
+    .line{border-color:#bbb;background:#fff}
+    .ball{border-color:#444;background:#fff;color:#000}
+    .print-watermark{display:block!important}
+  }
+  .print-watermark{display:none; font-size:12px; color:#b10000; border:1px solid #e3a2a2; padding:8px; border-radius:8px; margin-bottom:10px}
+</style>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/tools/lottery-number-generator/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/tools/lottery-number-generator/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/tools/lottery-number-generator/">
+</head>
+\1
+
+    <div id="topnav-return-home" style="position:sticky;top:0;padding:10px 14px;border-bottom:1px solid #eee;background:#fff;z-index:999;font-family:system-ui,Segoe UI,Roboto,Arial;">
+      <a href="../../index.html" style="text-decoration:none;">← 返回首页</a>
+    </div>
+    
+<header>
+  <a class="pill" data-home href="#">🛠 GoToolOnline</a>
+  <a class="pill" id="backHome" data-home href="#">← Back to Home</a>
+  <span class="pill" id="hdrTag" style="margin-left:auto">For entertainment only</span>
+  <select id="lang" class="lang" aria-label="Language">
+    <option value="en">English</option>
+    <option value="zh">简体中文</option>
+    <option value="ph">Tagalog</option>
+    <option value="id">Bahasa Indonesia</option>
+    <option value="vi">Tiếng Việt</option>
+    <option value="bn">বাংলা</option>
+    <option value="ng">English (NG)</option>
+    <option value="sw">Kiswahili</option>
+    <option value="ar">العربية</option>
+  </select>
+</header>
+
+<!-- HARD DISCLAIMER -->
+<div class="banner">
+  <span id="hard1">For entertainment only — not betting or investment advice.</span>
+  <div class="sub" id="hard2">Random numbers do not improve your odds.</div>
+</div>
+
+<main>
+<section class="card">
+  <h1 id="h1">Lottery Number Generator — AU &amp; US</h1>
+  <p id="intro">Quick-pick numbers for Australia &amp; United States games. Rules follow official matrices. <strong class="ok">This tool does not improve odds.</strong></p>
+
+  <div class="row">
+    <label id="labGame">Game
+      <select id="game">
+        <optgroup id="ogAU" label="Australia">
+          <option value="AU_POWERBALL">AU Powerball (7 × 1–35 + Powerball 1–20)</option>
+          <option value="OZ_LOTTO">Oz Lotto (7 × 1–47)</option>
+          <option value="SAT_LOTTO">Saturday Lotto / TattsLotto (6 × 1–45)</option>
+          <option value="SET_FOR_LIFE">Set for Life (7 × 1–44)</option>
+        </optgroup>
+        <optgroup id="ogUS" label="United States">
+          <option value="US_POWERBALL">US Powerball (5 × 1–69 + PB 1–26)</option>
+          <option value="MEGA_MILLIONS">Mega Millions (5 × 1–70 + MB 1–24)</option>
+        </optgroup>
+      </select>
+    </label>
+
+    <label id="labLines">Lines
+      <input id="lines" type="number" min="1" max="20" value="5" style="width:90px"/>
+    </label>
+
+    <label id="labLocks">Lock numbers (comma, space or “-”)
+      <input id="locks" type="text" placeholder="e.g. 7, 11 23-35 (main pool only)" style="min-width:260px"/>
+    </label>
+
+    <label class="row" style="gap:6px">
+      <input id="avoidDup" type="checkbox" checked/>
+      <span id="labDedup">Avoid duplicate lines (within this batch)</span>
+    </label>
+
+    <div class="row">
+      <button id="gen">Generate</button>
+      <button id="copy" class="secondary">Copy</button>
+      <button id="print" class="secondary">Print</button>
+      <button id="clearHist" class="secondary">Clear History</button>
+    </div>
+  </div>
+
+  <div class="note-box" style="margin-top:10px">
+    <strong id="discTitle">Disclaimer:</strong>
+    <span id="discBody">For entertainment only — numbers are random and do not increase your chance of winning. Check official rules in your jurisdiction before purchase.</span>
+  </div>
+</section>
+
+<section class="card">
+  <div class="print-watermark" id="wm">For entertainment only — not betting advice.</div>
+  <h2 style="margin:0 0 8px 0" id="h2Results">Results</h2>
+  <div id="out" class="grid" aria-live="polite"></div>
+  <div id="msg" class="small"></div>
+  <div class="small" style="margin-top:8px" id="reminder">
+    Reminder: Generated combinations are purely random and carry the same odds as any valid pick.
+  </div>
+</section>
+
+<section class="card">
+  <h2 style="margin:0 0 8px 0" id="h2Hist">History (saved on this device)</h2>
+  <div id="hist" class="grid"></div>
+</section>
+
+<section class="card web-only">
+  <h3 style="margin:0 0 8px 0" id="h3Matrix">Game matrices (summary)</h3>
+  <ul class="small" id="matrixList">
+    <li>AU Powerball: 7 from 1–35 + Powerball 1–20.</li>
+    <li>Oz Lotto: 7 from 1–47 (supplementaries not generated).</li>
+    <li>Saturday Lotto / TattsLotto: 6 from 1–45.</li>
+    <li>Set for Life (AU): 7 from 1–44.</li>
+    <li>US Powerball: 5 from 1–69 + Powerball 1–26.</li>
+    <li>Mega Millions: 5 from 1–70 + Mega Ball 1–24.</li>
+  </ul>
+</section>
+</main>
+
+<script>
+  // ---------- Game definitions (logic constants; UI names handled via i18n) ----------
+  const GAMES = {
+    AU_POWERBALL:  { name:"AU Powerball", main:{count:7,min:1,max:35}, special:{count:1,min:1,max:20,label:"PB"} },
+    OZ_LOTTO:      { name:"Oz Lotto", main:{count:7,min:1,max:47}, special:null },
+    SAT_LOTTO:     { name:"Saturday Lotto", main:{count:6,min:1,max:45}, special:null },
+    SET_FOR_LIFE:  { name:"Set for Life", main:{count:7,min:1,max:44}, special:null },
+    US_POWERBALL:  { name:"US Powerball", main:{count:5,min:1,max:69}, special:{count:1,min:1,max:26,label:"PB"} },
+    MEGA_MILLIONS: { name:"Mega Millions", main:{count:5,min:1,max:70}, special:{count:1,min:1,max:24,label:"MB"} },
+  };
+
+  // ---------- i18n (9 languages) ----------
+  const I18N = {
+    en:{title:"Lottery Number Generator — AU & US | For Entertainment Only",desc:"Quick-pick lottery numbers for Australia and the US. For entertainment only — not betting advice. Generate multiple lines, avoid duplicates, save history.",
+        back:"← Back to Home", tag:"For entertainment only",
+        hard1:"For entertainment only — not betting or investment advice.", hard2:"Random numbers do not improve your odds.",
+        h1:"Lottery Number Generator — AU & US", intro:"Quick-pick numbers for Australia & United States games. Rules follow official matrices. <strong class='ok'>This tool does not improve odds.</strong>",
+        game:"Game", lines:"Lines", locks:"Lock numbers (comma, space or “-”)", locksPh:"e.g. 7, 11 23-35 (main pool only)",
+        dedup:"Avoid duplicate lines (within this batch)", gen:"Generate", copy:"Copy", print:"Print", clear:"Clear History",
+        discT:"Disclaimer:", discB:"For entertainment only — numbers are random and do not increase your chance of winning. Check official rules in your jurisdiction before purchase.",
+        wm:"For entertainment only — not betting advice.", results:"Results", reminder:"Reminder: Generated combinations are purely random and carry the same odds as any valid pick.",
+        hist:"History (saved on this device)", matrix:"Game matrices (summary)",
+        ogAU:"Australia", ogUS:"United States",
+        games:{AU_POWERBALL:"AU Powerball", OZ_LOTTO:"Oz Lotto", SAT_LOTTO:"Saturday Lotto", SET_FOR_LIFE:"Set for Life", US_POWERBALL:"US Powerball", MEGA_MILLIONS:"Mega Millions"},
+        msgTooMany:(g,n)=>`Too many locked numbers for ${g} (need ${n}).`,
+        msgGen:(cnt,g)=>`<span class="ok">${cnt}</span> line(s) generated for <strong>${g}</strong> — <span class="warn">for entertainment only</span>.`,
+        copied:"Copied.", none:"Nothing to copy."
+    },
+    zh:{title:"彩票机选号码 — 澳大利亚 & 美国｜仅供娱乐",desc:"快速机选澳洲与美国彩种号码。仅供娱乐，非投注建议。可生成多注、避免重复并保存历史。",
+        back:"← 返回首页", tag:"仅供娱乐",
+        hard1:"仅供娱乐——非投注或投资建议。", hard2:"随机号码并不会提高你的中奖概率。",
+        h1:"彩票机选号码（澳大利亚 & 美国）", intro:"为澳大利亚与美国彩种快速生成号码，规则遵循官方选号矩阵。<strong class='ok'>本工具不提高中奖概率。</strong>",
+        game:"游戏", lines:"注数", locks:"锁定号码（逗号/空格/“–”）", locksPh:"例如：7, 11 23-35（仅主号池）",
+        dedup:"避免本次批量中出现重复行", gen:"生成", copy:"复制", print:"打印", clear:"清空历史",
+        discT:"声明：", discB:"仅供娱乐——号码随机，不会提高中奖机会。请在购票前查阅所属地区的官方规则。",
+        wm:"仅供娱乐——非投注建议。", results:"结果", reminder:"提示：机选组合完全随机，与任何有效选号的赔率相同。",
+        hist:"历史（保存在本机）", matrix:"玩法矩阵（概要）",
+        ogAU:"澳大利亚", ogUS:"美国",
+        games:{AU_POWERBALL:"澳洲 Powerball", OZ_LOTTO:"Oz Lotto", SAT_LOTTO:"星期六 Lotto", SET_FOR_LIFE:"Set for Life", US_POWERBALL:"美 Powerball", MEGA_MILLIONS:"Mega Millions"},
+        msgTooMany:(g,n)=>`所锁定的号码过多：${g} 需要 ${n} 个主号。`,
+        msgGen:(cnt,g)=>`已为 <strong>${g}</strong> 生成 <span class="ok">${cnt}</span> 注 —— <span class="warn">仅供娱乐</span>。`,
+        copied:"已复制。", none:"没有可复制的内容。"
+    },
+    ph:{title:"Lottery Number Generator — AU & US | Para Libangan Lamang",desc:"Mabilisang pick ng lotto numbers para sa Australia at US. Para libangan lamang — hindi payo sa pagtaya.",
+        back:"← Balik sa Home", tag:"Para libangan lamang",
+        hard1:"Para libangan lamang — hindi payo sa pagtaya o pamumuhunan.", hard2:"Hindi pinapataas ng random numbers ang tsansa mo.",
+        h1:"Lottery Number Generator — AU & US", intro:"Mabilisang number pick para sa AU at US games. Sundin ang opisyal na matrix. <strong class='ok'>Hindi nito pinapataas ang tsansa.</strong>",
+        game:"Laro", lines:"Bilang ng linya", locks:"I-lock na numero (comma/space/“–”)", locksPh:"hal. 7, 11 23-35 (main pool lang)",
+        dedup:"Iwasan ang dobleng linya (itong batch)", gen:"Gumawa", copy:"Kopya", print:"I-print", clear:"Burahin ang History",
+        discT:"Paalala:", discB:"Para libangan lamang — random ang mga numero at hindi nagpapataas ng tsansa. Tiyakin ang opisyal na patakaran sa inyong lugar.",
+        wm:"Para libangan lamang — hindi payo sa pagtaya.", results:"Mga Resulta", reminder:"Paalala: Random lang ang mga kombinasyon at pareho ang tsansa sa anumang pick.",
+        hist:"History (nasa device na ito)", matrix:"Matrix ng laro (buod)",
+        ogAU:"Australia", ogUS:"United States",
+        games:{AU_POWERBALL:"AU Powerball", OZ_LOTTO:"Oz Lotto", SAT_LOTTO:"Saturday Lotto", SET_FOR_LIFE:"Set for Life", US_POWERBALL:"US Powerball", MEGA_MILLIONS:"Mega Millions"},
+        msgTooMany:(g,n)=>`Sobra ang naka-lock para sa ${g} (kailangan ${n}).`,
+        msgGen:(cnt,g)=>`<span class="ok">${cnt}</span> linya para sa <strong>${g}</strong> — <span class="warn">libangan lamang</span>.`,
+        copied:"Nakopya.", none:"Walang makopya."
+    },
+    id:{title:"Generator Nomor Lotere — AU & US | Hanya untuk Hiburan",desc:"Pilih cepat nomor lotre Australia & AS. Hanya untuk hiburan — bukan saran taruhan.",
+        back:"← Kembali ke Beranda", tag:"Hanya untuk hiburan",
+        hard1:"Hanya untuk hiburan — bukan nasihat taruhan/investasi.", hard2:"Nomor acak tidak meningkatkan peluang Anda.",
+        h1:"Generator Nomor Lotere — AU & US", intro:"Nomor cepat untuk permainan AU & AS. Mengikuti matriks resmi. <strong class='ok'>Tidak meningkatkan peluang.</strong>",
+        game:"Permainan", lines:"Baris", locks:"Kunci angka (koma/spasi/“–”)", locksPh:"mis. 7, 11 23-35 (hanya pool utama)",
+        dedup:"Hindari baris duplikat (batch ini)", gen:"Acak", copy:"Salin", print:"Cetak", clear:"Hapus Riwayat",
+        discT:"Penafian:", discB:"Hanya untuk hiburan — nomor acak tidak meningkatkan peluang. Periksa aturan resmi di wilayah Anda.",
+        wm:"Hanya untuk hiburan — bukan saran taruhan.", results:"Hasil", reminder:"Pengingat: Kombinasi dihasilkan secara acak, peluangnya sama dengan pick lainnya.",
+        hist:"Riwayat (tersimpan di perangkat ini)", matrix:"Matriks permainan (ringkas)",
+        ogAU:"Australia", ogUS:"Amerika Serikat",
+        games:{AU_POWERBALL:"AU Powerball", OZ_LOTTO:"Oz Lotto", SAT_LOTTO:"Saturday Lotto", SET_FOR_LIFE:"Set for Life", US_POWERBALL:"US Powerball", MEGA_MILLIONS:"Mega Millions"},
+        msgTooMany:(g,n)=>`Terlalu banyak angka terkunci untuk ${g} (perlu ${n}).`,
+        msgGen:(cnt,g)=>`<span class="ok">${cnt}</span> baris untuk <strong>${g}</strong> — <span class="warn">hiburan saja</span>.`,
+        copied:"Disalin.", none:"Tidak ada yang bisa disalin."
+    },
+    vi:{title:"Tạo số vé số — Úc & Mỹ | Chỉ để giải trí",desc:"Chọn nhanh số vé số Úc & Mỹ. Chỉ để giải trí — không phải tư vấn cá cược.",
+        back:"← Về trang chủ", tag:"Chỉ để giải trí",
+        hard1:"Chỉ để giải trí — không phải lời khuyên cá cược/đầu tư.", hard2:"Số ngẫu nhiên không làm tăng cơ hội trúng.",
+        h1:"Trình tạo số vé số — Úc & Mỹ", intro:"Sinh số nhanh cho các game Úc & Mỹ, theo ma trận chính thức. <strong class='ok'>Không tăng tỉ lệ trúng.</strong>",
+        game:"Trò chơi", lines:"Số dòng", locks:"Khoá số (dấu phẩy/khoảng trắng/“–”)", locksPh:"vd: 7, 11 23-35 (chỉ pool chính)",
+        dedup:"Tránh trùng lặp dòng (trong lượt này)", gen:"Tạo", copy:"Sao chép", print:"In", clear:"Xoá lịch sử",
+        discT:"Lưu ý:", discB:"Chỉ để giải trí — số ngẫu nhiên không tăng cơ hội trúng. Hãy xem quy định chính thức tại nơi bạn sống.",
+        wm:"Chỉ để giải trí — không phải tư vấn cá cược.", results:"Kết quả", reminder:"Nhắc nhở: Tổ hợp được tạo hoàn toàn ngẫu nhiên, xác suất giống nhau.",
+        hist:"Lịch sử (lưu trên thiết bị này)", matrix:"Ma trận trò chơi (tóm tắt)",
+        ogAU:"Úc", ogUS:"Hoa Kỳ",
+        games:{AU_POWERBALL:"AU Powerball", OZ_LOTTO:"Oz Lotto", SAT_LOTTO:"Saturday Lotto", SET_FOR_LIFE:"Set for Life", US_POWERBALL:"US Powerball", MEGA_MILLIONS:"Mega Millions"},
+        msgTooMany:(g,n)=>`Cố định quá nhiều số cho ${g} (cần ${n}).`,
+        msgGen:(cnt,g)=>`Đã tạo <span class="ok">${cnt}</span> dòng cho <strong>${g}</strong> — <span class="warn">chỉ để giải trí</span>.`,
+        copied:"Đã sao chép.", none:"Không có gì để sao chép."
+    },
+    bn:{title:"লটারির নম্বর জেনারেটর — AU ও US | শুধুই বিনোদনের জন্য",desc:"অস্ট্রেলিয়া ও যুক্তরাষ্ট্রের লটারি নম্বর দ্রুত বেছে নিন। শুধুই বিনোদন — বাজি ধরার পরামর্শ নয়।",
+        back:"← হোমে ফিরে যান", tag:"শুধুই বিনোদন",
+        hard1:"শুধুই বিনোদন — বাজি/বিনিয়োগের পরামর্শ নয়।", hard2:"র‌্যান্ডম নম্বর আপনার সম্ভাবনা বাড়ায় না।",
+        h1:"লটারির নম্বর জেনারেটর — AU ও US", intro:"AU ও US গেমের জন্য দ্রুত নম্বর। অফিসিয়াল ম্যাট্রিক্স অনুসরণ করে। <strong class='ok'>এটি সম্ভাবনা বাড়ায় না।</strong>",
+        game:"গেম", lines:"লাইন", locks:"লক নম্বর (কমা/স্পেস/“–”)", locksPh:"যেমন: 7, 11 23-35 (শুধু মূল পুল)",
+        dedup:"এই ব্যাচে ডুপ্লিকেট লাইন এড়ান", gen:"জেনারেট", copy:"কপি", print:"প্রিন্ট", clear:"ইতিহাস মুছুন",
+        discT:"ঘোষণা:", discB:"শুধুই বিনোদন — নম্বর র‌্যান্ডম, জেতার সম্ভাবনা বাড়ায় না। কেনার আগে স্থানীয় নিয়ম দেখুন।",
+        wm:"শুধুই বিনোদন — বাজির পরামর্শ নয়।", results:"ফলাফল", reminder:"স্মরণ করিয়ে দেওয়া: সব কম্বিনেশন র‌্যান্ডম; যে কোনো বৈধ পিকের মতোই সম্ভাবনা।",
+        hist:"ইতিহাস (এই ডিভাইসে সংরক্ষিত)", matrix:"গেম ম্যাট্রিক্স (সারাংশ)",
+        ogAU:"অস্ট্রেলিয়া", ogUS:"যুক্তরাষ্ট্র",
+        games:{AU_POWERBALL:"AU Powerball", OZ_LOTTO:"Oz Lotto", SAT_LOTTO:"Saturday Lotto", SET_FOR_LIFE:"Set for Life", US_POWERBALL:"US Powerball", MEGA_MILLIONS:"Mega Millions"},
+        msgTooMany:(g,n)=>`${g} এর জন্য লক নম্বর বেশি (প্রয়োজন ${n})।`,
+        msgGen:(cnt,g)=>`<span class="ok">${cnt}</span> লাইন তৈরি হয়েছে — <strong>${g}</strong> · <span class="warn">শুধুই বিনোদন</span>।`,
+        copied:"কপি হয়েছে।", none:"কপি করার কিছু নেই।"
+    },
+    ng:{title:"Lottery Number Generator — AU & US | For Play Only",desc:"Quick-pick lottery numbers for Australia & US. For play only — no be betting advice.",
+        back:"← Back to Home", tag:"For play only",
+        hard1:"For play only — no be betting or investment advice.", hard2:"Random numbers no dey increase your odds.",
+        h1:"Lottery Number Generator — AU & US", intro:"Quick-pick for AU & US games. We follow official matrix. <strong class='ok'>E no go boost your odds.</strong>",
+        game:"Game", lines:"Lines", locks:"Lock numbers (comma/space/“–”)", locksPh:"eg: 7, 11 23-35 (main pool only)",
+        dedup:"No make duplicate lines (for this batch)", gen:"Generate", copy:"Copy", print:"Print", clear:"Clear History",
+        discT:"Notice:", discB:"For play only — numbers na random, e no dey increase chance. Check official rules for your area.",
+        wm:"For play only — no be betting advice.", results:"Results", reminder:"Reminder: All combinations na random; odds same like any valid pick.",
+        hist:"History (save for this device)", matrix:"Game matrix (summary)",
+        ogAU:"Australia", ogUS:"United States",
+        games:{AU_POWERBALL:"AU Powerball", OZ_LOTTO:"Oz Lotto", SAT_LOTTO:"Saturday Lotto", SET_FOR_LIFE:"Set for Life", US_POWERBALL:"US Powerball", MEGA_MILLIONS:"Mega Millions"},
+        msgTooMany:(g,n)=>`Locked numbers too much for ${g} (need ${n}).`,
+        msgGen:(cnt,g)=>`<span class="ok">${cnt}</span> lines for <strong>${g}</strong> — <span class="warn">for play only</span>.`,
+        copied:"Copied.", none:"Nothing to copy."
+    },
+    sw:{title:"Kizalishaji Namba za Bahati Nasibu — AU & US | Burudani Tu",desc:"Chagua haraka namba za Australia na Marekani. Burudani tu — si ushauri wa kamari.",
+        back:"← Rudi Nyumbani", tag:"Burudani tu",
+        hard1:"Burudani tu — si ushauri wa kamari au uwekezaji.", hard2:"Namba za nasibu haziongezi nafasi yako.",
+        h1:"Kizalishaji Namba za Bahati Nasibu — AU & US", intro:"Chagua namba kwa haraka kwa michezo ya AU & US. Inafuata matrix rasmi. <strong class='ok'>Hiziongezi nafasi ya ushindi.</strong>",
+        game:"Mchezo", lines:"Mstari", locks:"Funga namba (koma/nafasi/“–”)", locksPh:"mf. 7, 11 23-35 (pool kuu tu)",
+        dedup:"Epuka mistari marudio (katika kundi hili)", gen:"Zalisha", copy:"Nakili", print:"Chapisha", clear:"Futa Historia",
+        discT:"Kumbuka:", discB:"Burudani tu — namba ni za nasibu na haziongezi nafasi ya kushinda. Angalia kanuni rasmi eneo lako.",
+        wm:"Burudani tu — si ushauri wa kamari.", results:"Matokeo", reminder:"Kumbuka: Mchanganyiko wote ni wa nasibu; nafasi ni sawa na chaguo lolote sahihi.",
+        hist:"Historia (imehifadhiwa kwenye kifaa hiki)", matrix:"Matrix ya mchezo (muhtasari)",
+        ogAU:"Australia", ogUS:"Marekani",
+        games:{AU_POWERBALL:"AU Powerball", OZ_LOTTO:"Oz Lotto", SAT_LOTTO:"Saturday Lotto", SET_FOR_LIFE:"Set for Life", US_POWERBALL:"US Powerball", MEGA_MILLIONS:"Mega Millions"},
+        msgTooMany:(g,n)=>`Namba zilizofungwa nyingi kwa ${g} (zinahitajika ${n}).`,
+        msgGen:(cnt,g)=>`<span class="ok">${cnt}</span> mfululizo kwa <strong>${g}</strong> — <span class="warn">burudani tu</span>.`,
+        copied:"Imenakiliwa.", none:"Hakuna cha kunakili."
+    },
+    ar:{title:"مولّد أرقام اليانصيب — أستراليا والولايات المتحدة | للترفيه فقط",desc:"اختيار سريع لأرقام اليانصيب لأستراليا والولايات المتحدة. للترفيه فقط — ليس نصيحة للمراهنة.",
+        back:"← الرجوع إلى الصفحة الرئيسية", tag:"للترفيه فقط",
+        hard1:"للترفيه فقط — ليست نصيحة للمراهنة أو الاستثمار.", hard2:"الأرقام العشوائية لا تزيد فرصك.",
+        h1:"مولّد أرقام اليانصيب — أستراليا والولايات المتحدة", intro:"اختيار سريع لألعاب AU وUS وفق المصفوفات الرسمية. <strong class='ok'>هذا لا يزيد الاحتمالات.</strong>",
+        game:"اللعبة", lines:"الأسطر", locks:"تثبيت أرقام (فاصلة/مسافة/“–”)", locksPh:"مثال: 7, 11 23-35 (البركة الرئيسية فقط)",
+        dedup:"تجنّب التكرار داخل هذه الدفعة", gen:"توليد", copy:"نسخ", print:"طباعة", clear:"مسح السجل",
+        discT:"تنبيه:", discB:"للترفيه فقط — الأرقام عشوائية ولا تزيد فرص الربح. تحقّق من القواعد الرسمية في بلدك.",
+        wm:"للترفيه فقط — ليست نصيحة للمراهنة.", results:"النتائج", reminder:"تذكير: التركيبات مولّدة عشوائياً، واحتمالاتها مثل أي اختيار صالح.",
+        hist:"السجل (محفوظ على هذا الجهاز)", matrix:"مصفوفات الألعاب (ملخص)",
+        ogAU:"أستراليا", ogUS:"الولايات المتحدة",
+        games:{AU_POWERBALL:"أستراليا باوربول", OZ_LOTTO:"أوز لوتو", SAT_LOTTO:"ساترداي لوتو", SET_FOR_LIFE:"ست فور لايف", US_POWERBALL:"أمريكا باوربول", MEGA_MILLIONS:"ميجا مليونز"},
+        msgTooMany:(g,n)=>`أرقام مثبّتة كثيرة على ${g} (المطلوب ${n}).`,
+        msgGen:(cnt,g)=>`تم توليد <span class="ok">${cnt}</span> سطرًا لـ <strong>${g}</strong> — <span class="warn">للترفيه فقط</span>.`,
+        copied:"تم النسخ.", none:"لا شيء لنسخه."
+    }
+  };
+
+  const HTML_LANG = {en:'en', zh:'zh-CN', ph:'tl-PH', id:'id-ID', vi:'vi-VN', bn:'bn', ng:'en-NG', sw:'sw', ar:'ar'};
+
+  const $ = s => document.querySelector(s);
+  const qs = new URLSearchParams(location.search);
+
+  function setHomeLinksForLang(lang){
+    var path = location.pathname.replace(/\/+$/,'');
+    var parts = path.split('/');
+    if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+    else parts = [''];
+    var home = parts.join('/') + '/';
+    const u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    document.querySelectorAll('a[data-home]').forEach(a=>a.setAttribute('href', u.pathname+u.search+u.hash));
+  }
+
+  function applyLang(lang){
+    const t = I18N[lang] || I18N.en;
+    document.title = t.title;
+    const md = document.querySelector('meta[name="description"]'); if (md) md.setAttribute('content', t.desc);
+    document.documentElement.lang = HTML_LANG[lang] || 'en';
+    document.documentElement.dir = (lang==='ar') ? 'rtl' : 'ltr';
+
+    // Header / banners / basics
+    $('#backHome').textContent = t.back;
+    $('#hdrTag').textContent = t.tag;
+    $('#hard1').textContent = t.hard1;
+    $('#hard2').textContent = t.hard2;
+
+    // Main texts
+    $('#h1').textContent = t.h1;
+    $('#intro').innerHTML = t.intro;
+    $('#labGame').childNodes[0].nodeValue = t.game + ' ';
+    $('#labLines').childNodes[0].nodeValue = t.lines + ' ';
+    $('#labLocks').childNodes[0].nodeValue = t.locks + ' ';
+    $('#locks').placeholder = t.locksPh;
+    $('#labDedup').textContent = t.dedup;
+
+    $('#gen').textContent = t.gen;
+    $('#copy').textContent = t.copy;
+    $('#print').textContent = t.print;
+    $('#clearHist').textContent = t.clear;
+
+    $('#discTitle').textContent = t.discT;
+    $('#discBody').textContent = t.discB;
+    $('#wm').textContent = t.wm;
+    $('#h2Results').textContent = t.results;
+    $('#reminder').textContent = t.reminder;
+    $('#h2Hist').textContent = t.hist;
+    $('#h3Matrix').textContent = t.matrix;
+
+    // Optgroup labels
+    $('#ogAU').label = t.ogAU;
+    $('#ogUS').label = t.ogUS;
+
+    // Save + URL + home links
+    localStorage.setItem('lang', lang);
+    qs.set('lang', lang);
+    history.replaceState({}, '', location.pathname + '?' + qs.toString());
+    setHomeLinksForLang(lang);
+  }
+
+  function bootLang(){
+    const fromQS = qs.get('lang');
+    const fromLS = localStorage.getItem('lang');
+    const lang = I18N[fromQS] ? fromQS : (I18N[fromLS] ? fromLS : 'en');
+    $('#lang').value = lang;
+    applyLang(lang);
+  }
+
+  // ---------- Lottery logic ----------
+  const selGame = $('#game');
+  const linesEl = $('#lines');
+  const locksEl = $('#locks');
+  const avoidDupEl = $('#avoidDup');
+  const out = $('#out');
+  const msg = $('#msg');
+  const hist = $('#hist');
+
+  const randInt = (min,max)=> Math.floor(Math.random()*(max-min+1))+min;
+
+  function parseLocks(text, game){
+    const s = new Set();
+    if (!text) return s;
+    const cleaned = text.replace(/[,，]/g,' ').trim();
+    for (const token of cleaned.split(/\s+/)){
+      if (!token) continue;
+      if (token.includes('-')){
+        const [a,b] = token.split('-').map(x=>parseInt(x,10));
+        if (Number.isInteger(a) && Number.isInteger(b)){
+          const lo = Math.min(a,b), hi = Math.max(a,b);
+          for (let n=lo; n<=hi; n++){
+            if (n>=game.main.min && n<=game.main.max) s.add(n);
+          }
+        }
+      } else {
+        const n = parseInt(token,10);
+        if (Number.isInteger(n) && n>=game.main.min && n<=game.main.max) s.add(n);
+      }
+    }
+    return s;
+  }
+
+  function pickUnique(count, min, max, lockedSet){
+    if (count > (max-min+1)) throw new Error('range too small');
+    const chosen = new Set(lockedSet||[]);
+    while (chosen.size < count){
+      chosen.add(randInt(min,max));
+    }
+    return Array.from(chosen).sort((a,b)=>a-b);
+  }
+
+  function pickSpecial(spec){
+    if (!spec) return [];
+    const arr = [];
+    for (let i=0;i<spec.count;i++){
+      arr.push(randInt(spec.min,spec.max));
+    }
+    return arr;
+  }
+
+  function fmtLine(main, special, gameKey){
+    const mainBalls = main.map(n=>`<span class="ball">${n}</span>`).join('');
+    const spBalls = (special||[]).map(n=>`<span class="ball sp">${n}</span>`).join('');
+    const label = (GAMES[gameKey].special && GAMES[gameKey].special.label) ? GAMES[gameKey].special.label : 'SP';
+    const spLabel = spBalls ? `<span class="small" style="margin-inline-start:6px">${label}</span>` : '';
+    return `<div class="line"><div class="result">${mainBalls}${spBalls}${spLabel}</div></div>`;
+  }
+
+  function lineSignature(main, special){
+    return JSON.stringify({m:main.join(','), s:(special||[]).slice().sort((a,b)=>a-b).join(',')});
+  }
+
+  function t() {
+    const lang = $('#lang').value;
+    return I18N[lang] || I18N.en;
+  }
+
+  function localizedGameName(key){
+    const lang = $('#lang').value;
+    const table = (I18N[lang] && I18N[lang].games) ? I18N[lang].games : I18N.en.games;
+    return table[key] || GAMES[key].name;
+  }
+
+  function generateBatch(){
+    const key = selGame.value;
+    const game = GAMES[key];
+    const lines = Math.max(1, Math.min(20, parseInt(linesEl.value,10) || 1));
+    const locks = parseLocks(locksEl.value, game);
+    if (locks.size > game.main.count){
+      msg.innerHTML = `<span class="warn">${t().msgTooMany(localizedGameName(key), game.main.count)}</span>`;
+      return;
+    }
+    const sigs = new Set();
+    const batch = [];
+    let attempts = 0, cap = lines * 50;
+    while (batch.length < lines && attempts < cap){
+      attempts++;
+      const main = pickUnique(game.main.count, game.main.min, game.main.max, locks);
+      const special = pickSpecial(game.special);
+      const sig = lineSignature(main, special);
+      if (avoidDupEl.checked && sigs.has(sig)) continue;
+      sigs.add(sig);
+      batch.push({main, special});
+    }
+    renderBatch(batch, key);
+    saveHistory(key, batch);
+    msg.innerHTML = t().msgGen(batch.length, localizedGameName(key));
+  }
+
+  function renderBatch(batch, key){
+    out.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    batch.forEach(one=>{
+      const wrap = document.createElement('div');
+      wrap.innerHTML = fmtLine(one.main, one.special, key);
+      frag.appendChild(wrap.firstElementChild);
+    });
+    out.appendChild(frag);
+    out.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  // History
+  const KEY = 'lotto_history_v1';
+  function loadHistory(){
+    try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; }
+  }
+  function saveHistory(gameKey, batch){
+    const now = new Date().toISOString();
+    const data = { t: now, game: gameKey, items: batch };
+    const arr = loadHistory();
+    arr.unshift(data);
+    while (arr.length > 20) arr.pop();
+    localStorage.setItem(KEY, JSON.stringify(arr));
+    renderHistory();
+  }
+  function renderHistory(){
+    const arr = loadHistory();
+    hist.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    arr.forEach(rec=>{
+      const gameName = localizedGameName(rec.game);
+      const box = document.createElement('div');
+      box.className = 'card';
+      const when = new Date(rec.t).toLocaleString();
+      const linesHtml = rec.items.map(it => fmtLine(it.main, it.special, rec.game)).join('');
+      box.innerHTML = `<div class="small" style="margin-bottom:6px;color:#c9d6e6">${when} · ${gameName} — ${t().tag}</div>${linesHtml}`;
+      frag.appendChild(box);
+    });
+    hist.appendChild(frag);
+  }
+
+  // Buttons
+  $('#gen').addEventListener('click', generateBatch);
+  $('#copy').addEventListener('click', ()=>{
+    const txt = Array.from(out.querySelectorAll('.line')).map(line=>{
+      const nums = Array.from(line.querySelectorAll('.ball')).map(b=>b.textContent.trim());
+      return nums.join(' ');
+    }).join('\n');
+    if (!txt) { msg.innerHTML = `<span class="warn">${t().none}</span>`; return; }
+    navigator.clipboard.writeText(txt).then(()=> msg.innerHTML = `<span class="ok">${t().copied}</span>`);
+  });
+  $('#print').addEventListener('click', ()=> window.print());
+  $('#clearHist').addEventListener('click', ()=>{ localStorage.removeItem(KEY); renderHistory(); });
+
+  // Language wiring
+  bootLang();
+  $('#lang').addEventListener('change', e=>applyLang(e.target.value));
+
+  // Boot history
+  renderHistory();
+</script>
+
+<script>
+(function(){
+  // Compute site root by removing the last two segments (category/tool)
+  var path = location.pathname.replace(/\/+$/,'');
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = [''];
+  var home = parts.join('/') + '/';
+
+  // preserve ?lang if present
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+
+  document.querySelectorAll('a[data-home]').forEach(function(a){
+    a.setAttribute('href', home);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"/>
+<title>Trap the Wombat · Hex Grid</title>
+<style>
+  :root{--bg:#0b1220;--fg:#111827;--muted:#6b7280;--accent:#22d3ee}
+  html,body{margin:0;height:100%;background:linear-gradient(180deg,#0b1220,#111827);color:#e5e7eb;
+    font-family:system-ui,-apple-system,Segoe UI,Roboto,"PingFang SC",sans-serif;touch-action:manipulation}
+  #wrap{display:grid;grid-template-rows:auto 1fr auto;max-width:620px;margin:0 auto;height:100%}
+  header,footer{padding:8px 12px;display:flex;align-items:center;gap:8px}
+  header{justify-content:space-between}
+  .btn{background:#111827;border:1px solid #1f2937;color:#e5e7eb;padding:6px 10px;border-radius:10px;cursor:pointer}
+  .btn:hover{border-color:var(--accent)}
+  #info{color:#94a3b8}
+  canvas{display:block;width:100%;height:auto;aspect-ratio:1/1;
+    background:linear-gradient(180deg,#dbeafe 0%, #f1f5f9 100%);
+    border-top:1px solid #1f2937;border-bottom:1px solid #1f2937}
+  footer{justify-content:space-between;color:#94a3b8;font-size:12px}
+  .badge{padding:2px 8px;border:1px solid #1f2937;background:#0f172a;border-radius:999px}
+</style>
+
+  <meta name="description" content="Useful online tools—fast, free, and multilingual."/>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/game1.html"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/game1.html"/>
+
+<link rel="canonical" href="https://gotoolonline.com/game1.html">
+</head>
+<body>
+
+        <button id="close-btn" style="position:fixed;right:14px;top:10px;padding:6px 10px;border:1px solid #ddd;border-radius:8px;background:#fff;cursor:pointer;z-index:1000">关闭</button>
+        
+<div id="wrap">
+  <header>
+    <div id="info"><span id="status">Block the path to trap the wombat.</span> · Moves: <strong id="moves">0</strong> · Best: <strong id="best">–</strong></div>
+    <div><button id="btnRestart" class="btn">Restart</button></div>
+  </header>
+
+  <canvas id="cv" width="560" height="560"></canvas>
+
+  <footer>
+    <span class="badge">Tap a hex to place a rock. The wombat moves along a shortest path.</span>
+    <a href="../" style="color:#22d3ee;text-decoration:none">← Back</a>
+  </footer>
+</div>
+
+<script>
+/* ===== Single Skin: Wombat (black silhouette) ===== */
+const Wombat = { draw:(g,x,y,s=1)=>{
+  g.save(); g.translate(x,y); g.scale(s,s);
+  g.fillStyle="#0b0b0b";
+  // body
+  g.beginPath(); g.ellipse(0,0,16,13,0,0,6.283); g.fill();
+  // head
+  g.beginPath(); g.ellipse(12,-2,8,7,0,0,6.283); g.fill();
+  // ears
+  g.beginPath(); g.ellipse(-6,-10,3.5,4.2,0,0,6.283); g.ellipse(6,-10,3.5,4.2,0,0,6.283); g.fill();
+  // legs
+  g.fillRect(-10,6,6,4); g.fillRect(4,6,6,4);
+  g.restore();
+}};
+
+/* ===== Game: hex grid + BFS pathing ===== */
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+const W = cv.width, H = cv.height;
+
+const statusEl = document.getElementById('status');
+const movesEl  = document.getElementById('moves');
+const bestEl   = document.getElementById('best');
+const btnRestart = document.getElementById('btnRestart');
+
+let best = +localStorage.getItem('TTC_best_one') || 0;
+bestEl.textContent = best ? best : '–';
+
+// board + palette
+const RADIUS = 5;             // board radius (axial)
+const HEX_S  = 24;            // hex size
+let ORIGIN = { x: W/2, y: H/2 + 10 }; // will update on resize
+const BLOCK_PROB = 0.12;
+const HEX_FILL = "#f5f5f4";   // unblocked: off-white
+const HEX_EDGE = "#e7e5e4";   // edge cells: slightly darker off-white
+const HEX_STROKE = "#d1d5db"; // outline
+const HEX_BLOCK = "#0b0b0b";  // blocked (clicked): black
+
+// axial directions (pointy-topped)
+const DIRS = [
+  {q:+1,r:0},{q:+1,r:-1},{q:0,r:-1},
+  {q:-1,r:0},{q:-1,r:+1},{q:0,r:+1}
+];
+
+function key(q,r){ return q+"_"+r; }
+function inBoard(q,r){
+  return Math.abs(q) <= RADIUS && Math.abs(r) <= RADIUS && Math.abs(q+r) <= RADIUS;
+}
+function isEdge(q,r){ return Math.abs(q)===RADIUS || Math.abs(r)===RADIUS || Math.abs(q+r)===RADIUS; }
+
+// axial -> pixel (pointy)
+function a2p(q,r){
+  const x = HEX_S * (Math.sqrt(3)*q + Math.sqrt(3)/2*r);
+  const y = HEX_S * (3/2*r);
+  return {x: ORIGIN.x + x, y: ORIGIN.y + y};
+}
+// pixel -> axial (standard inverse for pointy)
+function p2a(px,py){
+  const x = px - ORIGIN.x, y = py - ORIGIN.y;
+  const qf = (Math.sqrt(3)/3 * x - 1/3 * y) / HEX_S;
+  const rf = (2/3 * y) / HEX_S;
+  return hexRound(qf, rf);
+}
+function hexRound(qf,rf){
+  let xf = qf, zf = -qf-rf, yf = rf;
+  let rx = Math.round(xf), ry = Math.round(yf), rz = Math.round(zf);
+  const x_diff = Math.abs(rx-xf), y_diff = Math.abs(ry-yf), z_diff = Math.abs(rz-zf);
+  if(x_diff > y_diff && x_diff > z_diff) rx = -ry - rz;
+  else if(y_diff > z_diff) ry = -rx - rz;
+  else rz = -rx - ry;
+  return {q:rx, r:ry};
+}
+
+// board state
+const cells = new Map(); // key -> {q,r,blocked}
+function resetBoard(){
+  cells.clear();
+  for(let q=-RADIUS;q<=RADIUS;q++){
+    for(let r=-RADIUS;r<=RADIUS;r++){
+      if(!inBoard(q,r)) continue;
+      cells.set(key(q,r), {q,r,blocked:false});
+    }
+  }
+  // random rocks, keep center & neighbors free
+  for(const c of cells.values()){
+    const nearCenter = Math.max(Math.abs(c.q), Math.abs(c.r), Math.abs(c.q+c.r))<=1;
+    if(nearCenter) continue;
+    if(Math.random() < BLOCK_PROB) c.blocked=true;
+  }
+}
+
+let critter = {q:0,r:0}; // wombat starts at center
+let moves = 0;
+let gameOver = false;
+
+function restart(){
+  resetBoard();
+  critter = {q:0,r:0};
+  moves = 0; gameOver=false;
+  statusEl.textContent = "Block the path to trap the wombat.";
+  movesEl.textContent = "0";
+  draw();
+}
+
+// BFS: shortest path from critter to any edge
+function bfsToEdge(){
+  const start = key(critter.q,critter.r);
+  const q = [start];
+  const came = new Map(); came.set(start, null);
+  while(q.length){
+    const k = q.shift();
+    const [cq,cr] = k.split("_").map(Number);
+    if(isEdge(cq,cr)) return reconstruct(came, k);
+    for(const d of DIRS){
+      const nq = cq + d.q, nr = cr + d.r;
+      if(!inBoard(nq,nr)) continue;
+      const nk = key(nq,nr);
+      if(came.has(nk)) continue;
+      const cell = cells.get(nk);
+      if(!cell || cell.blocked) continue;
+      came.set(nk, k);
+      q.push(nk);
+    }
+  }
+  return null;
+}
+function reconstruct(came, endK){
+  const path = [];
+  for(let cur=endK; cur; cur=came.get(cur)){
+    const [q,r] = cur.split("_").map(Number);
+    path.push({q,r});
+  }
+  return path.reverse();
+}
+
+// click: place rock then move wombat 1 step along shortest path
+function clickAt(px,py){
+  if(gameOver) return;
+  const {q,r} = p2a(px,py);
+  if(!inBoard(q,r)) return;
+  const k = key(q,r);
+  if(k===key(critter.q,critter.r)) return; // can't block the wombat itself
+  const c = cells.get(k);
+  if(!c || c.blocked) return;
+  c.blocked = true; // black rock
+  moves++; movesEl.textContent = String(moves);
+
+  if(isEdge(critter.q,critter.r)){ lose(); return; }
+  const path = bfsToEdge();
+  if(!path || path.length<=1){ win(); return; }
+  const next = path[1];
+  critter.q = next.q; critter.r = next.r;
+
+  if(isEdge(critter.q,critter.r)) lose();
+  draw();
+}
+
+function win(){
+  gameOver=true;
+  statusEl.textContent = "恭喜 抓住了那只小猫";
+  if(best===0 || moves<best){ best=moves; localStorage.setItem('TTC_best_one',best); }
+  bestEl.textContent = best || '–';
+  draw();
+}
+function lose(){
+  gameOver=true;
+  statusEl.textContent = "It escaped! ❌";
+  draw();
+}
+
+/* ===== rendering ===== */
+function drawHex(x,y, size, fill, stroke){
+  const a = Math.PI/3;
+  ctx.beginPath();
+  for(let i=0;i<6;i++){
+    const px = x + size*Math.cos(a*i + Math.PI/6);
+    const py = y + size*Math.sin(a*i + Math.PI/6);
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.closePath();
+  if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+  if(stroke){ ctx.strokeStyle=stroke; ctx.stroke(); }
+}
+
+function draw(){
+  // light background to enhance contrast
+  const grd = ctx.createLinearGradient(0,0,0,H);
+  grd.addColorStop(0,'#e2e8f0'); grd.addColorStop(1,'#f8fafc');
+  ctx.fillStyle = grd; ctx.fillRect(0,0,W,H);
+
+  // cells
+  for(const c of cells.values()){
+    const p = a2p(c.q,c.r);
+    const onEdge = isEdge(c.q,c.r);
+    const fill = c.blocked ? HEX_BLOCK : (onEdge ? HEX_EDGE : HEX_FILL);
+    drawHex(p.x,p.y,HEX_S-1, fill, HEX_STROKE);
+  }
+
+  // wombat
+  const p = a2p(critter.q,critter.r);
+  Wombat.draw(ctx, p.x, p.y-4, 1.12);
+}
+
+/* ===== precise input (fix CSS scaling offset) ===== */
+cv.addEventListener('pointerdown', e=>{
+  const rect = cv.getBoundingClientRect();
+  const sx = cv.width  / rect.width;
+  const sy = cv.height / rect.height;
+  const x = (e.clientX - rect.left) * sx;
+  const y = (e.clientY - rect.top)  * sy;
+  clickAt(x,y);
+});
+
+/* ===== controls ===== */
+btnRestart.onclick = ()=>restart();
+
+/* ===== keep origin in center on resize ===== */
+function updateOrigin(){
+  ORIGIN.x = cv.width/2;
+  ORIGIN.y = cv.height/2 + 10;
+}
+window.addEventListener('resize', ()=>{ updateOrigin(); draw(); });
+
+/* ===== init ===== */
+restart();
+</script>
+
+    <script>
+    (function(){
+      function goHome(){
+        try {
+          if (document.referrer && document.referrer !== location.href) {
+            // If navigated from another page, go back
+            history.back();
+            // Fallback if back doesn't navigate
+            setTimeout(function(){
+              if (document.visibilityState !== 'hidden' && performance.now() < 1500) {
+                var target = (function(){
+                  // Compute a safe relative link to index from this page's depth
+                  var depth = (location.pathname.match(/\//g) || []).length - 1; // naive
+                  // If hosted under GitHub Pages with repo path, try to detect root
+                  // Simplify: always try relative './index.html' first
+                  return './index.html';
+                })();
+                location.href = target;
+              }
+            }, 500);
+          } else {
+            location.href = './game1.html';
+          }
+        } catch(e){
+          location.href = './game1.html';
+        }
+      }
+      function ensure(){
+        var btn = document.getElementById('close-btn') || document.querySelector('[data-close]');
+        if (!btn) return;
+        btn.addEventListener('click', function(e){
+          e.preventDefault();
+          goHome();
+        }, {passive: false});
+        // Also make ESC close
+        window.addEventListener('keydown', function(e){
+          if (e.key === 'Escape') goHome();
+        });
+        // If there's an element with class 'back' make it work too
+        var back = document.querySelector('.back, .btn-back');
+        if (back) back.addEventListener('click', function(e){ e.preventDefault(); goHome(); }, {passive:false});
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', ensure);
+      } else {
+        ensure();
+      }
+    })();
+    </script>
+    
+</body>
+</html>

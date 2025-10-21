@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Unix Timestamp Converter — Epoch ↔ Local &amp; UTC Time | GoToolOnline</title>
+<meta name="description" content="Free Unix timestamp converter. Convert epoch seconds or milliseconds to Local/UTC time and back. Auto-detect 10/13-digit input, copy-ready outputs, URL sharing. Works offline."/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"/>
+
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Unix Timestamp Converter — Epoch ↔ Local &amp; UTC Time"/>
+<meta property="og:description" content="Convert Unix epoch (seconds or milliseconds) to Local/UTC and vice versa. Copy-ready. Works offline."/>
+<meta property="og:url" content="https://gotoolonline.com/time/unix-timestamp/"/>
+<meta name="twitter:card" content="summary"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text x='2' y='14' font-size='14'>🕰️</text></svg>"/>
+<!-- Structured Data -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Unix Timestamp Converter","applicationCategory":"DeveloperApplication","operatingSystem":"Web","url":"https://gotoolonline.com/time/unix-timestamp/","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"GoToolOnline","url":"https://gotoolonline.com"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://gotoolonline.com/"},{"@type":"ListItem","position":2,"name":"Time Tools","item":"https://gotoolonline.com/time/"},{"@type":"ListItem","position":3,"name":"Unix Timestamp Converter","item":"https://gotoolonline.com/time/unix-timestamp/"}]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Is input in seconds or milliseconds?","acceptedAnswer":{"@type":"Answer","text":"Choose Seconds or Milliseconds, or leave on Auto. Auto detects 10-digit (seconds) and 13-digit (milliseconds) timestamps."}},
+{"@type":"Question","name":"Does it work offline?","acceptedAnswer":{"@type":"Answer","text":"Yes. Everything runs in your browser; no network calls are used."}},
+{"@type":"Question","name":"How do I convert a date to Unix time?","acceptedAnswer":{"@type":"Answer","text":"Pick a date and time, choose Local or UTC, then click Convert. Both seconds and milliseconds outputs are provided."}},
+{"@type":"Question","name":"Can I share a pre-filled link?","acceptedAnswer":{"@type":"Answer","text":"Yes. The tool updates the URL as you type, e.g. ?ts=1734500000&unit=s or ?date=2025-01-01&time=00:00:00&zone=utc."}}
+]}
+</script>
+<style>
+  :root{--bg:#0a0f1e;--card:#0f1830;--fg:#eaf3ff;--muted:#9fb0c3;--acc:#4fb3ff}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+  header{max-width:900px;margin:18px auto 8px;display:flex;gap:10px;align-items:center;padding:0 16px}
+  header a{color:var(--fg);text-decoration:none}
+  .pill{padding:8px 12px;border:1px solid #24365b;background:#0f1a2f;border-radius:999px;white-space:nowrap}
+  .lang{margin-left:auto;padding:8px 10px;border:1px solid #24365b;background:#0f1a2f;border-radius:10px;color:#eaf3ff;font-size:14px}
+  main{max-width:900px;margin:8px auto 72px;padding:0 16px}
+  nav.breadcrumb{font-size:14px;color:var(--muted);margin-bottom:6px}
+  nav.breadcrumb a{color:var(--muted)}
+  .card{background:var(--card);border:1px solid #1a2843;border-radius:18px;padding:16px;margin:12px 0}
+  h1{margin:4px 0 8px 0}
+  input,select,button,textarea{padding:14px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;font-size:16px}
+  button{cursor:pointer;font-weight:800}
+  button.primary{background:linear-gradient(180deg,#2a78ff,#0050d4);border:none}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .muted{color:var(--muted)}
+  .out{font-size:20px;font-weight:800}
+  .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace}
+  .help{font-size:14px;color:#9fb0c3;margin-top:6px}
+  .linkrow a{display:inline-block;margin-right:10px;color:#cfe6ff;text-decoration:none;border-bottom:1px dashed #2a78ff}
+  .linkrow a:hover{color:#fff;border-bottom-color:#4fb3ff}
+  .badge{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;background:#0c1426;border:1px solid #2a3c64;font-size:12px}
+  @media (max-width:800px){ .grid{grid-template-columns:1fr} }
+  @media print{ header,nav.breadcrumb,.linkrow,.lang{display:none !important} body{background:#fff;color:#000} .card{border:none} }
+</style>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/time/unix-timestamp/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/time/unix-timestamp/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/time/unix-timestamp/">
+</head>
+<body>
+<header>
+  <a class="pill" data-home href="#">🛠 GoToolOnline</a>
+  <a class="pill" id="backHome" data-home href="#">← Back to Home</a>
+  <select id="lang" class="lang" aria-label="Language">
+    <option value="en">English</option>
+    <option value="zh">简体中文</option>
+    <option value="ph">Tagalog</option>
+    <option value="id">Bahasa Indonesia</option>
+    <option value="vi">Tiếng Việt</option>
+    <option value="bn">বাংলা</option>
+    <option value="ng">English (NG)</option>
+    <option value="sw">Kiswahili</option>
+    <option value="ar">العربية</option>
+  </select>
+</header>
+
+<main>
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <a id="bcHome" data-home href="#">Home</a> › <a id="bcTime" href="/time/">Time Tools</a> › <strong id="bcCur">Unix Timestamp Converter</strong>
+</nav>
+
+<section class="card">
+  <h1 id="h1">Unix Timestamp Converter</h1>
+  <p id="hero" class="muted">Convert <b>Unix epoch</b> (seconds or milliseconds) ↔ <b>Local / UTC</b>. Auto-detect 10/13-digit input. Works fully offline.</p>
+
+  <div class="grid" role="region" aria-label="Converters">
+    <!-- Epoch -> Date -->
+    <div class="card" aria-labelledby="h-ep2dt">
+      <h2 id="h-ep2dt" style="margin:0 0 8px">Epoch → Date</h2>
+
+      <div class="row" role="group" aria-label="Epoch input">
+        <label class="mono" for="ts" style="display:none">Unix timestamp</label>
+        <input id="ts" class="mono" inputmode="numeric" placeholder="e.g. 1734500000 or 1734500000000" style="flex:1" aria-describedby="tsHelp"/>
+        <label for="unit" style="display:none">Unit</label>
+        <select id="unit" aria-label="Unit">
+          <option value="auto" selected>Auto</option>
+          <option value="s">Seconds (10 digits)</option>
+          <option value="ms">Milliseconds (13 digits)</option>
+        </select>
+        <button id="now" class="primary" aria-label="Insert current epoch">Now</button>
+      </div>
+      <div class="help" id="tsHelp">Tip: Auto detects 10-digit seconds and 13-digit milliseconds. Use Unit to override.</div>
+
+      <!-- Preferred first (only visible if current language has a preferred zone) -->
+      <div id="prefWrap" style="margin-top:10px;display:none">
+        <div class="muted"><span id="prefLabel">Preferred</span><span class="badge" id="prefBadge"></span></div>
+        <div id="pref" class="out mono" aria-live="polite">—</div>
+      </div>
+
+      <div style="margin-top:10px">
+        <div class="muted" id="lblLocal">Local</div>
+        <div id="local" class="out mono" aria-live="polite">—</div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="muted" id="lblUTC">UTC</div>
+        <div id="utc" class="out mono" aria-live="polite">—</div>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <button id="copyPref" style="display:none" title="Copy preferred date/time">Copy Preferred</button>
+        <button id="copyLocal" title="Copy local date/time">Copy Local</button>
+        <button id="copyUTC" title="Copy UTC date/time">Copy UTC</button>
+      </div>
+    </div>
+
+    <!-- Date -> Epoch -->
+    <div class="card" aria-labelledby="h-dt2ep">
+      <h2 id="h-dt2ep" style="margin:0 0 8px">Date → Epoch</h2>
+      <div class="row" role="group" aria-label="Date-time input">
+        <label for="date" style="display:none">Date</label>
+        <input id="date" type="date"/>
+        <label for="time" style="display:none">Time</label>
+        <input id="time" type="time" step="1"/>
+        <label for="zone" style="display:none">Zone</label>
+        <select id="zone" aria-label="Zone">
+          <!-- preferred option injected dynamically when available -->
+          <option value="local">Local</option>
+          <option value="utc">UTC</option>
+        </select>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button id="toEpoch" class="primary">Convert</button>
+        <button id="fillNow" title="Fill current local date/time">Fill Now</button>
+      </div>
+      <div style="margin-top:10px">
+        <div class="muted" id="lblSec">Seconds</div>
+        <div id="sec" class="out mono" aria-live="polite">—</div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="muted" id="lblMs">Milliseconds</div>
+        <div id="msec" class="out mono" aria-live="polite">—</div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button id="copySec">Copy Seconds</button>
+        <button id="copyMs">Copy Milliseconds</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="linkrow help" style="margin-top:12px">
+    <span id="rel">Related tools:</span>
+    <a href="/time/timezone-converter/">Time Zone Converter</a>
+    <a href="/time/countdown-timer/">Countdown Timer</a>
+    <a href="/time/stopwatch/">Stopwatch</a>
+  </div>
+</section>
+</main>
+
+<script>
+/* ---------- i18n (9 languages) + preferred zones ---------- */
+const I18N = {
+  en:{title:"Unix Timestamp Converter — Epoch ↔ Local & UTC Time | GoToolOnline",
+      desc:"Free Unix timestamp converter. Convert epoch seconds or milliseconds to Local/UTC time and back. Auto-detect 10/13-digit input, copy-ready outputs, URL sharing. Works offline.",
+      back:"← Back to Home",
+      bcHome:"Home", bcTime:"Time Tools", bcCur:"Unix Timestamp Converter",
+      h1:"Unix Timestamp Converter",
+      hero:"Convert <b>Unix epoch</b> (seconds or milliseconds) ↔ <b>Local / UTC</b>. Auto-detect 10/13-digit input. Works fully offline.",
+      ep2dt:"Epoch → Date", dt2ep:"Date → Epoch",
+      phTS:"e.g. 1734500000 or 1734500000000",
+      unitAuto:"Auto", unitS:"Seconds (10 digits)", unitMS:"Milliseconds (13 digits)",
+      now:"Now", tip:"Tip: Auto detects 10-digit seconds and 13-digit milliseconds. Use Unit to override.",
+      preferred:"Preferred", local:"Local", utc:"UTC",
+      copyPref:"Copy Preferred", copyLocal:"Copy Local", copyUTC:"Copy UTC",
+      date:"Date", time:"Time", zone:"Zone",
+      zonePref:"Preferred", zoneLocal:"Local", zoneUTC:"UTC",
+      convert:"Convert", fill:"Fill Now",
+      seconds:"Seconds", milliseconds:"Milliseconds",
+      copySec:"Copy Seconds", copyMs:"Copy Milliseconds",
+      related:"Related tools:",
+      alertPickDate:"Pick a date", alertInvalid:"Invalid date/time"},
+  zh:{title:"Unix 时间戳转换器 — Epoch ↔ 本地/UTC | GoToolOnline",
+      desc:"免费 Unix 时间戳转换器。秒/毫秒 ↔ 本地/UTC 互转。自动识别 10/13 位输入，结果可复制，支持 URL 共享，离线可用。",
+      back:"← 返回首页",
+      bcHome:"首页", bcTime:"时间工具", bcCur:"Unix 时间戳转换器",
+      h1:"Unix 时间戳转换器",
+      hero:"将 <b>Unix epoch</b>（秒/毫秒）与 <b>本地 / UTC</b> 互相转换。自动识别 10/13 位输入，完全离线运行。",
+      ep2dt:"Epoch → 日期/时间", dt2ep:"日期/时间 → Epoch",
+      phTS:"如 1734500000 或 1734500000000",
+      unitAuto:"自动", unitS:"秒（10 位）", unitMS:"毫秒（13 位）",
+      now:"此刻", tip:"提示：自动识别 10 位秒、13 位毫秒；也可在单位中手动指定。",
+      preferred:"优先（语言地区）", local:"本地", utc:"UTC",
+      copyPref:"复制优先时间", copyLocal:"复制本地时间", copyUTC:"复制 UTC",
+      date:"日期", time:"时间", zone:"时区",
+      zonePref:"优先", zoneLocal:"本地", zoneUTC:"UTC",
+      convert:"转换", fill:"填入当前", seconds:"秒", milliseconds:"毫秒",
+      copySec:"复制秒", copyMs:"复制毫秒", related:"相关工具：",
+      alertPickDate:"请先选择日期", alertInvalid:"日期/时间无效"},
+  ph:{title:"Unix Timestamp Converter — Epoch ↔ Lokal/UTC | GoToolOnline",
+      desc:"Libreng Unix timestamp converter. I-convert ang epoch (segundo/ms) sa Lokal/UTC at pabalik. Auto-detect 10/13-digit, copy-ready, URL share, offline.",
+      back:"← Balik sa Home",
+      bcHome:"Home", bcTime:"Mga Tool sa Oras", bcCur:"Unix Timestamp Converter",
+      h1:"Unix Timestamp Converter",
+      hero:"I-convert ang <b>Unix epoch</b> (segundo o millisecond) ↔ <b>Lokal / UTC</b>. Auto-detect 10/13-digit. Gumagana offline.",
+      ep2dt:"Epoch → Petsa/Oras", dt2ep:"Petsa/Oras → Epoch",
+      phTS:"hal. 1734500000 o 1734500000000",
+      unitAuto:"Auto", unitS:"Segundos (10 digit)", unitMS:"Milliseconds (13 digit)",
+      now:"Ngayon", tip:"Tip: Auto 10/13-digit; puwedeng i-override sa Unit.",
+      preferred:"Preferred", local:"Lokal", utc:"UTC",
+      copyPref:"Kopyahin Preferred", copyLocal:"Kopyahin Lokal", copyUTC:"Kopyahin UTC",
+      date:"Petsa", time:"Oras", zone:"Zone",
+      zonePref:"Preferred", zoneLocal:"Lokal", zoneUTC:"UTC",
+      convert:"I-convert", fill:"Ilagay Ngayon",
+      seconds:"Segundos", milliseconds:"Milliseconds",
+      copySec:"Kopyahin Segundos", copyMs:"Kopyahin Milliseconds",
+      related:"Kaugnay na tools:", alertPickDate:"Pumili ng petsa", alertInvalid:"Di-wastong petsa/oras"},
+  id:{title:"Konverter Timestamp Unix — Epoch ↔ Lokal & UTC | GoToolOnline",
+      desc:"Konverter timestamp Unix gratis. Ubah epoch (detik/ms) ke Lokal/UTC dan sebaliknya. Deteksi 10/13 digit, salin cepat, URL, offline.",
+      back:"← Kembali",
+      bcHome:"Beranda", bcTime:"Alat Waktu", bcCur:"Konverter Timestamp Unix",
+      h1:"Konverter Timestamp Unix",
+      hero:"Ubah <b>Unix epoch</b> (detik atau milidetik) ↔ <b>Lokal / UTC</b>. Deteksi otomatis 10/13 digit. Offline.",
+      ep2dt:"Epoch → Tanggal", dt2ep:"Tanggal → Epoch",
+      phTS:"mis. 1734500000 atau 1734500000000",
+      unitAuto:"Otomatis", unitS:"Detik (10 digit)", unitMS:"Milidetik (13 digit)",
+      now:"Sekarang", tip:"Tip: Otomatis 10/13 digit; bisa ubah di Unit.",
+      preferred:"Preferensi", local:"Lokal", utc:"UTC",
+      copyPref:"Salin Preferensi", copyLocal:"Salin Lokal", copyUTC:"Salin UTC",
+      date:"Tanggal", time:"Waktu", zone:"Zona",
+      zonePref:"Preferensi", zoneLocal:"Lokal", zoneUTC:"UTC",
+      convert:"Konversi", fill:"Isi Sekarang",
+      seconds:"Detik", milliseconds:"Milidetik",
+      copySec:"Salin Detik", copyMs:"Salin Milidetik",
+      related:"Alat terkait:", alertPickDate:"Pilih tanggal", alertInvalid:"Tanggal/waktu tidak valid"},
+  vi:{title:"Bộ đổi dấu thời gian Unix — Epoch ↔ Cục bộ & UTC | GoToolOnline",
+      desc:"Chuyển đổi epoch Unix (giây/ms) sang Cục bộ/UTC và ngược lại. Tự nhận 10/13 chữ số, sao chép nhanh, chia sẻ URL, offline.",
+      back:"← Về trang chủ",
+      bcHome:"Trang chủ", bcTime:"Công cụ Thời gian", bcCur:"Bộ đổi Unix Timestamp",
+      h1:"Bộ đổi Unix Timestamp",
+      hero:"Đổi <b>Unix epoch</b> (giây hoặc mili-giây) ↔ <b>Cục bộ / UTC</b>. Tự nhận 10/13 chữ số. Hoạt động offline.",
+      ep2dt:"Epoch → Ngày/Giờ", dt2ep:"Ngày/Giờ → Epoch",
+      phTS:"vd. 1734500000 hoặc 1734500000000",
+      unitAuto:"Tự động", unitS:"Giây (10 số)", unitMS:"Mili-giây (13 số)",
+      now:"Bây giờ", tip:"Mẹo: Tự nhận 10/13 số; có thể chỉnh ở Đơn vị.",
+      preferred:"Ưu tiên", local:"Cục bộ", utc:"UTC",
+      copyPref:"Sao chép Ưu tiên", copyLocal:"Sao chép Cục bộ", copyUTC:"Sao chép UTC",
+      date:"Ngày", time:"Giờ", zone:"Múi giờ",
+      zonePref:"Ưu tiên", zoneLocal:"Cục bộ", zoneUTC:"UTC",
+      convert:"Chuyển đổi", fill:"Điền hiện tại",
+      seconds:"Giây", milliseconds:"Mili-giây",
+      copySec:"Sao chép Giây", copyMs:"Sao chép Mili-giây",
+      related:"Công cụ liên quan:", alertPickDate:"Chọn ngày", alertInvalid:"Ngày/giờ không hợp lệ"},
+  bn:{title:"ইউনিক্স টাইমস্ট্যাম্প কনভার্টার — Epoch ↔ লোকাল/UTC | GoToolOnline",
+      desc:"বিনামূল্যে ইউনিক্স টাইমস্ট্যাম্প কনভার্টার। সেকেন্ড/মিলিসেকেন্ড ↔ লোকাল/UTC। 10/13 অংক অটো-ডিটেক্ট, কপি সহজ, URL শেয়ার, অফলাইন।",
+      back:"← হোমে ফিরে যান",
+      bcHome:"হোম", bcTime:"সময়ের টুলস", bcCur:"ইউনিক্স টাইমস্ট্যাম্প কনভার্টার",
+      h1:"ইউনিক্স টাইমস্ট্যাম্প কনভার্টার",
+      hero:"<b>ইউনিক্স epoch</b> (সেকেন্ড/মিলিসেকেন্ড) ↔ <b>লোকাল / UTC</b> রূপান্তর। 10/13 অংক অটো-ডিটেক্ট। অফলাইন।",
+      ep2dt:"Epoch → তারিখ/সময়", dt2ep:"তারিখ/সময় → Epoch",
+      phTS:"যেমন 1734500000 বা 1734500000000",
+      unitAuto:"অটো", unitS:"সেকেন্ড (10 অংক)", unitMS:"মিলিসেকেন্ড (13 অংক)",
+      now:"এখন", tip:"ইঙ্গিত: 10/13 অংক অটো; ইউনিটে বদলাতে পারেন।",
+      preferred:"অগ্রাধিকার", local:"লোকাল", utc:"UTC",
+      copyPref:"অগ্রাধিকার কপি", copyLocal:"লোকাল কপি", copyUTC:"UTC কপি",
+      date:"তারিখ", time:"সময়", zone:"জোন",
+      zonePref:"অগ্রাধিকার", zoneLocal:"লোকাল", zoneUTC:"UTC",
+      convert:"রূপান্তর", fill:"এখন বসান",
+      seconds:"সেকেন্ড", milliseconds:"মিলিসেকেন্ড",
+      copySec:"সেকেন্ড কপি", copyMs:"মিলিসেকেন্ড কপি",
+      related:"সম্পর্কিত টুলস:", alertPickDate:"তারিখ নির্বাচন করুন", alertInvalid:"তারিখ/সময় সঠিক নয়"},
+  ng:null, // fallback en
+  sw:{title:"Kigeuzi cha Timestamp ya Unix — Epoch ↔ Ndani & UTC | GoToolOnline",
+      desc:"Kigeuzi cha Unix bila malipo. Badilisha epoch (sekunde/ms) hadi Ndani/UTC na kurudi. Hutambua 10/13 tarakimu, kunakili kwa urahisi, URL, offline.",
+      back:"← Rudi Nyumbani",
+      bcHome:"Nyumbani", bcTime:"Zana za Muda", bcCur:"Kigeuzi cha Unix Timestamp",
+      h1:"Kigeuzi cha Unix Timestamp",
+      hero:"Badilisha <b>Unix epoch</b> (sekunde au milisekunde) ↔ <b>Ndani / UTC</b>. Hutambua kiotomatiki 10/13 tarakimu. Hufanya kazi offline.",
+      ep2dt:"Epoch → Tarehe/Saa", dt2ep:"Tarehe/Saa → Epoch",
+      phTS:"mf. 1734500000 au 1734500000000",
+      unitAuto:"Otomatiki", unitS:"Sekunde (tarakimu 10)", unitMS:"Milisekunde (tarakimu 13)",
+      now:"Sasa", tip:"Dokezo: Hutambua 10/13; unaweza kubadili kwenye Kitengo.",
+      preferred:"Pendekezwa", local:"Ndani", utc:"UTC",
+      copyPref:"Nakili Pendekezwa", copyLocal:"Nakili Ndani", copyUTC:"Nakili UTC",
+      date:"Tarehe", time:"Saa", zone:"Kanda",
+      zonePref:"Pendekezwa", zoneLocal:"Ndani", zoneUTC:"UTC",
+      convert:"Badilisha", fill:"Jaza Sasa",
+      seconds:"Sekunde", milliseconds:"Milisekunde",
+      copySec:"Nakili Sekunde", copyMs:"Nakili Milisekunde",
+      related:"Zana zinazohusiana:", alertPickDate:"Chagua tarehe", alertInvalid:"Tarehe/saa si halali"},
+  ar:{title:"محول طابع يونكس — Epoch ↔ المحلي وUTC | GoToolOnline",
+      desc:"محول طابع يونكس مجاني. حوّل الثواني/المللي ثانية ↔ المحلي/UTC. يكتشف 10/13 رقمًا تلقائيًا، نسخ سريع، مشاركة رابط، يعمل دون اتصال.",
+      back:"← الرجوع إلى الصفحة الرئيسية",
+      bcHome:"الصفحة الرئيسية", bcTime:"أدوات الوقت", bcCur:"محول طابع يونكس",
+      h1:"محول طابع يونكس",
+      hero:"حوّل <b>Epoch</b> يونكس (ثوانٍ أو مللي ثانية) ↔ <b>المحلي / UTC</b>. يكتشف 10/13 رقمًا تلقائيًا. يعمل دون اتصال.",
+      ep2dt:"Epoch → التاريخ/الوقت", dt2ep:"التاريخ/الوقت → Epoch",
+      phTS:"مثال 1734500000 أو 1734500000000",
+      unitAuto:"تلقائي", unitS:"ثوانٍ (10 أرقام)", unitMS:"مللي ثانية (13 رقمًا)",
+      now:"الآن", tip:"تلميح: يكتشف 10/13 رقمًا؛ ويمكنك تغييره من الوحدة.",
+      preferred:"المفضل", local:"المحلي", utc:"UTC",
+      copyPref:"نسخ المفضل", copyLocal:"نسخ المحلي", copyUTC:"نسخ UTC",
+      date:"التاريخ", time:"الوقت", zone:"المنطقة",
+      zonePref:"المفضل", zoneLocal:"المحلي", zoneUTC:"UTC",
+      convert:"تحويل", fill:"املأ الآن",
+      seconds:"ثوانٍ", milliseconds:"مللي ثانية",
+      copySec:"نسخ الثواني", copyMs:"نسخ المللي ثانية",
+      related:"أدوات ذات صلة:", alertPickDate:"اختر تاريخًا", alertInvalid:"تاريخ/وقت غير صالح"}
+};
+I18N.ng = I18N.en;
+
+const PREF_TZ = {
+  zh:"Asia/Shanghai",
+  ph:"Asia/Manila",
+  id:"Asia/Jakarta",
+  vi:"Asia/Ho_Chi_Minh",
+  bn:"Asia/Dhaka",
+  ng:"Africa/Lagos",
+  sw:"Africa/Nairobi",
+  ar:"Asia/Riyadh"
+};
+const HTML_LANG = { en:'en', zh:'zh-CN', ph:'tl-PH', id:'id-ID', vi:'vi-VN', bn:'bn', ng:'en-NG', sw:'sw', ar:'ar' };
+
+const $ = s=>document.querySelector(s);
+const qs = new URLSearchParams(location.search);
+
+function getLang(){ return qs.get('lang') || localStorage.getItem('lang') || 'en'; }
+function setLangURL(lang){
+  qs.set('lang', lang);
+  history.replaceState({}, '', location.pathname + '?' + qs.toString());
+}
+function applyLang(lang){
+  const t = I18N[lang] || I18N.en;
+  document.title = t.title;
+  const md = document.querySelector('meta[name="description"]'); if (md) md.setAttribute('content', t.desc);
+  document.documentElement.lang = HTML_LANG[lang] || 'en';
+  document.documentElement.dir  = (lang==='ar') ? 'rtl' : 'ltr';
+
+  $('#backHome').textContent = t.back;
+  $('#bcHome').textContent = t.bcHome;
+  $('#bcTime').textContent = t.bcTime;
+  $('#bcCur').textContent  = t.bcCur;
+
+  $('#h1').textContent = t.h1;
+  $('#hero').innerHTML = t.hero;
+
+  $('#h-ep2dt').textContent = t.ep2dt;
+  $('#ts').placeholder = t.phTS;
+  $('#unit option[value="auto"]').textContent = t.unitAuto;
+  $('#unit option[value="s"]').textContent    = t.unitS;
+  $('#unit option[value="ms"]').textContent   = t.unitMS;
+  $('#now').textContent = t.now;
+  $('#tsHelp').textContent = t.tip;
+  $('#prefLabel').textContent = t.preferred;
+  $('#lblLocal').textContent = t.local;
+  $('#lblUTC').textContent   = t.utc;
+  $('#copyPref').textContent = t.copyPref;
+  $('#copyLocal').textContent= t.copyLocal;
+  $('#copyUTC').textContent  = t.copyUTC;
+
+  $('#h-dt2ep').textContent = t.dt2ep;
+  $('#toEpoch').textContent  = t.convert;
+  $('#fillNow').textContent  = t.fill;
+  $('#lblSec').textContent   = t.seconds;
+  $('#lblMs').textContent    = t.milliseconds;
+  $('#copySec').textContent  = t.copySec;
+  $('#copyMs').textContent   = t.copyMs;
+
+  $('#rel').textContent = t.related;
+
+  // Zone select labels
+  const z = $('#zone');
+  const optLocal = z.querySelector('option[value="local"]');
+  const optUTC   = z.querySelector('option[value="utc"]');
+  if (optLocal) optLocal.textContent = t.zoneLocal;
+  if (optUTC)   optUTC.textContent   = t.zoneUTC;
+
+  // Preferred block & zone option
+  const prefTZ = PREF_TZ[lang];
+  const prefWrap = $('#prefWrap');
+  const copyPref = $('#copyPref');
+
+  // Inject/remove Preferred in zone select
+  let prefOpt = z.querySelector('option[value="pref"]');
+  if (prefTZ){
+    $('#prefBadge').textContent = prefTZ;
+    prefWrap.style.display = '';
+    copyPref.style.display = '';
+
+    if (!prefOpt){
+      prefOpt = document.createElement('option');
+      prefOpt.value = 'pref';
+      z.prepend(prefOpt);
+    }
+    prefOpt.textContent = t.zonePref;
+
+    // Default to preferred if URL didn't specify zone
+    if (!qs.get('zone')) z.value = 'pref';
+  }else{
+    prefWrap.style.display = 'none';
+    copyPref.style.display = 'none';
+    if (prefOpt) prefOpt.remove();
+    if (z.value === 'pref') z.value = 'local';
+  }
+
+  localStorage.setItem('lang', lang);
+  setLangURL(lang);
+  renderTS(); // refresh outputs & badges
+}
+
+function getPrefTZ(lang){ return PREF_TZ[lang] || null; }
+
+/* ---------- core logic ---------- */
+function fmt(d, tz){
+  return new Intl.DateTimeFormat([], {
+    year:'numeric',month:'short',day:'2-digit',
+    hour:'2-digit',minute:'2-digit',second:'2-digit',
+    hour12:false,timeZone: tz
+  }).format(d);
+}
+function detectUnitFromValue(v){
+  const s = v.trim();
+  if (!/^-?\d{1,20}$/.test(s)) return null;
+  if (s.length >= 13) return "ms";
+  if (s.length === 10) return "s";
+  const n = Number(s);
+  if (!Number.isFinite(n)) return null;
+  if (n > 1e12) return "ms";
+  if (n > 1e9 && n < 5e10) return "s";
+  return null;
+}
+function parseTS(){
+  const raw = $('#ts').value.trim();
+  if (!raw) return null;
+  if (!/^-?\d{1,20}$/.test(raw)) return null;
+  const sel = $('#unit').value;
+  const inferred = sel === 'auto' ? detectUnitFromValue(raw) : sel;
+  let n = Number(raw);
+  if (!Number.isFinite(n)) return null;
+  if (inferred === 's') n *= 1000;
+  return new Date(n);
+}
+function renderTS(){
+  const d = parseTS();
+  const lang = getLang();
+  const prefTZ = getPrefTZ(lang);
+
+  if(!d || Number.isNaN(d.getTime())){
+    $('#pref').textContent  = '—';
+    $('#local').textContent = '—';
+    $('#utc').textContent   = '—';
+  }else{
+    if (prefTZ) $('#pref').textContent = fmt(d, prefTZ);
+    $('#local').textContent = fmt(d);
+    $('#utc').textContent   = fmt(d,'UTC');
+  }
+  persistURL();
+}
+function zoneToTZ(val){
+  if (val==='utc') return 'UTC';
+  if (val==='pref') return getPrefTZ(getLang()) || Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+}
+function toEpoch(){
+  const t = I18N[getLang()] || I18N.en;
+  const date = $('#date').value;
+  const time = $('#time').value || '00:00:00';
+  if(!date){ alert(t.alertPickDate); return; }
+  const zSel = $('#zone').value;
+  const tz   = zoneToTZ(zSel);
+
+  // Construct date in chosen tz: create Date from parts by formatting to that tz offset
+  // Easiest: build an ISO in that tz using getTimezoneOffset difference trick is complex.
+  // Simpler here: if tz==='UTC', append Z; else treat as local by temporarily formatting.
+  let d;
+  if (tz === 'UTC'){
+    d = new Date(`${date}T${time}Z`);
+  }else{
+    // interpret as local wall time in that tz by getting equivalent UTC using that tz's offset at that time
+    const parts = `${date}T${time}:00`.slice(0,19); // ensure HH:MM:SS
+    const localCandidate = new Date(parts); // local
+    // Adjust from local to target tz by diff between target offset and local offset at that moment
+    const fmtOpt = { timeZone: tz, year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false };
+    const inTz = new Intl.DateTimeFormat('en-CA', fmtOpt).format(new Date(parts));
+    // inTz returns like "YYYY-MM-DD, HH:MM:SS" (locale-dependent). Build ISO then parse as if that wall time were in tz -> produce same instant as localCandidate but corrected.
+    const m = inTz.match(/(\d{4})-(\d{2})-(\d{2}).*?(\d{2}):(\d{2}):(\d{2})/);
+    if (m){
+      const iso = `${m[1]}-${m[2]}-${m[3]}T${m[4]}:${m[5]}:${m[6]}Z`;
+      d = new Date(iso);
+    }else{
+      d = localCandidate; // fallback
+    }
+  }
+
+  if(Number.isNaN(d.getTime())){ alert(t.alertInvalid); return; }
+  const ms = d.getTime();
+  $('#sec').textContent  = String(Math.floor(ms/1000));
+  $('#msec').textContent = String(ms);
+  persistURL();
+}
+function copy(text){
+  const v = (text||'').trim();
+  if (!v || v==='—') return;
+  navigator.clipboard?.writeText(v).catch(()=>{});
+}
+
+/* ---------- URL state ---------- */
+function persistURL(){
+  const lang = getLang();
+  if (lang) qs.set('lang', lang);
+
+  const ts = $('#ts').value.trim();
+  const unit = $('#unit').value;
+  const date = $('#date').value;
+  const time = $('#time').value;
+  const zone = $('#zone').value;
+
+  if (ts) qs.set('ts', ts); else qs.delete('ts');
+  if (unit && unit!=='auto') qs.set('unit', unit); else qs.delete('unit');
+  if (date) qs.set('date', date); else qs.delete('date');
+  if (time) qs.set('time', time); else qs.delete('time');
+  if (zone && zone!=='local') qs.set('zone', zone); else qs.delete('zone');
+
+  history.replaceState({}, '', location.pathname + (qs.toString()?('?'+qs.toString()):''));
+}
+function loadFromURL(){
+  const ts = qs.get('ts') || '';
+  const unit = qs.get('unit') || 'auto';
+  const date = qs.get('date');
+  const time = qs.get('time');
+  const zone = qs.get('zone');
+
+  if (ts) $('#ts').value = ts;
+  $('#unit').value = (['auto','s','ms'].includes(unit) ? unit : 'auto');
+  if (date) $('#date').value = date;
+  if (time) $('#time').value = time;
+  if (zone) $('#zone').value = zone;
+}
+
+/* ---------- events ---------- */
+$('#ts').addEventListener('input', renderTS);
+$('#unit').addEventListener('change', renderTS);
+$('#now').addEventListener('click', ()=>{
+  const mode = $('#unit').value;
+  const useMs = (mode==='ms') || (mode==='auto');
+  $('#ts').value = useMs ? String(Date.now()) : String(Math.floor(Date.now()/1000));
+  renderTS();
+});
+$('#toEpoch').addEventListener('click', toEpoch);
+$('#fillNow').addEventListener('click', ()=>{
+  const now = new Date();
+  $('#date').value = now.toISOString().slice(0,10);
+  $('#time').value = now.toTimeString().slice(0,8);
+  // if preferred tz exists and no explicit URL zone, keep current select value (likely 'pref'); otherwise default to local
+  if (!$('#zone').value) $('#zone').value = 'local';
+  toEpoch();
+});
+$('#copyPref').onclick  = ()=>copy($('#pref').textContent);
+$('#copyLocal').onclick = ()=>copy($('#local').textContent);
+$('#copyUTC').onclick   = ()=>copy($('#utc').textContent);
+$('#copySec').onclick   = ()=>copy($('#sec').textContent);
+$('#copyMs').onclick    = ()=>copy($('#msec').textContent);
+
+// Keyboard: Enter = run current panel
+window.addEventListener('keydown', (e)=>{
+  if (e.ctrlKey || e.metaKey) return;
+  if (e.key.toLowerCase()==='enter'){
+    if (document.activeElement && document.activeElement.closest('[aria-labelledby="h-dt2ep"]')) toEpoch();
+    else renderTS();
+  }
+});
+
+// Language boot & change
+const langSel = $('#lang');
+const bootLang = getLang();
+langSel.value = I18N[bootLang] ? bootLang : 'en';
+applyLang(langSel.value); // also sets document dir/lang and texts
+loadFromURL();            // load URL values (after we have labels & options)
+renderTS();
+if (!qs.get('ts') && !qs.get('date')){
+  $('#now').click();
+  $('#fillNow').click();
+}
+langSel.addEventListener('change', ()=>{
+  applyLang(langSel.value);
+});
+
+// Keep Home links carrying ?lang
+</script>
+
+<noscript>
+  <div class="card" style="max-width:800px;margin:24px auto">
+    <h2>JavaScript Required</h2>
+    <p class="muted">This converter runs entirely in your browser (for privacy and offline use). Please enable JavaScript.</p>
+  </div>
+</noscript>
+
+<script>
+(function(){
+  // Compute site root by removing the last two segments (category/tool)
+  var path = location.pathname.replace(/\/+$/,'');
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = [''];
+  var home = parts.join('/') + '/';
+
+  // preserve ?lang if present
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+
+  document.querySelectorAll('a[data-home]').forEach(function(a){
+    a.setAttribute('href', home);
+  });
+})();
+</script>
+</body>
+</html>

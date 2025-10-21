@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Countdown Timer — Up to 10 Timers, Presets & Sound | GoToolOnline</title>
+<meta name="description" content="Multi countdown timers (up to 10). Quick presets (30s, 1m, 2m, 5m, 10m, 30m, 1h), big buttons, progress bars, sound alert, titles, and end time. Mobile friendly."/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<link href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text x='6' y='52' font-size='48'>⏳</text></svg>" rel="icon"/>
+<!-- Canonical & Social -->
+
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Countdown Timer — Up to 10 Timers | GoToolOnline"/>
+<meta property="og:description" content="Start multiple countdown timers with quick presets, big buttons, progress bars and sound alerts."/>
+<meta property="og:url" content="https://gotoolonline.com/time/countdown-timer/"/>
+<meta name="twitter:card" content="summary"/>
+<!-- Structured data -->
+<script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebApplication",
+    "name":"Countdown Timer",
+    "url":"https://gotoolonline.com/time/countdown-timer/",
+    "applicationCategory":"Timer",
+    "operatingSystem":"Web",
+    "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+    "publisher":{"@type":"Organization","name":"GoToolOnline","url":"https://gotoolonline.com"}
+  }
+</script>
+<script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"BreadcrumbList",
+    "itemListElement":[
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://gotoolonline.com/"},
+      {"@type":"ListItem","position":2,"name":"Time Tools","item":"https://gotoolonline.com/time/"},
+      {"@type":"ListItem","position":3,"name":"Countdown Timer","item":"https://gotoolonline.com/time/countdown-timer/"}
+    ]
+  }
+</script>
+<script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"Can I run multiple timers at once?","acceptedAnswer":{"@type":"Answer","text":"Yes. You can run up to 10 timers simultaneously. Use presets or set minutes/seconds for each."}},
+      {"@type":"Question","name":"Will the alarm sound if the tab is in the background?","acceptedAnswer":{"@type":"Answer","text":"The timers keep counting in the background. Most browsers allow short sounds when time is up, but some may require the tab to be in focus or you to interact with the page first."}},
+      {"@type":"Question","name":"Does this store my data?","acceptedAnswer":{"@type":"Answer","text":"No account is needed and no data is sent to a server. Timers run in your browser."}}
+    ]
+  }
+</script>
+<style>
+  :root { --bg:#0a0f1e; --card:#0f1830; --muted:#9fb0c3; --fg:#eaf3ff; --acc:#4fb3ff; --ok:#61d095; --warn:#ffb86b; --danger:#ff6b6b; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+  header{max-width:1200px;margin:20px auto 8px;display:flex;gap:12px;align-items:center;padding:0 16px;position:relative}
+  header a{color:var(--fg);text-decoration:none}
+  .pill{padding:8px 12px;border:1px solid #24365b;background:#0f1a2f;border-radius:999px;white-space:nowrap}
+  .langWrap{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .lang{padding:8px 10px;border-radius:10px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;font-size:14px}
+  /* If a global #global-lang exists in header (site-wide control), place it near logo */
+  #global-lang.lang-dropdown{appearance:none;-webkit-appearance:none;outline:none;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;border-radius:999px;padding:.5rem 2rem .5rem .875rem;font:600 14px/1 Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;position:absolute;left:160px;top:8px;z-index:10}
+  main{max-width:1200px;margin:8px auto 72px;padding:0 16px}
+  h1{font-size:32px;margin:8px 0 6px}
+  p{color:var(--muted)}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+  button,input,select{padding:12px;border-radius:12px;border:1px solid #2a3d67;background:#0f1a2f;color:#eaf3ff;font-size:16px}
+  button{cursor:pointer;font-weight:800}
+  button.primary{background:linear-gradient(180deg,#2a78ff,#0050d4);border:none}
+  button.ghost{background:#0f1a2f}
+  button:disabled{opacity:.6;cursor:not-allowed}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+  .card{background:var(--card);border:1px solid #1a2843;border-radius:18px;padding:14px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .title{font-weight:800;font-size:18px}
+  .big{font-size:42px;font-weight:900;letter-spacing:1px}
+  .muted{color:var(--muted)}
+  .preset{padding:6px 10px;border-radius:999px;border:1px solid #2a3d67;background:#0f1a2f;cursor:pointer;font-size:14px}
+  .preset:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  .bar{height:10px;background:#0b1226;border:1px solid #1c2d55;border-radius:999px;overflow:hidden}
+  .bar>span{display:block;height:100%;background:linear-gradient(90deg,#2a78ff,#4fb3ff);width:0%}
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .danger{color:var(--danger)}
+  .note{font-size:13px;color:#9fb0c3}
+  .del{background:#1a0f12;border-color:#5b2436}
+  .del:hover{filter:brightness(1.06)}
+  .mini{padding:8px 10px;font-size:14px;border-radius:10px}
+  footer{max-width:1200px;margin:40px auto;padding:0 16px;color:var(--muted);font-size:14px}
+  .footer-links a{color:#8cd1ff;text-decoration:none;margin-right:10px}
+  .footer-links a:hover{text-decoration:underline}
+  @media (max-width:700px){ .big{font-size:36px} }
+</style>
+<script>function backToTop(){ window.scrollTo({top:0, behavior:'smooth'}); }</script>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/time/countdown-timer/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/time/countdown-timer/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/time/countdown-timer/">
+</head>
+<body>
+<header>
+  <a class="pill" data-home href="#">🛠 GoToolOnline</a>
+  <a id="backLink" class="pill" data-home href="#">← Back to Home</a>
+  <div class="langWrap">
+    <span class="muted">🌐</span>
+    <select id="lang" class="lang" aria-label="Language">
+      <option value="en">English</option>
+      <option value="zh">简体中文</option>
+      <option value="ph">Tagalog</option>
+      <option value="id">Bahasa Indonesia</option>
+      <option value="vi">Tiếng Việt</option>
+      <option value="bn">বাংলা</option>
+      <option value="ng">English (NG)</option>
+      <option value="sw">Kiswahili</option>
+      <option value="ar">العربية</option>
+    </select>
+  </div>
+</header>
+
+<main>
+  <nav aria-label="Breadcrumb" class="note" style="margin-bottom:8px">
+    <a id="bcHome" data-home href="#">Home</a> › <a id="bcTime" href="/time/">Time Tools</a> › <strong id="bcCurrent">Countdown Timer</strong>
+  </nav>
+
+  <section class="card">
+    <h1 id="pageTitle">Countdown Timer</h1>
+    <p id="hero">Run up to <strong>10</strong> timers at once. Quick presets below. When time’s up, you’ll get a sound alert.</p>
+    <div class="actions">
+      <button class="primary" id="addTimer">+ Add Timer</button>
+      <button class="ghost" id="clearAll">Clear All</button>
+    </div>
+    <div class="row" style="gap:8px;flex-wrap:wrap">
+      <span class="preset" data-sec="30">30s</span>
+      <span class="preset" data-sec="60">1m</span>
+      <span class="preset" data-sec="120">2m</span>
+      <span class="preset" data-sec="300">5m</span>
+      <span class="preset" data-sec="600">10m</span>
+      <span class="preset" data-sec="1800">30m</span>
+      <span class="preset" data-sec="3600">1h</span>
+      <span class="note" id="presetHint">Click a preset to create a timer instantly.</span>
+    </div>
+  </section>
+
+  <section id="wrap" class="grid" aria-live="polite"></section>
+
+  <!-- Related -->
+  <section class="card" style="margin-top:20px">
+    <h2 id="relTitle" style="margin:0 0 6px 0;font-size:22px">Related tools</h2>
+    <p class="note" id="relText" style="margin:0">
+      Need to compare dates or split time? Try
+      <a href="/calculators/date-difference/">Date Difference Calculator</a> or
+      <a href="/calculators/percentage-calculator/">Percentage Calculator</a>.
+    </p>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-links">
+    <a href="/about/">About</a> ·
+    <a href="/privacy/">Privacy</a> ·
+    <a href="/terms/">Terms</a> ·
+    <a href="/contact/">Contact</a>
+  </div>
+  <div style="margin-top:8px">© <span id="y"></span> GoToolOnline.com · Free online tools for everyone.</div>
+</footer>
+
+<script>
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  // ---------- i18n ----------
+  const HTML_LANG = { en:'en', zh:'zh-CN', ph:'tl-PH', id:'id-ID', vi:'vi-VN', bn:'bn', ng:'en-NG', sw:'sw', ar:'ar' };
+
+  const I18N = {
+    en:{pageTitle:"Countdown Timer — Up to 10 Timers, Presets & Sound | GoToolOnline",metaDesc:"Multi countdown timers (up to 10). Quick presets, progress bars, sound alert. Mobile friendly.",
+        back:"← Back to Home",crumbHome:"Home",crumbTime:"Time Tools",crumbCur:"Countdown Timer",
+        h1:"Countdown Timer", hero:"Run up to <strong>10</strong> timers at once. Quick presets below. When time’s up, you’ll get a sound alert.",
+        add:"+ Add Timer", clear:"Clear All", presetHint:"Click a preset to create a timer instantly.",
+        minutes:"Minutes", seconds:"Seconds", sound:"Sound", titlePH:"Title (optional)", delete:"Delete",
+        start:"Start", pause:"Pause", reset:"Reset", ends:"Ends at",
+        tip:"Tip: edit minutes/seconds before starting. Progress bar shows remaining time.",
+        maxTimers:"Max 10 timers.", setDuration:"Set a duration first.",
+        relTitle:"Related tools", relText:"Need to compare dates or split time? Try",
+        relOr:"or",
+        units:{s:"s",m:"m",h:"h"}
+    },
+    zh:{pageTitle:"倒计时计时器 — 最多 10 个、预设与提示音 | GoToolOnline",metaDesc:"支持最多 10 个倒计时。快速预设、进度条、提示音，移动端友好。",
+        back:"← 返回首页",crumbHome:"首页",crumbTime:"时间工具",crumbCur:"倒计时计时器",
+        h1:"倒计时计时器", hero:"可同时运行 <strong>10</strong> 个计时器。下方有快速预设。时间到会有提示音。",
+        add:"+ 新建计时器", clear:"清空全部", presetHint:"点击预设即可快速创建计时器。",
+        minutes:"分钟", seconds:"秒", sound:"声音", titlePH:"标题（可选）", delete:"删除",
+        start:"开始", pause:"暂停", reset:"重置", ends:"结束于",
+        tip:"提示：开始前先设置分钟/秒。进度条显示剩余时间。",
+        maxTimers:"最多 10 个计时器。", setDuration:"请先设置时长。",
+        relTitle:"相关工具", relText:"需要比较日期或拆分时间？试试",
+        relOr:"或",
+        units:{s:"秒",m:"分",h:"小时"}
+    },
+    ph:{pageTitle:"Countdown Timer — Hanggang 10 Timer, Presets at Tunog | GoToolOnline",metaDesc:"Maraming timer (hanggang 10). Mabilis na preset, progress bar, at tunog. Mobile-friendly.",
+        back:"← Balik sa Home",crumbHome:"Home",crumbTime:"Mga Tool sa Oras",crumbCur:"Countdown Timer",
+        h1:"Countdown Timer", hero:"Magpatakbo ng <strong>hanggang 10</strong> timer sabay-sabay. May mabilis na preset sa ibaba. Tutunog kapag tapos na.",
+        add:"+ Dagdag Timer", clear:"I-clear Lahat", presetHint:"I-click ang preset para gumawa agad ng timer.",
+        minutes:"Minuto", seconds:"Segundo", sound:"Tunog", titlePH:"Pamagat (opsyonal)", delete:"Delete",
+        start:"Start", pause:"Pause", reset:"Reset", ends:"Matatapos sa",
+        tip:"Tip: i-edit muna ang minuto/segundo bago magsimula. Ipinapakita ng progress bar ang natitirang oras.",
+        maxTimers:"Pinakamataas na 10 timer.", setDuration:"Maglagay muna ng tagal.",
+        relTitle:"Kaugnay na tool", relText:"Kailangang ikumpara ang petsa o hatiin ang oras? Subukan ang",
+        relOr:"o",
+        units:{s:"seg",m:"min",h:"oras"}
+    },
+    id:{pageTitle:"Penghitung Waktu Mundur — Hingga 10 Timer, Preset & Suara | GoToolOnline",metaDesc:"Banyak timer (hingga 10). Preset cepat, bilah progres, dan bunyi peringatan. Ramah seluler.",
+        back:"← Kembali ke Beranda",crumbHome:"Beranda",crumbTime:"Alat Waktu",crumbCur:"Penghitung Waktu Mundur",
+        h1:"Penghitung Waktu Mundur", hero:"Jalankan <strong>hingga 10</strong> timer sekaligus. Preset cepat di bawah. Saat selesai akan berbunyi.",
+        add:"+ Tambah Timer", clear:"Hapus Semua", presetHint:"Klik preset untuk membuat timer instan.",
+        minutes:"Menit", seconds:"Detik", sound:"Suara", titlePH:"Judul (opsional)", delete:"Hapus",
+        start:"Mulai", pause:"Jeda", reset:"Atur Ulang", ends:"Selesai pada",
+        tip:"Tip: edit menit/detik sebelum mulai. Batang progres menampilkan sisa waktu.",
+        maxTimers:"Maksimal 10 timer.", setDuration:"Tetapkan durasi terlebih dahulu.",
+        relTitle:"Alat terkait", relText:"Perlu membandingkan tanggal atau membagi waktu? Coba",
+        relOr:"atau",
+        units:{s:"dtk",m:"mnt",h:"jam"}
+    },
+    vi:{pageTitle:"Bộ đếm ngược — Tối đa 10 bộ hẹn giờ, preset & âm báo | GoToolOnline",metaDesc:"Nhiều bộ đếm ngược (tối đa 10). Preset nhanh, thanh tiến trình, âm báo. Hỗ trợ di động.",
+        back:"← Về Trang chủ",crumbHome:"Trang chủ",crumbTime:"Công cụ Thời gian",crumbCur:"Bộ đếm ngược",
+        h1:"Bộ đếm ngược", hero:"Chạy <strong>tối đa 10</strong> bộ hẹn giờ cùng lúc. Có preset nhanh bên dưới. Hết giờ sẽ phát âm báo.",
+        add:"+ Thêm bộ hẹn giờ", clear:"Xóa tất cả", presetHint:"Nhấn preset để tạo nhanh.",
+        minutes:"Phút", seconds:"Giây", sound:"Âm thanh", titlePH:"Tiêu đề (tuỳ chọn)", delete:"Xoá",
+        start:"Bắt đầu", pause:"Tạm dừng", reset:"Đặt lại", ends:"Kết thúc lúc",
+        tip:"Mẹo: hãy chỉnh phút/giây trước khi bắt đầu. Thanh tiến trình hiển thị thời gian còn lại.",
+        maxTimers:"Tối đa 10 bộ hẹn giờ.", setDuration:"Vui lòng đặt thời lượng trước.",
+        relTitle:"Công cụ liên quan", relText:"Cần so sánh ngày hoặc chia thời gian? Hãy thử",
+        relOr:"hoặc",
+        units:{s:"giây",m:"phút",h:"giờ"}
+    },
+    bn:{pageTitle:"কাউন্টডাউন টাইমার — সর্বোচ্চ ১০টি, প্রিসেট ও সাউন্ড | GoToolOnline",metaDesc:"একাধিক টাইমার (সর্বোচ্চ ১০টি)। দ্রুত প্রিসেট, প্রগ্রেস বার, সাউন্ড অ্যালার্ট। মোবাইলে উপযোগী।",
+        back:"← হোমে ফিরে যান",crumbHome:"হোম",crumbTime:"সময়ের টুলস",crumbCur:"কাউন্টডাউন টাইমার",
+        h1:"কাউন্টডাউন টাইমার", hero:"একসাথে <strong>১০</strong>টি পর্যন্ত টাইমার চালান। নিচে দ্রুত প্রিসেট আছে। সময় শেষ হলে শব্দ শোনা যাবে।",
+        add:"+ টাইমার যোগ করুন", clear:"সব মুছুন", presetHint:"প্রিসেট ক্লিক করলে সঙ্গে সঙ্গে টাইমার তৈরি হবে।",
+        minutes:"মিনিট", seconds:"সেকেন্ড", sound:"সাউন্ড", titlePH:"শিরোনাম (ঐচ্ছিক)", delete:"মুছুন",
+        start:"শুরু", pause:"বিরতি", reset:"রিসেট", ends:"শেষ হবে",
+        tip:"পরামর্শ: শুরু করার আগে মিনিট/সেকেন্ড ঠিক করুন। প্রগ্রেস বার বাকি সময় দেখায়।",
+        maxTimers:"সর্বোচ্চ ১০টি টাইমার।", setDuration:"আগে সময়সীমা দিন।",
+        relTitle:"সংশ্লিষ্ট টুলস", relText:"তারিখ তুলনা বা সময় ভাগ করতে চান? চেষ্টা করুন",
+        relOr:"অথবা",
+        units:{s:"সেকেন্ড",m:"মিনিট",h:"ঘন্টা"}
+    },
+    sw:{pageTitle:"Kipima Muda wa Kurudi Nyuma — Mpaka Vipima Muda 10 | GoToolOnline",metaDesc:"Vipima muda vingi (hadi 10). Preseti za haraka, upau wa maendeleo, arifa ya sauti. Rafiki kwa simu.",
+        back:"← Rudi Nyumbani",crumbHome:"Nyumbani",crumbTime:"Zana za Muda",crumbCur:"Kipima Muda wa Kurudi Nyuma",
+        h1:"Kipima Muda wa Kurudi Nyuma", hero:"Endesha <strong>hadi vipima muda 10</strong> kwa wakati mmoja. Preseti za haraka zipo hapa chini. Sauti italia muda ukiisha.",
+        add:"+ Ongeza Kipima muda", clear:"Futa Vyote", presetHint:"Bofya preset kuunda kipima muda mara moja.",
+        minutes:"Dakika", seconds:"Sekunde", sound:"Sauti", titlePH:"Kichwa (hiari)", delete:"Futa",
+        start:"Anza", pause:"Sitisha", reset:"Weka upya", ends:"Inaisha saa",
+        tip:"Dokezo: hariri dakika/sekunde kabla ya kuanza. Upau wa maendeleo unaonyesha muda uliobaki.",
+        maxTimers:"Upeo ni vipima muda 10.", setDuration:"Weka muda kwanza.",
+        relTitle:"Zana zinazohusiana", relText:"Unahitaji kulinganisha tarehe au kugawa muda? Jaribu",
+        relOr:"au",
+        units:{s:"sek",m:"dak",h:"saa"}
+    },
+    ar:{pageTitle:"عدّاد تنازلي — حتى 10 مؤقتات، إعدادات مسبقة وتنبيه صوتي | GoToolOnline",metaDesc:"عدّة مؤقتات (حتى 10). إعدادات سريعة، شريط تقدّم، وتنبيه صوتي. مناسب للجوال.",
+        back:"← الرجوع إلى الصفحة الرئيسية",crumbHome:"الصفحة الرئيسية",crumbTime:"أدوات الوقت",crumbCur:"العدّاد التنازلي",
+        h1:"العدّاد التنازلي", hero:"شغّل <strong>حتى 10</strong> مؤقتات في آنٍ واحد. إعدادات سريعة بالأسفل. عند الانتهاء سيصدر تنبيه صوتي.",
+        add:"+ إضافة مؤقت", clear:"مسح الكل", presetHint:"انقر إعدادًا مسبقًا لإنشاء مؤقت فورًا.",
+        minutes:"دقائق", seconds:"ثوانٍ", sound:"صوت", titlePH:"عنوان (اختياري)", delete:"حذف",
+        start:"بدء", pause:"إيقاف مؤقت", reset:"إعادة ضبط", ends:"ينتهي عند",
+        tip:"تلميح: حرّر الدقائق/الثواني قبل البدء. يوضح شريط التقدّم الوقت المتبقي.",
+        maxTimers:"الحد الأقصى 10 مؤقتات.", setDuration:"حدِّد مدة أولًا.",
+        relTitle:"أدوات ذات صلة", relText:"هل تريد مقارنة التواريخ أو تقسيم الوقت؟ جرّب",
+        relOr:"أو",
+        units:{s:"ث",m:"د",h:"س"}
+    }
+  };
+  // English (NG) fallback to en
+  I18N.ng = I18N.en;
+
+  function getLang(){
+    const u = new URL(location.href);
+    return u.searchParams.get('lang') || localStorage.getItem('lang') || 'en';
+  }
+
+  function setHomeLinks(lang){
+    // Compute site root by removing the last two segments (category/tool)
+    var path = location.pathname.replace(/\/+$/,''); // strip trailing slashes
+    var parts = path.split('/');
+    if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+    else parts = ['']; // already at root
+    var home = parts.join('/') + '/';
+
+    // preserve ?lang if present
+    if (lang) {
+      var u = new URL(home, location.origin);
+      u.searchParams.set('lang', lang);
+      home = u.pathname + u.search + u.hash;
+    }
+    document.querySelectorAll('[data-home]').forEach(a=>a.setAttribute('href', home));
+  }
+
+  function formatPreset(sec, t){
+    const u = t.units;
+    if (sec % 3600 === 0) return (sec/3600) + (u.h || 'h');
+    if (sec % 60 === 0)   return (sec/60)   + (u.m || 'm');
+    return sec + (u.s || 's');
+  }
+
+  function applyLang(lang){
+    const t = I18N[lang] || I18N.en;
+    document.documentElement.lang = HTML_LANG[lang] || 'en';
+    document.documentElement.dir  = (lang === 'ar') ? 'rtl' : 'ltr';
+
+    document.title = t.pageTitle;
+    const md = document.querySelector('meta[name="description"]'); if (md) md.setAttribute('content', t.metaDesc);
+
+    // Header & crumbs
+    document.getElementById('backLink').textContent = t.back;
+    document.getElementById('bcHome').textContent = t.crumbHome;
+    document.getElementById('bcTime').textContent = t.crumbTime;
+    document.getElementById('bcCurrent').textContent = t.crumbCur;
+
+    // Hero & actions
+    document.getElementById('pageTitle').textContent = t.h1;
+    document.getElementById('hero').innerHTML = t.hero;
+    document.getElementById('addTimer').textContent = t.add;
+    document.getElementById('clearAll').textContent = t.clear;
+    document.getElementById('presetHint').textContent = t.presetHint;
+
+    // Preset labels
+    document.querySelectorAll('.preset').forEach(el=>{
+      const sec = parseInt(el.dataset.sec,10);
+      el.textContent = formatPreset(sec, t);
+    });
+
+    // Related
+    document.getElementById('relTitle').textContent = t.relTitle;
+    const relP = document.getElementById('relText');
+    relP.innerHTML = `${t.relText} <a href="/calculators/date-difference/">Date Difference Calculator</a> ${t.relOr} <a href="/calculators/percentage-calculator/">Percentage Calculator</a>.`;
+
+    // Existing cards text refresh
+    document.querySelectorAll('.lbl-min').forEach(el=>el.firstChild && (el.firstChild.nodeValue = t.minutes + ' '));
+    document.querySelectorAll('.lbl-sec').forEach(el=>el.firstChild && (el.firstChild.nodeValue = t.seconds + ' '));
+    document.querySelectorAll('.lbl-sound').forEach(el=>{ if (el.lastChild) el.lastChild.nodeValue = ' ' + t.sound; });
+    document.querySelectorAll('.btn-start').forEach(el=>el.textContent = t.start);
+    document.querySelectorAll('.btn-pause').forEach(el=>el.textContent = t.pause);
+    document.querySelectorAll('.btn-reset').forEach(el=>el.textContent = t.reset);
+    document.querySelectorAll('.btn-del').forEach(el=>{ el.textContent = t.delete; el.title = t.delete; });
+    document.querySelectorAll('.lbl-ends').forEach(el=>el.firstChild && (el.firstChild.nodeValue = t.ends + ' '));
+    document.querySelectorAll('.tip-text').forEach(el=>el.textContent = t.tip);
+    document.querySelectorAll('.title').forEach(el=>el.placeholder = t.titlePH);
+
+    // Persist & URL
+    localStorage.setItem('lang', lang);
+    const url = new URL(location.href);
+    url.searchParams.set('lang', lang);
+    const qs = url.searchParams.toString();
+    history.replaceState({}, '', url.pathname + (qs ? ('?' + qs) : '') + location.hash);
+
+    setHomeLinks(lang);
+    window._i18n = t;
+
+    // sync to site-wide dropdown if present
+    const g = document.getElementById('global-lang');
+    if (g && g.value !== lang) g.value = lang;
+  }
+
+  const sel = document.getElementById('lang');
+  const cur = getLang();
+  sel.value = I18N[cur] ? cur : 'en';
+  applyLang(sel.value);
+  sel.addEventListener('change', ()=>applyLang(sel.value));
+
+  // If a site-wide #global-lang exists, keep two-way sync
+  (function syncGlobal(){
+    const g = document.getElementById('global-lang');
+    if (!g) return;
+    g.value = sel.value;
+    g.addEventListener('change', ()=>{ sel.value = g.value; applyLang(sel.value); });
+    sel.addEventListener('change', ()=>{ if (g.value !== sel.value) g.value = sel.value; });
+  })();
+</script>
+
+<script>
+  // ------- Countdown logic -------
+  const MAX_TIMERS = 10;
+
+  function beep(){
+    try{
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type='sine'; o.frequency.value = 880;
+      o.connect(g); g.connect(ctx.destination);
+      g.gain.setValueAtTime(0.001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + 0.01);
+      o.start();
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
+      o.stop(ctx.currentTime + 1.05);
+    }catch{}
+  }
+
+  const wrap = document.getElementById('wrap');
+  const addBtn = document.getElementById('addTimer');
+  const clearAllBtn = document.getElementById('clearAll');
+
+  let idSeq = 1;
+  const timers = new Map(); // id -> state
+
+  function fmt(ms){
+    if (ms < 0) ms = 0;
+    const total = Math.floor(ms/1000);
+    const h = Math.floor(total/3600);
+    const m = Math.floor((total%3600)/60);
+    const s = total%60;
+    return (h>0 ? String(h).padStart(2,'0')+':' : '') +
+           String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  }
+
+  function endTimeFromNow(ms){
+    const d = new Date(Date.now() + ms);
+    return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  }
+
+  function makeCard(presetSec){
+    const t = window._i18n || I18N.en;
+    if (timers.size >= MAX_TIMERS){ alert(t.maxTimers); return; }
+    const id = idSeq++;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="row" style="justify-content:space-between">
+        <input type="text" class="title" placeholder="${t.titlePH}" aria-label="Title">
+        <button class="mini del btn-del" title="${t.delete}">${t.delete}</button>
+      </div>
+
+      <div class="row" style="margin-top:8px">
+        <label class="lbl-min">${t.minutes} <input class="min" type="number" min="0" max="599" value="${presetSec?Math.floor(presetSec/60):0}" style="width:100px"></label>
+        <label class="lbl-sec">${t.seconds} <input class="sec" type="number" min="0" max="59" value="${presetSec?presetSec%60:0}" style="width:100px"></label>
+        <label class="row lbl-sound" style="gap:6px"><input type="checkbox" class="sound" checked> ${t.sound}</label>
+      </div>
+
+      <div class="row" style="margin-top:8px">
+        <button class="start primary btn-start">${t.start}</button>
+        <button class="pause ghost btn-pause" disabled>${t.pause}</button>
+        <button class="reset ghost btn-reset">${t.reset}</button>
+      </div>
+
+      <div class="big" style="margin-top:8px"><span class="remain">00:00</span></div>
+      <div class="muted lbl-ends">${t.ends} <span class="endAt">--:--</span></div>
+
+      <div class="bar" style="margin-top:10px"><span></span></div>
+      <div class="note tip-text" style="margin-top:6px">${t.tip}</div>
+    `;
+    wrap.prepend(card);
+
+    const st = { id, node: card, totalMs: 0, leftMs: 0, running: false, startTs: 0, endTs: 0, raf: 0 };
+    timers.set(id, st);
+
+    const q = sel => card.querySelector(sel);
+    const minEl = q('.min'), secEl = q('.sec');
+    const startBtn = q('.start'), pauseBtn = q('.pause'), resetBtn = q('.reset');
+    const delBtn = q('.del'), remainEl = q('.remain'), endAtEl = q('.endAt');
+    const bar = q('.bar>span'), soundEl = q('.sound');
+
+    function readInputs(){
+      const m = Math.max(0, Math.min(599, parseInt(minEl.value||'0',10)));
+      const s = Math.max(0, Math.min(59,  parseInt(secEl.value||'0',10)));
+      const ms = (m*60 + s) * 1000;
+      st.totalMs = ms;
+      st.leftMs = ms;
+      remainEl.textContent = fmt(ms);
+      endAtEl.textContent = ms ? endTimeFromNow(ms) : '--:--';
+      bar.style.width = '0%';
+    }
+
+    function loop(){
+      if (!st.running) return;
+      const now = performance.now();
+      st.leftMs = Math.max(0, st.endTs - now);
+      remainEl.textContent = fmt(st.leftMs);
+      const p = st.totalMs>0 ? (1 - st.leftMs/st.totalMs)*100 : 0;
+      bar.style.width = Math.min(100, Math.max(0, p)) + '%';
+      if (st.leftMs <= 0){
+        st.running = false;
+        startBtn.disabled = false;
+        pauseBtn.disabled = true;
+        if (soundEl.checked) beep();
+      }else{
+        st.raf = requestAnimationFrame(loop);
+      }
+    }
+
+    function start(){
+      const t = window._i18n || I18N.en;
+      if (st.running) return;
+      if (!st.totalMs){ readInputs(); }
+      if (!st.totalMs){ alert(t.setDuration); return; }
+      const base = st.leftMs>0 && st.leftMs<st.totalMs ? st.leftMs : st.totalMs;
+      st.startTs = performance.now();
+      st.endTs = st.startTs + base;
+      st.running = true;
+      startBtn.disabled = true;
+      pauseBtn.disabled = false;
+      endAtEl.textContent = endTimeFromNow(base);
+      cancelAnimationFrame(st.raf);
+      st.raf = requestAnimationFrame(loop);
+    }
+
+    function pause(){
+      if (!st.running) return;
+      st.running = false;
+      cancelAnimationFrame(st.raf);
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+    }
+
+    function reset(){
+      st.running = false;
+      cancelAnimationFrame(st.raf);
+      readInputs();
+      startBtn.disabled = false;
+      pauseBtn.disabled = true;
+    }
+
+    function remove(){
+      st.running = false;
+      cancelAnimationFrame(st.raf);
+      timers.delete(id);
+      card.remove();
+    }
+
+    startBtn.addEventListener('click', start);
+    pauseBtn.addEventListener('click', pause);
+    resetBtn.addEventListener('click', reset);
+    delBtn.addEventListener('click', remove);
+    minEl.addEventListener('change', readInputs);
+    secEl.addEventListener('change', readInputs);
+
+    readInputs();
+    if (presetSec){ start(); }
+  }
+
+  document.getElementById('addTimer').addEventListener('click', ()=> makeCard());
+  document.getElementById('clearAll').addEventListener('click', ()=>{
+    Array.from(timers.values()).forEach(st => { st.running=false; cancelAnimationFrame(st.raf); st.node.remove(); });
+    timers.clear();
+  });
+
+  document.querySelectorAll('.preset').forEach(p=>{
+    p.addEventListener('click', ()=>{
+      const sec = parseInt(p.dataset.sec,10);
+      makeCard(sec);
+    });
+  });
+
+  // Start with one empty timer
+  makeCard();
+</script>
+
+<!-- keep your original home-link resolver and preserve ?lang -->
+<script>
+(function(){
+  // Compute site root by removing the last two segments (category/tool)
+  var path = location.pathname.replace(/\/+$/,''); // strip trailing slashes
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = ['']; // already at root
+  var home = parts.join('/') + '/';
+
+  // preserve ?lang if present
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+
+  document.querySelectorAll('a[data-home]').forEach(function(a){
+    a.setAttribute('href', home);
+  });
+})();
+</script>
+</body>
+</html>

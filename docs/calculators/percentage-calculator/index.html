@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Percentage Calculator — Percent of, Percent Change & What Percent | GoToolOnline</title>
+<meta name="description" content="Free online percentage calculator: percent of a number, what percent one number is of another, and percent change. Precise rounding, copy results, mobile-friendly."/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+
+<!-- Social -->
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Percentage Calculator — Percent of, Percent Change"/>
+<meta property="og:description" content="Compute percent of a number, what percent, and percent change. Simple, accurate, and mobile-friendly."/>
+<meta property="og:url" content="https://gotoolonline.com/calculators/percentage-calculator/"/>
+<meta name="twitter:card" content="summary"/>
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text x='6' y='52' font-size='48'>%</text></svg>'">
+<style>
+  :root { --bg:#0a0f1e; --card:#0f1830; --muted:#9fb0c3; --fg:#eaf3ff; --acc:#4fb3ff; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg);}
+  a{color:#8cd1ff;text-decoration:none}
+  header{max-width:1200px;margin:24px auto 8px;display:flex;gap:14px;align-items:center;padding:0 18px;}
+  header a.logo{display:flex;gap:10px;align-items:center;color:var(--fg);font-weight:800;font-size:24px}
+  header a.navbtn{margin-left:auto;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:12px;color:#eaf3ff;font-size:16px}
+  header a.navbtn:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  /* language UI */
+  #langBtn{margin-left:8px}
+  .pill{padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:12px;color:#eaf3ff;cursor:pointer}
+  .lang-panel{position:fixed; top:72px; right:18px; z-index:1200;background:#0f1830; border:1px solid #1a2843; border-radius:16px;padding:12px; display:none; width:min(420px, calc(100vw - 24px));box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  .lang-panel.open{ display:block }
+  .lang-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px }
+  .lang-grid button{display:block;width:100%;text-align:center;padding:10px 10px;border:1px solid #24365b;background:#0f1a2f;border-radius:12px;color:var(--fg);font-size:14px;cursor:pointer}
+  .lang-grid button.active{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+
+  main{max-width:1200px;margin:10px auto 72px;padding:0 18px}
+  h1{font-size:34px;margin:10px 0 10px}
+  h2{font-size:22px;margin:8px 0 6px}
+  p,label,.muted{font-size:18px; line-height:1.6}
+  .card{background:var(--card);border:1px solid #1a2843;border-radius:20px;padding:20px;margin:16px 0}
+  label{display:block;margin:10px 0 6px;color:var(--muted)}
+  input,select,button{width:100%;padding:14px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;font-size:18px}
+  button{cursor:pointer;background:linear-gradient(180deg,#2a78ff,#0050d4);border:none;font-weight:700;letter-spacing:.2px}
+  button.ghost{background:#0f1a2f;border:1px solid #24365b}
+  button:disabled{opacity:.6;cursor:not-allowed}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .result{padding:14px;background:#0c1426;border:1px dashed #2a3c64;border-radius:12px;margin-top:12px;font-size:20px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .muted{color:#9fb0c3}
+  .opt{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  footer{max-width:1200px;margin:40px auto;padding:0 18px;color:var(--muted);font-size:15px}
+  .backTop{margin-top:12px;display:inline-block;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:10px;color:#eaf3ff;text-decoration:none}
+  .backTop:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  @media (max-width:760px){ .row{grid-template-columns:1fr} }
+  @media print{ header,footer,.no-print{display:none!important} body{background:#fff;color:#000} .card{border:none} }
+</style>
+
+<!-- Structured data -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Percentage Calculator","url":"https://gotoolonline.com/calculators/percentage-calculator/","applicationCategory":"Calculator","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"GoToolOnline","url":"https://gotoolonline.com"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"What operations are supported?","acceptedAnswer":{"@type":"Answer","text":"Percent of a number (P% of N), what percent one number is of another (A of B), and percent change from A to B."}},
+  {"@type":"Question","name":"Can I control decimal places?","acceptedAnswer":{"@type":"Answer","text":"Yes. Use the decimal places selector to format results from 0 to 6 decimals."}}
+]}
+</script>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/calculators/percentage-calculator/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/calculators/percentage-calculator/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/calculators/percentage-calculator/">
+</head>
+<body>
+<header>
+  <a class="logo" data-home href="#"><span>🛠️</span><strong>GoToolOnline</strong></a>
+  <a class="navbtn" data-home href="#" data-i18n="ui.back">← Back to Home</a>
+  <button id="langBtn" class="pill" aria-haspopup="dialog" aria-expanded="false" data-i18n="ui.lang">🌐 Language</button>
+  <div class="lang-panel" id="langPanel" role="dialog" aria-label="Select language">
+    <div class="lang-grid" id="langGrid"></div>
+  </div>
+</header>
+
+<main>
+  <section class="card">
+    <h1 data-i18n="title">Percentage Calculator</h1>
+    <p class="muted" data-i18n="lede">Three quick calculators: <strong>P% of N</strong>, <strong>what percent A is of B</strong>, and <strong>percent change</strong>. Private, runs in your browser.</p>
+    <div class="opt">
+      <label style="display:flex;align-items:center;gap:8px">
+        <span data-i18n="dp.label">Decimal places</span>
+        <select id="dp">
+          <option>0</option><option selected>2</option><option>3</option><option>4</option><option>5</option><option>6</option>
+        </select>
+      </label>
+      <button class="ghost" id="clearAll" data-i18n="btn.clearAll">Clear all</button>
+    </div>
+  </section>
+
+  <!-- 1) P% of N -->
+  <section class="card" aria-labelledby="pof-title">
+    <h2 id="pof-title" data-i18n="pof.title">1) Percent of a Number (P% of N)</h2>
+    <div class="row">
+      <div><label for="p"><span data-i18n="pof.p">Percent (P %)</span></label><input id="p" type="number" inputmode="decimal" step="0.01" placeholder="15"/></div>
+      <div><label for="n"><span data-i18n="pof.n">Number (N)</span></label><input id="n" type="number" inputmode="decimal" step="0.01" placeholder="200"/></div>
+    </div>
+    <div class="opt" style="margin-top:12px">
+      <button id="btnPof" data-i18n="btn.compute">Compute</button>
+      <button class="ghost" id="btnPofEx" data-i18n="pof.example">Example (15% of 200)</button>
+    </div>
+    <div class="result" aria-live="polite"><span data-i18n="labels.result">Result:</span> <span id="r1">—</span> <button class="ghost" id="copy1" data-i18n="btn.copy">Copy</button></div>
+  </section>
+
+  <!-- 2) A is what percent of B -->
+  <section class="card" aria-labelledby="what-title">
+    <h2 id="what-title" data-i18n="what.title">2) What Percent? (A is what % of B)</h2>
+    <div class="row">
+      <div><label for="aof"><span data-i18n="what.a">A</span></label><input id="aof" type="number" inputmode="decimal" step="0.01" placeholder="30"/></div>
+      <div><label for="bof"><span data-i18n="what.b">B</span></label><input id="bof" type="number" inputmode="decimal" step="0.01" placeholder="240"/></div>
+    </div>
+    <div class="opt" style="margin-top:12px">
+      <button id="btnWhat" data-i18n="btn.calculate">Calculate</button>
+      <button class="ghost" id="btnWhatEx" data-i18n="what.example">Example (30 of 240)</button>
+    </div>
+    <div class="result" aria-live="polite"><span data-i18n="labels.result">Result:</span> <span id="r3">—</span> <button class="ghost" id="copy3" data-i18n="btn.copy">Copy</button></div>
+  </section>
+
+  <!-- 3) Percent change -->
+  <section class="card" aria-labelledby="chg-title">
+    <h2 id="chg-title" data-i18n="chg.title">3) Percent Change (from A to B)</h2>
+    <div class="row">
+      <div><label for="from"><span data-i18n="chg.from">From (A)</span></label><input id="from" type="number" inputmode="decimal" step="0.01" placeholder="120"/></div>
+      <div><label for="to"><span data-i18n="chg.to">To (B)</span></label><input id="to" type="number" inputmode="decimal" step="0.01" placeholder="150"/></div>
+    </div>
+    <div class="opt" style="margin-top:12px">
+      <button id="btnChange" data-i18n="btn.calcChange">Calculate Change</button>
+      <button class="ghost" id="btnChangeEx" data-i18n="chg.example">Example (120 → 150)</button>
+    </div>
+    <div class="result" aria-live="polite"><span data-i18n="labels.change">Change:</span> <span id="r2">—</span> <button class="ghost" id="copy2" data-i18n="btn.copy">Copy</button></div>
+    <p class="muted" style="margin-top:8px" data-i18n="chg.note">Positive = increase, negative = decrease. If the “From (A)” value is 0, percent change is undefined.</p>
+  </section>
+
+  <section class="card">
+    <h2 data-i18n="notes.title">Notes</h2>
+    <ul class="muted" style="margin:6px 0 0 18px">
+      <li data-i18n="notes.n1">All calculations run locally in your browser. No data is sent to a server.</li>
+      <li data-i18n="notes.n2">Use decimal places to control rounding (display only; internal math uses full precision).</li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  <a class="backTop" href="javascript:void(0)" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to Top ↑</a>
+  <div style="margin-top:10px">© <span id="y"></span> GoToolOnline.com · <span data-i18n="ui.tagline">Free online tools for everyone.</span></div>
+</footer>
+
+<script>
+/* ===== Footer year ===== */
+document.getElementById('y').textContent = new Date().getFullYear();
+
+/* ===== Core logic ===== */
+(function(){
+  const $ = id => document.getElementById(id);
+  const dpSel = $('dp');
+
+  function fmt(x){
+    const d = parseInt(dpSel.value,10);
+    if (!isFinite(x)) return '—';
+    return x.toFixed(d); // western digits by default
+  }
+
+  // 1) P% of N
+  $('btnPof').addEventListener('click', ()=>{
+    const p = parseFloat($('p').value);
+    const n = parseFloat($('n').value);
+    if (isNaN(p) || isNaN(n)) { $('r1').textContent = window.__DICT__?.msg?.both || 'Please enter both numbers.'; return; }
+    $('r1').textContent = fmt((p/100) * n);
+  });
+  $('btnPofEx').addEventListener('click', ()=>{ $('p').value='15'; $('n').value='200'; $('btnPof').click(); });
+
+  // 2) A is what percent of B
+  $('btnWhat').addEventListener('click', ()=>{
+    const a = parseFloat($('aof').value);
+    const b = parseFloat($('bof').value);
+    if (isNaN(a) || isNaN(b)) { $('r3').textContent = window.__DICT__?.msg?.both || 'Please enter both numbers.'; return; }
+    if (b === 0) { $('r3').textContent = window.__DICT__?.msg?.undefB || 'Undefined (B is 0)'; return; }
+    $('r3').textContent = fmt((a / b) * 100) + '%';
+  });
+  $('btnWhatEx').addEventListener('click', ()=>{ $('aof').value='30'; $('bof').value='240'; $('btnWhat').click(); });
+
+  // 3) Percent change
+  $('btnChange').addEventListener('click', ()=>{
+    const a = parseFloat($('from').value);
+    const b = parseFloat($('to').value);
+    if (isNaN(a) || isNaN(b)) { $('r2').textContent = window.__DICT__?.msg?.both || 'Please enter both numbers.'; return; }
+    if (a === 0) { $('r2').textContent = window.__DICT__?.msg?.undefFrom || 'Undefined (From is 0)'; return; }
+    $('r2').textContent = fmt(((b - a) / a) * 100) + '%';
+  });
+  $('btnChangeEx').addEventListener('click', ()=>{ $('from').value='120'; $('to').value='150'; $('btnChange').click(); });
+
+  // Copy buttons
+  function copyText(text){ try { navigator.clipboard.writeText(text); return true; } catch(e){ return false; } }
+  $('copy1').addEventListener('click', ()=>{ const t=$('r1').textContent; if (t && t!=='—') copyText(t); });
+  $('copy2').addEventListener('click', ()=>{ const t=$('r2').textContent; if (t && t!=='—') copyText(t); });
+  $('copy3').addEventListener('click', ()=>{ const t=$('r3').textContent; if (t && t!=='—') copyText(t); });
+
+  // Clear all
+  $('clearAll').addEventListener('click', ()=>{
+    ['p','n','aof','bof','from','to'].forEach(id=>$(id).value='');
+    ['r1','r2','r3'].forEach(id=>$(id).textContent='—');
+  });
+})();
+</script>
+
+<script>
+/* ===== i18n (9 languages) + lang switch; preserve ?lang; RTL for ar ===== */
+(function(){
+  const LANGS = ['en','zh','ph','id','vi','bn','ng','sw','ar'];
+  const NAMES = {en:'English', zh:'简体中文', ph:'Tagalog', id:'Bahasa Indonesia', vi:'Tiếng Việt', bn:'বাংলা', ng:'English (NG)', sw:'Kiswahili', ar:'العربية'};
+
+  function getCookie(name){ return ('; '+document.cookie).split('; '+name+'=').pop().split(';')[0] || ''; }
+  function setCookie(name,val){ document.cookie = name+'='+val+';path=/;max-age=31536000'; }
+
+  function pickLang(){
+    const url = new URL(location.href);
+    const q = (url.searchParams.get('lang')||'').toLowerCase();
+    const c = (getCookie('lang')||'').toLowerCase();
+    const nav = (navigator.language||'en').toLowerCase();
+    const MAP = {en:'en', tl:'ph', fil:'ph', id:'id', vi:'vi', bn:'bn', sw:'sw', ar:'ar', zh:'zh', 'zh-cn':'zh', 'zh-hans':'zh'};
+    let lang='en';
+    if (q && LANGS.includes(q)) lang=q;
+    else if (c && LANGS.includes(c)) lang=c;
+    else lang = MAP[nav] || MAP[nav.split('-')[0]] || 'en';
+    setCookie('lang', lang);
+    document.documentElement.lang = (lang==='ph'?'tl':(lang==='ng'?'en':lang));
+    document.documentElement.dir = (lang==='ar'?'rtl':'ltr');
+    return lang;
+  }
+
+  function merge(base, over){
+    const out = Array.isArray(base)? base.slice() : {...base};
+    if (!over) return out;
+    for (const k of Object.keys(over)){
+      if (over[k] && typeof over[k]==='object' && !Array.isArray(over[k]) && base && typeof base[k]==='object'){
+        out[k] = merge(base[k], over[k]);
+      } else { out[k] = over[k]; }
+    }
+    return out;
+  }
+
+  const EN = {
+    meta:{title:"Percentage Calculator — Percent of, Percent Change & What Percent | GoToolOnline",
+          desc:"Free online percentage calculator: percent of a number, what percent one number is of another, and percent change. Precise rounding, copy results, mobile-friendly."},
+    ui:{back:"← Back to Home", lang:"Language", tagline:"Free online tools for everyone.", copy:"Copy"},
+    title:"Percentage Calculator",
+    lede:"Three quick calculators: <strong>P% of N</strong>, <strong>what percent A is of B</strong>, and <strong>percent change</strong>. Private, runs in your browser.",
+    dp:{label:"Decimal places"},
+    btn:{clearAll:"Clear all", compute:"Compute", calculate:"Calculate", calcChange:"Calculate Change"},
+    labels:{result:"Result:", change:"Change:"},
+    pof:{title:"1) Percent of a Number (P% of N)", p:"Percent (P %)", n:"Number (N)", example:"Example (15% of 200)"},
+    what:{title:"2) What Percent? (A is what % of B)", a:"A", b:"B", example:"Example (30 of 240)"},
+    chg:{title:"3) Percent Change (from A to B)", from:"From (A)", to:"To (B)", example:"Example (120 → 150)", note:"Positive = increase, negative = decrease. If the “From (A)” value is 0, percent change is undefined."},
+    notes:{title:"Notes", n1:"All calculations run locally in your browser. No data is sent to a server.", n2:"Use decimal places to control rounding (display only; internal math uses full precision)."},
+    msg:{both:"Please enter both numbers.", undefB:"Undefined (B is 0)", undefFrom:"Undefined (From is 0)"}
+  };
+
+  const ZH = {
+    meta:{title:"百分比计算器 — 占比/百分之多少/涨跌幅 | GoToolOnline",
+          desc:"在线百分比计算器：某数的百分比、A 占 B 的百分比、从 A 到 B 的百分比变化。可设小数位，支持复制，移动端友好。"},
+    ui:{back:"← 返回首页", lang:"语言", tagline:"免费、好用、对隐私友好", copy:"复制"},
+    title:"百分比计算器",
+    lede:"三个快速计算：<strong>P% × N</strong>、<strong>A 占 B 的百分比</strong>、<strong>百分比变化</strong>。本地运行，数据不上传。",
+    dp:{label:"小数位"},
+    btn:{clearAll:"清空", compute:"计算", calculate:"计算", calcChange:"计算变化"},
+    labels:{result:"结果：", change:"变化："},
+    pof:{title:"1）某数的百分比（P% × N）", p:"百分比（P %）", n:"数值（N）", example:"示例（15% × 200）"},
+    what:{title:"2）占比（A 占 B 的百分比）", a:"A", b:"B", example:"示例（30 / 240）"},
+    chg:{title:"3）百分比变化（从 A 到 B）", from:"从（A）", to:"到（B）", example:"示例（120 → 150）", note:"正数＝增加，负数＝减少；若“从（A）”为 0，则百分比变化未定义。"},
+    notes:{title:"说明", n1:"所有计算在你的浏览器本地完成，不会上传数据。", n2:"小数位仅影响显示，内部计算保留完整精度。"},
+    msg:{both:"请填写两个数。", undefB:"未定义（B 为 0）", undefFrom:"未定义（“从”值为 0）"}
+  };
+
+  const PH = {
+    ui:{back:"← Bumalik sa Home", lang:"Wika", tagline:"Libreng online na mga tool", copy:"Kopya"},
+    title:"Kalkulador ng Porsyento",
+    lede:"Tatlong mabilis na kalkulasyon: <strong>P% ng N</strong>, <strong>ilang porsyento si A ng B</strong>, at <strong>percent change</strong>. Ligtas at lokal sa browser.",
+    dp:{label:"Bilang ng decimal"},
+    btn:{clearAll:"I-clear lahat", compute:"Kuwentahin", calculate:"Kuwentahin", calcChange:"Kuwentahin ang Pagbabago"},
+    labels:{result:"Resulta:", change:"Pagbabago:"},
+    pof:{title:"1) Porsyento ng Isang Numero (P% ng N)", p:"Porsyento (P %)", n:"Numero (N)", example:"Hal. (15% ng 200)"},
+    what:{title:"2) Ilang Porsyento? (A ay ilang % ng B)", a:"A", b:"B", example:"Hal. (30 ng 240)"},
+    chg:{title:"3) Percent Change (mula A hanggang B)", from:"Mula (A)", to:"Hanggang (B)", example:"Hal. (120 → 150)", note:"Positibo = pagtaas; negatibo = pagbaba. Kung 0 ang “Mula (A)”, walang kahulugan ang percent change."},
+    notes:{title:"Tala", n1:"Lokal ang kalkulasyon sa iyong browser.", n2:"Ang decimal ay para sa display lang."},
+    msg:{both:"Pakilagay ang dalawang numero.", undefB:"Walang kahulugan (B ay 0)", undefFrom:"Walang kahulugan (Mula ay 0)"}
+  };
+
+  const ID = {
+    ui:{back:"← Kembali ke Beranda", lang:"Bahasa", tagline:"Alat online gratis untuk semua", copy:"Salin"},
+    title:"Kalkulator Persentase",
+    lede:"Tiga kalkulator cepat: <strong>P% dari N</strong>, <strong>A adalah berapa % dari B</strong>, dan <strong>perubahan persentase</strong>. Privat, berjalan di browser.",
+    dp:{label:"Jumlah desimal"},
+    btn:{clearAll:"Bersihkan semua", compute:"Hitung", calculate:"Hitung", calcChange:"Hitung Perubahan"},
+    labels:{result:"Hasil:", change:"Perubahan:"},
+    pof:{title:"1) Persen dari Angka (P% dari N)", p:"Persen (P %)", n:"Angka (N)", example:"Contoh (15% dari 200)"},
+    what:{title:"2) Berapa Persen? (A berapa % dari B)", a:"A", b:"B", example:"Contoh (30 dari 240)"},
+    chg:{title:"3) Perubahan Persen (dari A ke B)", from:"Dari (A)", to:"Ke (B)", example:"Contoh (120 → 150)", note:"Positif = naik, negatif = turun. Jika “Dari (A)” = 0, perubahan persen tak terdefinisi."},
+    notes:{title:"Catatan", n1:"Semua perhitungan berjalan lokal di browser.", n2:"Desimal hanya memengaruhi tampilan; hitung internal presisi penuh."},
+    msg:{both:"Masukkan dua angka.", undefB:"Tak terdefinisi (B = 0)", undefFrom:"Tak terdefinisi (Dari = 0)"}
+  };
+
+  const VI = {
+    ui:{back:"← Về trang chủ", lang:"Ngôn ngữ", tagline:"Công cụ miễn phí cho mọi người", copy:"Sao chép"},
+    title:"Máy tính phần trăm",
+    lede:"Ba phép tính nhanh: <strong>P% của N</strong>, <strong>A chiếm bao nhiêu % của B</strong>, và <strong>tỷ lệ thay đổi</strong>. Chạy cục bộ, riêng tư.",
+    dp:{label:"Số chữ số thập phân"},
+    btn:{clearAll:"Xóa hết", compute:"Tính", calculate:"Tính", calcChange:"Tính thay đổi"},
+    labels:{result:"Kết quả:", change:"Thay đổi:"},
+    pof:{title:"1) Phần trăm của một số (P% × N)", p:"Phần trăm (P %)", n:"Số (N)", example:"Ví dụ (15% của 200)"},
+    what:{title:"2) Bao nhiêu phần trăm? (A là % của B)", a:"A", b:"B", example:"Ví dụ (30 của 240)"},
+    chg:{title:"3) Tỷ lệ thay đổi (từ A đến B)", from:"Từ (A)", to:"Đến (B)", example:"Ví dụ (120 → 150)", note:"Dương = tăng, âm = giảm. Nếu “Từ (A)” bằng 0 thì không xác định."},
+    notes:{title:"Ghi chú", n1:"Tính toán diễn ra trong trình duyệt.", n2:"Số thập phân chỉ ảnh hưởng hiển thị."},
+    msg:{both:"Hãy nhập đủ hai số.", undefB:"Không xác định (B = 0)", undefFrom:"Không xác định (Từ = 0)"}
+  };
+
+  const BN = {
+    ui:{back:"← হোমে ফিরে যান", lang:"ভাষা", tagline:"সবার জন্য ফ্রি টুল", copy:"কপি"},
+    title:"শতাংশ ক্যালকুলেটর",
+    lede:"তিনটি দ্রুত হিসাব: <strong>P% × N</strong>, <strong>A হলো B-এর কত %</strong>, এবং <strong>Percent Change</strong>। সম্পূর্ণভাবে ব্রাউজারে চলে।",
+    dp:{label:"দশমিক ঘর"},
+    btn:{clearAll:"সব পরিষ্কার", compute:"হিসাব", calculate:"হিসাব", calcChange:"পরিবর্তন হিসাব"},
+    labels:{result:"ফলাফল:", change:"পরিবর্তন:"},
+    pof:{title:"1) সংখ্যার শতাংশ (P% × N)", p:"শতাংশ (P %)", n:"সংখ্যা (N)", example:"উদাহরণ (200-এর 15%)"},
+    what:{title:"2) কত শতাংশ? (A, B-এর কত %)", a:"A", b:"B", example:"উদাহরণ (240-এর 30)"},
+    chg:{title:"3) Percent Change (A থেকে B)", from:"থেকে (A)", to:"পর্যন্ত (B)", example:"উদাহরণ (120 → 150)", note:"ধনাত্মক = বৃদ্ধি, ঋণাত্মক = হ্রাস। “থেকে (A)” যদি 0 হয়, তবে অনির্দিষ্ট।"},
+    notes:{title:"নোট", n1:"সব হিসাব আপনার ব্রাউজারেই হয়; সার্ভারে পাঠানো হয় না।", n2:"দশমিক ঘর শুধু প্রদর্শনে প্রভাব ফেলে; অভ্যন্তরীণ গাণিতিকে পূর্ণ নির্ভুলতা।"},
+    msg:{both:"দুটো সংখ্যাই দিন।", undefB:"অসংজ্ঞায়িত (B = 0)", undefFrom:"অসংজ্ঞায়িত (থেকে = 0)"}
+  };
+
+  const NG = {
+    ui:{back:"← Back to Home", lang:"Language", tagline:"Fast, free tools for everyone", copy:"Copy"},
+    title:"Percentage Calculator",
+    lede:"Three quick calculators: <strong>P% of N</strong>, <strong>what percent A is of B</strong>, and <strong>percent change</strong>. Private, runs in your browser.",
+    dp:{label:"Decimal places"},
+    btn:{clearAll:"Clear all", compute:"Compute", calculate:"Calculate", calcChange:"Calculate Change"},
+    labels:{result:"Result:", change:"Change:"},
+    pof:{title:"1) Percent of a Number (P% of N)", p:"Percent (P %)", n:"Number (N)", example:"Example (15% of 200)"},
+    what:{title:"2) What Percent? (A is what % of B)", a:"A", b:"B", example:"Example (30 of 240)"},
+    chg:{title:"3) Percent Change (from A to B)", from:"From (A)", to:"To (B)", example:"Example (120 → 150)", note:"Positive = increase, negative = decrease. If From (A) is 0, change is undefined."},
+    notes:{title:"Notes", n1:"All calculations are local.", n2:"Decimal places affect display only."},
+    msg:{both:"Please enter both numbers.", undefB:"Undefined (B is 0)", undefFrom:"Undefined (From is 0)"}
+  };
+
+  const SW = {
+    ui:{back:"← Rudi nyumbani", lang:"Lugha", tagline:"Zana za bure kwa kila mtu", copy:"Nakili"},
+    title:"Kikokotoo cha Asilimia",
+    lede:"Vikokotoo vitatu vya haraka: <strong>P% ya N</strong>, <strong>A ni asilimia ngapi ya B</strong>, na <strong>mabadiliko kwa asilimia</strong>. Hufanya kazi ndani ya kivinjari.",
+    dp:{label:"Nafasi za desimali"},
+    btn:{clearAll:"Futa zote", compute:"Kokotoa", calculate:"Kokotoa", calcChange:"Kokotoa Mabadiliko"},
+    labels:{result:"Matokeo:", change:"Mabadiliko:"},
+    pof:{title:"1) Asilimia ya Nambari (P% ya N)", p:"Asilimia (P %)", n:"Nambari (N)", example:"Mfano (15% ya 200)"},
+    what:{title:"2) Ni Asilimia Ngapi? (A ni % ya B)", a:"A", b:"B", example:"Mfano (30 ya 240)"},
+    chg:{title:"3) Mabadiliko ya Asilimia (kutoka A hadi B)", from:"Kutoka (A)", to:"Hadi (B)", example:"Mfano (120 → 150)", note:"Chanya = ongezeko, Hasi = upungufu. Ikiwa “Kutoka (A)” ni 0, haifafanuliwi."},
+    notes:{title:"Maelezo", n1:"Hesabu zinafanywa ndani ya kivinjari chako.", n2:"Desimali huathiri muonekano pekee."},
+    msg:{both:"Weka nambari zote mbili.", undefB:"Haijafafanuliwa (B = 0)", undefFrom:"Haijafafanuliwa (Kutoka = 0)"}
+  };
+
+  const AR = {
+    meta:{title:"حاسبة النسبة المئوية — نسبة من، نسبة التغيير | GoToolOnline",
+          desc:"حاسبة نسبة مئوية مجانية: نسبة رقم من آخر، ما هي النسبة، ونسبة التغيير. تحكم في الكسور العشرية ونسخ النتائج."},
+    ui:{back:"← العودة إلى الصفحة الرئيسية", lang:"اللغة", tagline:"أدوات مجانية للجميع", copy:"نسخ"},
+    title:"حاسبة النسبة المئوية",
+    lede:"ثلاث حاسبات سريعة: <strong>P% من N</strong>، <strong>كم٪ يمثّل A من B</strong>، و<strong>نسبة التغيير</strong>. تعمل محليًا في المتصفح.",
+    dp:{label:"الخانات العشرية"},
+    btn:{clearAll:"مسح الكل", compute:"احسب", calculate:"احسب", calcChange:"احسب التغيير"},
+    labels:{result:"النتيجة:", change:"التغيير:"},
+    pof:{title:"1) نسبة رقم (P% من N)", p:"النسبة (P %)", n:"العدد (N)", example:"مثال (15% من 200)"},
+    what:{title:"2) كم نسبة؟ (A كم٪ من B)", a:"A", b:"B", example:"مثال (30 من 240)"},
+    chg:{title:"3) نسبة التغيير (من A إلى B)", from:"من (A)", to:"إلى (B)", example:"مثال (120 → 150)", note:"موجب = زيادة، سالب = نقصان. إذا كانت قيمة “من (A)” تساوي 0 فالنسبة غير معرّفة."},
+    notes:{title:"ملاحظات", n1:"تُجرى كل الحسابات محليًا في متصفحك.", n2:"الخانات العشرية تؤثر العرض فقط."},
+    msg:{both:"أدخل الرقمين من فضلك.", undefB:"غير معرّف (B يساوي 0)", undefFrom:"غير معرّف (من يساوي 0)"}
+  };
+
+  const MAP = {en:EN, zh:ZH, ph:PH, id:ID, vi:VI, bn:BN, ng:NG, sw:SW, ar:AR};
+
+  function get(obj, path){ return String(path).split('.').reduce((o,k)=> (o && (k in o))? o[k] : undefined, obj); }
+
+  function applyI18N(D){
+    if (get(D,'meta.title')) document.title = get(D,'meta.title');
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc && get(D,'meta.desc')) desc.setAttribute('content', get(D,'meta.desc'));
+
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      const val = get(D, key);
+      if (val == null) return;
+      if (/<[a-z][\s\S]*>/i.test(val)) el.innerHTML = val; else el.textContent = val;
+    });
+
+    const btn = document.getElementById('langBtn'); if (btn) btn.textContent = '🌐 ' + (get(D,'ui.lang')||'Language');
+  }
+
+  function keepLangInLinks(lang){
+    document.querySelectorAll('a[href]').forEach(a=>{
+      const href = a.getAttribute('href')||'';
+      if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+      const u = new URL(href, location.origin);
+      if (!u.searchParams.get('lang')) u.searchParams.set('lang', lang);
+      a.setAttribute('href', u.pathname + u.search + u.hash);
+    });
+  }
+
+  const lang = pickLang();
+  const D = merge(EN, MAP[lang]||{});
+  applyI18N(D);
+  keepLangInLinks(lang);
+
+  window.__LANG__ = lang;
+  window.__DICT__ = D;
+
+  // language panel
+  const panel = document.getElementById('langPanel');
+  const btn = document.getElementById('langBtn');
+  const grid = document.getElementById('langGrid');
+  if (grid){
+    const LANGS_ORDER = ['en','zh','ph','id','vi','bn','ng','sw','ar'];
+    LANGS_ORDER.forEach(code=>{
+      const b=document.createElement('button');
+      b.textContent = NAMES[code]||code;
+      if (code===lang) b.className='active';
+      b.addEventListener('click', ()=>{
+        const u=new URL(location.href); u.searchParams.set('lang', code); setCookie('lang', code); location.href=u.toString();
+      });
+      grid.appendChild(b);
+    });
+  }
+  function openLang(open){ panel.classList.toggle('open', !!open); btn.setAttribute('aria-expanded', !!open); }
+  if (btn) btn.addEventListener('click', (e)=>{ e.stopPropagation(); openLang(!panel.classList.contains('open')); });
+  document.addEventListener('click', (e)=>{ if(panel && panel.classList.contains('open')){ const within = panel.contains(e.target) || (btn && btn.contains(e.target)); if(!within) openLang(false); } });
+})();
+</script>
+
+<!-- Back-to-home resolver (preserve ?lang) -->
+<script>
+(function(){
+  var path = location.pathname.replace(/\/+$/,'');
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = [''];
+  var home = parts.join('/') + '/';
+
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+
+  document.querySelectorAll('a[data-home]').forEach(function(a){
+    a.setAttribute('href', home);
+  });
+})();
+</script>
+</body>
+</html>

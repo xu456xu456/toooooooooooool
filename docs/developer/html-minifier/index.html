@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>HTML Minifier (Basic) | GoToolOnline</title>
+<meta name="description" content="Minify HTML by collapsing whitespace and removing line breaks (basic).">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text x='6' y='52' font-size='48'>🛠️</text></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+<style>
+  :root { --bg:#0a0f1e; --card:#0f1830; --muted:#9fb0c3; --fg:#eaf3ff; --acc:#4fb3ff; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg);}
+  header{max-width:1200px;margin:24px auto 8px;display:flex;gap:14px;align-items:center;padding:0 18px;}
+  header a.logo{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--fg);font-weight:800;font-size:24px}
+  header a.navbtn{margin-left:auto;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:12px;color:#eaf3ff;text-decoration:none;font-size:16px;white-space:nowrap}
+  header a.navbtn:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  .langWrap{display:flex;align-items:center;gap:8px}
+  .lang{padding:8px 10px;border-radius:10px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;font-size:14px}
+  main{max-width:1200px;margin:10px auto 64px;padding:0 18px}
+  h1{font-size:34px;margin:10px 0 10px}
+  h2{font-size:26px;margin:10px 0 6px}
+  h3{font-size:20px;margin:6px 0 4px}
+  p,label,.muted{font-size:18px; line-height:1.6}
+  .card{background:var(--card);border:1px solid #1a2843;border-radius:20px;padding:20px;margin:16px 0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-top:12px}
+  .tool{display:block;background:var(--card);border:1px solid #1a2843;border-radius:16px;padding:16px;text-decoration:none;color:var(--fg)}
+  .tool strong{font-size:20px;display:block;margin-bottom:6px}
+  .tool:hover{border-color:var(--acc);box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  label{display:block;margin:10px 0 6px;color:var(--muted)}
+  input,select,button,textarea{width:100%;padding:14px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;font-size:18px}
+  button{cursor:pointer;background:linear-gradient(180deg,#2a78ff,#0050d4);border:none;font-weight:700;letter-spacing:.2px}
+  button:hover{filter:brightness(1.06)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .result{padding:14px;background:#0c1426;border:1px dashed #2a3c64;border-radius:12px;margin-top:12px;font-size:20px}
+  .muted{color:#9fb0c3}
+  footer{max-width:1200px;margin:40px auto;padding:0 18px;color:var(--muted);font-size:15px}
+  .backTop{margin-top:12px;display:inline-block;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:10px;color:#eaf3ff;text-decoration:none}
+  .backTop:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  @media (max-width:760px){ .row{grid-template-columns:1fr} header{gap:10px} }
+  @media print{ header,footer,.no-print{display:none!important} body{background:#fff;color:#000} .card,.tool{border:none} }
+</style>
+<script>function backToTop(){ window.scrollTo({top:0, behavior:'smooth'}); }</script>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/developer/html-minifier/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/developer/html-minifier/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/developer/html-minifier/">
+</head>
+<body>
+<header>
+  <a class="logo" data-home href="#"><span>🛠️</span><strong>GoToolOnline</strong></a>
+  <a id="backLink" class="navbtn" data-home href="#">← Back to Home</a>
+  <div class="langWrap">
+    <span class="muted">🌐</span>
+    <select id="lang" class="lang" aria-label="Language">
+      <option value="en">English</option>
+      <option value="zh">简体中文</option>
+      <option value="ph">Tagalog</option>
+      <option value="id">Bahasa Indonesia</option>
+      <option value="vi">Tiếng Việt</option>
+      <option value="bn">বাংলা</option>
+      <option value="ng">English (NG)</option>
+      <option value="sw">Kiswahili</option>
+      <option value="ar">العربية</option>
+    </select>
+  </div>
+</header>
+<main>
+<section class="card">
+  <h1 id="t">HTML Minifier (Basic)</h1>
+  <textarea id="src" rows="12" placeholder="Paste HTML here…"></textarea>
+  <button id="btnDo" onclick="minify()">Minify</button>
+  <textarea id="out" rows="12" readonly></textarea>
+  <p class="muted" id="note">Note: basic whitespace minifier. For production, use a build tool.</p>
+</section>
+<script>
+function minify(){
+  const s=document.getElementById('src').value;
+  const r=s.replace(/\n+/g,'').replace(/\s{2,}/g,' ').replace(/>\s+</g,'><').trim();
+  document.getElementById('out').value=r;
+}
+</script>
+</main>
+<footer>
+  <a id="topBtn" class="backTop" href="javascript:void(0)" onclick="backToTop()">Back to Top ↑</a>
+  <div style="margin-top:10px">© 2025 GoToolOnline.com · Free online tools for everyone.</div>
+</footer>
+
+<!-- i18n + persist + RTL -->
+<script>
+(function(){
+  const HTML_LANG = { en:'en', zh:'zh-CN', ph:'tl-PH', id:'id-ID', vi:'vi-VN', bn:'bn', ng:'en-NG', sw:'sw', ar:'ar' };
+
+  const L = {
+    en:{ back:"← Back to Home", title:"HTML Minifier (Basic)", ph:"Paste HTML here…",
+        btn:"Minify", note:"Note: basic whitespace minifier. For production, use a build tool.",
+        top:"Back to Top ↑", pageTitle:"HTML Minifier (Basic) | GoToolOnline" },
+    zh:{ back:"← 返回首页", title:"HTML 压缩（基础）", ph:"在此粘贴 HTML…",
+        btn:"压缩", note:"说明：仅做空白折叠的基础压缩，线上请使用构建工具。",
+        top:"返回顶部 ↑", pageTitle:"HTML 压缩（基础）| GoToolOnline" },
+    ph:{ back:"← Balik sa Home", title:"HTML Minifier (Basic)", ph:"I-paste ang HTML dito…",
+        btn:"I-minify", note:"Tala: simpleng whitespace minifier lang. Para sa production, gumamit ng build tool.",
+        top:"Balik sa Itaas ↑", pageTitle:"HTML Minifier (Basic) | GoToolOnline" },
+    id:{ back:"← Kembali ke Beranda", title:"HTML Minifier (Dasar)", ph:"Tempel HTML di sini…",
+        btn:"Minify", note:"Catatan: hanya pemadatan spasi dasar. Untuk produksi, gunakan build tool.",
+        top:"Kembali ke Atas ↑", pageTitle:"HTML Minifier (Dasar) | GoToolOnline" },
+    vi:{ back:"← Về Trang chủ", title:"Nén HTML (Cơ bản)", ph:"Dán mã HTML vào đây…",
+        btn:"Nén", note:"Lưu ý: chỉ nén khoảng trắng cơ bản; khi chạy production hãy dùng công cụ build.",
+        top:"Lên đầu trang ↑", pageTitle:"Nén HTML (Cơ bản) | GoToolOnline" },
+    bn:{ back:"← হোমে ফিরে যান", title:"HTML মিনিফায়ার (বেসিক)", ph:"এখানে HTML পেস্ট করুন…",
+        btn:"মিনিফাই", note:"নোট: এটি বেসিক whitespace মিনিফিকেশন; প্রোডাকশনের জন্য build টুল ব্যবহার করুন।",
+        top:"উপরে যান ↑", pageTitle:"HTML মিনিফায়ার (বেসিক) | GoToolOnline" },
+    ng:{ back:"← Back to Home", title:"HTML Minifier (Basic)", ph:"Paste HTML here…",
+        btn:"Minify", note:"Note: basic whitespace minifier. For production, use a build tool.",
+        top:"Back to Top ↑", pageTitle:"HTML Minifier (Basic) | GoToolOnline" },
+    sw:{ back:"← Rudi Nyumbani", title:"Kipunguza HTML (Msingi)", ph:"Bandika HTML hapa…",
+        btn:"Punguza", note:"Kumbuka: hupunguza nafasi tupu tu. Kwa production tumia zana ya kujenga.",
+        top:"Rudi Juu ↑", pageTitle:"Kipunguza HTML (Msingi) | GoToolOnline" },
+    ar:{ back:"← الرجوع إلى الصفحة الرئيسية", title:"مُصغِّر HTML (أساسي)", ph:"ألصِق كود HTML هنا…",
+        btn:"تصغير", note:"ملاحظة: تصغير أساسي يعتمد على طيّ المسافات فقط. للإنتاج استخدم أداة بناء.",
+        top:"العودة للأعلى ↑", pageTitle:"مُصغِّر HTML (أساسي) | GoToolOnline" }
+  };
+
+  function getLang(){
+    const u = new URL(location.href);
+    return u.searchParams.get('lang') || localStorage.getItem('lang') || 'en';
+  }
+
+  function setHomeLinks(lang){
+    var path = location.pathname.replace(/\/+$/,'');
+    var parts = path.split('/');
+    if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+    else parts = [''];
+    var home = parts.join('/') + '/';
+    if (lang){
+      var u = new URL(home, location.origin);
+      u.searchParams.set('lang', lang);
+      home = u.pathname + u.search + u.hash;
+    }
+    document.querySelectorAll('a[data-home]').forEach(a=>a.setAttribute('href', home));
+  }
+
+  function applyLang(lang){
+    const d = L[lang] || L.en;
+    document.getElementById('backLink').textContent = d.back;
+    document.getElementById('t').textContent = d.title;
+    document.getElementById('src').placeholder = d.ph;
+    document.getElementById('btnDo').textContent = d.btn;
+    document.getElementById('note').textContent = d.note;
+    document.getElementById('topBtn').textContent = d.top;
+    document.title = d.pageTitle;
+
+    document.documentElement.lang = HTML_LANG[lang] || 'en';
+    document.documentElement.dir  = (lang==='ar') ? 'rtl' : 'ltr';
+
+    localStorage.setItem('lang', lang);
+    const url = new URL(location.href);
+    url.searchParams.set('lang', lang);
+    history.replaceState({}, '', url.pathname + '?' + url.searchParams.toString());
+
+    setHomeLinks(lang);
+  }
+
+  const sel = document.getElementById('lang');
+  const cur = getLang();
+  sel.value = L[cur] ? cur : 'en';
+  applyLang(sel.value);
+  sel.addEventListener('change', function(){ applyLang(this.value); });
+})();
+</script>
+
+<!-- 初始 back-home 解析（保留 ?lang） -->
+<script>
+(function(){
+  var path = location.pathname.replace(/\/+$/,'');
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = [''];
+  var home = parts.join('/') + '/';
+
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+  document.querySelectorAll('a[data-home]').forEach(function(a){
+    a.setAttribute('href', home);
+  });
+})();
+</script>
+</body>
+</html>

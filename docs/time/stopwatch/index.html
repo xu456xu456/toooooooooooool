@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Stopwatch — Multiple Parallel Timers, Laps & CSV Export | GoToolOnline</title>
+<meta name="description" content="Free online stopwatch with up to 5 parallel timers. Start/Pause, Lap tracking, Reset and CSV export. Big digits, keyboard shortcuts, and shareable URL (?n=5)."/>
+<meta content="width=device-width, initial-scale=1" name="viewport">
+<link href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text x='2' y='14' font-size='14'>⏱️</text></svg>" rel="icon"/>
+<!-- Canonical & Social -->
+
+<meta content="website" property="og:type"/>
+<meta content="Stopwatch — Up to 5 Parallel Timers | GoToolOnline" property="og:title"/>
+<meta content="Run multiple stopwatches at once. Lap, Reset, Export CSV. Big digits and keyboard shortcuts." property="og:description"/>
+<meta content="https://gotoolonline.com/time/stopwatch/" property="og:url"/>
+<meta content="summary" name="twitter:card"/>
+<meta content="index, follow, max-image-preview:large" name="robots"/>
+<!-- Structured data -->
+<script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebApplication",
+    "name":"Stopwatch",
+    "url":"https://gotoolonline.com/time/stopwatch/",
+    "applicationCategory":"Timer",
+    "operatingSystem":"Web",
+    "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+    "publisher":{"@type":"Organization","name":"GoToolOnline","url":"https://gotoolonline.com"}
+  }
+</script>
+<script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"BreadcrumbList",
+    "itemListElement":[
+      {"@type":"ListItem","position":1,"name":"Home","item":"https://gotoolonline.com/"},
+      {"@type":"ListItem","position":2,"name":"Time Tools","item":"https://gotoolonline.com/time/"},
+      {"@type":"ListItem","position":3,"name":"Stopwatch","item":"https://gotoolonline.com/time/stopwatch/"}
+    ]
+  }
+</script>
+<script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"How many stopwatches can I run?","acceptedAnswer":{"@type":"Answer","text":"You can run up to five independent stopwatches in parallel."}},
+      {"@type":"Question","name":"Can I export lap times?","acceptedAnswer":{"@type":"Answer","text":"Yes. Each stopwatch can export its laps as a CSV file (Lap, Split, Total)."}},
+      {"@type":"Question","name":"How do I share a setup with multiple timers?","acceptedAnswer":{"@type":"Answer","text":"Append a query like ?n=5 to the URL to open the page with five stopwatches."}}
+    ]
+  }
+</script>
+<style>
+  :root { --bg:#0a0f1e; --card:#0f1830; --muted:#9fb0c3; --fg:#eaf3ff; --acc:#4fb3ff; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+  header{max-width:1200px;margin:24px auto 8px;display:flex;gap:14px;align-items:center;padding:0 18px}
+  header a.logo{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--fg);font-weight:800;font-size:24px;white-space:nowrap}
+  header a.navbtn{padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:12px;color:#eaf3ff;text-decoration:none;font-size:16px;white-space:nowrap}
+  header a.navbtn:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  .langWrap{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .lang{padding:8px 10px;border-radius:10px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;font-size:14px}
+  main{max-width:1200px;margin:10px auto 72px;padding:0 18px}
+  h1{font-size:34px;margin:10px 0 12px}
+  p,label{font-size:18px;line-height:1.6}
+  .muted{color:var(--muted)}
+  .card{background:#0f1830;border:1px solid #1a2843;border-radius:20px;padding:20px;margin:16px 0}
+  input,button{padding:12px 14px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;font-size:16px}
+  button{cursor:pointer;background:linear-gradient(180deg,#2a78ff,#0050d4);border:none;font-weight:700;letter-spacing:.2px}
+  button:hover{filter:brightness(1.06)}
+  .toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .small{font-size:14px;color:#9fb0c3}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-top:16px}
+  .sw{background:#0f1830;border:1px solid #1a2843;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px}
+  .sw .title{display:flex;justify-content:space-between;align-items:center}
+  .sw .title strong{font-size:18px}
+  .time{font-size:48px;font-weight:900;letter-spacing:1px;text-align:center}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .laplist{border-top:1px dashed #2a3c64;margin-top:8px;padding-top:8px;max-height:220px;overflow:auto}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:6px 8px;text-align:left;border-bottom:1px solid #1a2843;white-space:nowrap}
+  kbd{background:#0f1a2f;border:1px solid #24365b;border-radius:6px;padding:2px 6px;font-size:12px}
+  .chip{padding:8px 12px;border:1px solid #24365b;background:#0f1a2f;border-radius:999px;cursor:pointer;font-size:16px}
+  .chip:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  footer{max-width:1200px;margin:40px auto;padding:0 18px;color:#9fb0c3;font-size:14px}
+  .footer-links a{color:#8cd1ff;text-decoration:none;margin-right:10px}
+  .footer-links a:hover{text-decoration:underline}
+  @media (max-width:480px){ .time{font-size:38px} }
+  @media print{ header,footer,.toolbar,.langWrap{display:none!important} body{background:#fff;color:#000} .card,.sw{border:none} }
+</style>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/time/stopwatch/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/time/stopwatch/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/time/stopwatch/">
+</head>
+<body>
+<header>
+  <a class="logo" data-home href="#"><span>🛠️</span><strong>GoToolOnline</strong></a>
+  <a id="backLink" class="navbtn" data-home href="#">← Back to Home</a>
+  <div class="langWrap">
+    <span class="muted">🌐</span>
+    <select id="lang" class="lang" aria-label="Language">
+      <option value="en">English</option>
+      <option value="zh">简体中文</option>
+      <option value="ph">Tagalog</option>
+      <option value="id">Bahasa Indonesia</option>
+      <option value="vi">Tiếng Việt</option>
+      <option value="bn">বাংলা</option>
+      <option value="ng">English (NG)</option>
+      <option value="sw">Kiswahili</option>
+      <option value="ar">العربية</option>
+    </select>
+  </div>
+</header>
+
+<main>
+  <nav aria-label="Breadcrumb" class="small" style="margin-bottom:6px">
+    <a id="bcHome" data-home href="#">Home</a> › <a id="bcTime" href="/time/">Time Tools</a> › <strong id="bcCurrent">Stopwatch</strong>
+  </nav>
+
+  <section class="card">
+    <h1 id="pageTitle">Stopwatch (Up to 5)</h1>
+    <p id="hero" class="muted">Run multiple independent stopwatches with lap timing and CSV export. Share a multi-stopwatch layout via <code>?n=5</code>.</p>
+    <div class="toolbar">
+      <button id="addOne">Add Stopwatch</button>
+      <button id="addToFive" title="Create up to five stopwatches">Add 4 More</button>
+      <span id="kbHint" class="small">Keyboard (focused card): <kbd>Space</kbd> Start/Pause · <kbd>L</kbd> Lap · <kbd>R</kbd> Reset</span>
+    </div>
+  </section>
+
+  <section class="grid" id="wrap"></section>
+
+  <section aria-labelledby="faq-h2" class="card">
+    <h2 id="faq-h2" style="margin:0 0 8px 0;font-size:22px">FAQ</h2>
+    <details><summary id="q1">How do I open with 5 stopwatches?</summary><div id="a1" class="small">Visit <code>/time/stopwatch/?n=5</code> and share that link.</div></details>
+    <details><summary id="q2">Can I export lap times?</summary><div id="a2" class="small">Yes — click <b>Export</b> to download a CSV (Lap, Split, Total).</div></details>
+    <details><summary id="q3">Does it work offline?</summary><div id="a3" class="small">The timer logic runs in your browser. No sign-in required.</div></details>
+  </section>
+
+  <section class="card">
+    <h2 id="relTitle" style="margin:0 0 6px 0;font-size:22px">Related tools</h2>
+    <p id="relText" class="small" style="margin:0">
+      Need alarms instead? Try the <a href="/time/countdown-timer/">Countdown Timer</a>.
+      For dates math, see <a href="/calculators/date-difference/">Date Difference</a>.
+    </p>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-links">
+    <a href="/about/">About</a> ·
+    <a href="/privacy/">Privacy</a> ·
+    <a href="/terms/">Terms</a> ·
+    <a href="/contact/">Contact</a>
+  </div>
+  <div style="margin-top:8px">© <span id="y"></span> GoToolOnline.com · Free online tools for everyone.</div>
+</footer>
+
+<script>
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  // ---------- i18n ----------
+  const HTML_LANG = { en:'en', zh:'zh-CN', ph:'tl-PH', id:'id-ID', vi:'vi-VN', bn:'bn', ng:'en-NG', sw:'sw', ar:'ar' };
+
+  const I18N = {
+    en: {
+      metaTitle:"Stopwatch — Multiple Parallel Timers, Laps & CSV Export | GoToolOnline",
+      metaDesc:"Free online stopwatch with up to 5 parallel timers. Start/Pause, Lap tracking, Reset and CSV export. Big digits, keyboard shortcuts, and shareable URL (?n=5).",
+      back:"← Back to Home",
+      crumbHome:"Home", crumbTime:"Time Tools", crumbCur:"Stopwatch",
+      h1:"Stopwatch (Up to 5)",
+      hero:'Run multiple independent stopwatches with lap timing and CSV export. Share a multi-stopwatch layout via <code>?n=5</code>.',
+      addOne:"Add Stopwatch", addToFive:"Add 4 More",
+      kbdHint:'Keyboard (focused card): <kbd>Space</kbd> Start/Pause · <kbd>L</kbd> Lap · <kbd>R</kbd> Reset',
+      // card
+      cardTitle:"Stopwatch", remove:"Remove", removeTitle:"Remove this stopwatch",
+      start:"Start", pause:"Pause", lap:"Lap", reset:"Reset", export:"Export",
+      lapsLabel:"Laps", thN:"#", thSplit:"Split", thTotal:"Total",
+      alertMax:"Up to 5 stopwatches only.", alertNoLaps:"No laps to export.",
+      csvHeader:["Lap","Split","Total"],
+      // FAQ & related
+      faq:"FAQ",
+      q1:"How do I open with 5 stopwatches?", a1:'Visit <code>/time/stopwatch/?n=5</code> and share that link.',
+      q2:"Can I export lap times?", a2:'Yes — click <b>Export</b> to download a CSV (Lap, Split, Total).',
+      q3:"Does it work offline?", a3:"The timer logic runs in your browser. No sign-in required.",
+      relTitle:"Related tools",
+      relText:'Need alarms instead? Try the <a href="/time/countdown-timer/">Countdown Timer</a>. For dates math, see <a href="/calculators/date-difference/">Date Difference</a>.'
+    },
+    zh: {
+      metaTitle:"秒表 — 多路并行、圈速与 CSV 导出 | GoToolOnline",
+      metaDesc:"免费在线秒表，最多并行 5 组。开始/暂停、圈速、重置与 CSV 导出。大号数字、键盘快捷键、可分享链接（?n=5）。",
+      back:"← 返回首页",
+      crumbHome:"首页", crumbTime:"时间工具", crumbCur:"秒表",
+      h1:"秒表（最多 5 个）",
+      hero:'支持多组独立秒表，圈速与 CSV 导出。可用 <code>?n=5</code> 打开 5 组布局并分享。',
+      addOne:"新增秒表", addToFive:"一键到 5 个",
+      kbdHint:'键盘（卡片聚焦）：<kbd>Space</kbd> 开始/暂停 · <kbd>L</kbd> 记圈 · <kbd>R</kbd> 重置',
+      cardTitle:"秒表", remove:"删除", removeTitle:"删除该秒表",
+      start:"开始", pause:"暂停", lap:"圈速", reset:"重置", export:"导出",
+      lapsLabel:"圈速", thN:"#", thSplit:"分段", thTotal:"累计",
+      alertMax:"最多 5 个秒表。", alertNoLaps:"没有可导出的圈速。",
+      csvHeader:["Lap","Split","Total"],
+      faq:"常见问题",
+      q1:"如何直接打开 5 个秒表？", a1:'访问 <code>/time/stopwatch/?n=5</code> 并分享该链接。',
+      q2:"能导出圈速吗？", a2:'可以，点击 <b>导出</b> 下载 CSV（Lap/Single Split/Total）。',
+      q3:"离线可用吗？", a3:"逻辑在浏览器内执行，无需登录。",
+      relTitle:"相关工具",
+      relText:'需要闹钟？试试 <a href="/time/countdown-timer/">倒计时计时器</a>。日期计算参见 <a href="/calculators/date-difference/">日期差计算</a>。'
+    },
+    ph: {
+      metaTitle:"Stopwatch — Maramihang Timer, Lap at CSV Export | GoToolOnline",
+      metaDesc:"Libreng stopwatch na may hanggang 5 sabayang timer. Start/Pause, Lap, Reset at CSV export. Malalaking digit at keyboard shortcuts.",
+      back:"← Balik sa Home",
+      crumbHome:"Home", crumbTime:"Mga Tool sa Oras", crumbCur:"Stopwatch",
+      h1:"Stopwatch (Hanggang 5)",
+      hero:'Magpatakbo ng maraming independent stopwatch na may lap at CSV export. Ibahagi ang layout gamit ang <code>?n=5</code>.',
+      addOne:"Magdagdag ng Stopwatch", addToFive:"Dagdag pa ng 4",
+      kbdHint:'Keyboard (nakatuon ang card): <kbd>Space</kbd> Start/Pause · <kbd>L</kbd> Lap · <kbd>R</kbd> Reset',
+      cardTitle:"Stopwatch", remove:"Alisin", removeTitle:"Alisin ang stopwatch na ito",
+      start:"Start", pause:"Pause", lap:"Lap", reset:"Reset", export:"Export",
+      lapsLabel:"Laps", thN:"#", thSplit:"Split", thTotal:"Total",
+      alertMax:"Hanggang 5 stopwatch lamang.", alertNoLaps:"Walang laps para i-export.",
+      csvHeader:["Lap","Split","Total"],
+      faq:"FAQ",
+      q1:"Paano bubuksan na may 5 stopwatch?", a1:'Bisitahin ang <code>/time/stopwatch/?n=5</code> at ibahagi ang link.',
+      q2:"Maaari bang i-export ang lap times?", a2:'Oo — i-click ang <b>Export</b> para i-download ang CSV (Lap, Split, Total).',
+      q3:"Gagana ba offline?", a3:"Tumatakbo ang lohika sa iyong browser. Walang sign-in.",
+      relTitle:"Kaugnay na tool",
+      relText:'Kailangan mo ng alarma? Subukan ang <a href="/time/countdown-timer/">Countdown Timer</a>. Para sa petsa, tingnan ang <a href="/calculators/date-difference/">Date Difference</a>.'
+    },
+    id: {
+      metaTitle:"Stopwatch — Banyak Timer Paralel, Lap & Ekspor CSV | GoToolOnline",
+      metaDesc:"Stopwatch online gratis hingga 5 timer paralel. Mulai/Jeda, Lap, Reset, dan ekspor CSV. Digit besar & pintasan keyboard.",
+      back:"← Kembali ke Beranda",
+      crumbHome:"Beranda", crumbTime:"Alat Waktu", crumbCur:"Stopwatch",
+      h1:"Stopwatch (Hingga 5)",
+      hero:'Jalankan beberapa stopwatch independen dengan lap & ekspor CSV. Bagikan tata letak dengan <code>?n=5</code>.',
+      addOne:"Tambah Stopwatch", addToFive:"Tambah 4 Lagi",
+      kbdHint:'Keyboard (kartu fokus): <kbd>Space</kbd> Mulai/Jeda · <kbd>L</kbd> Lap · <kbd>R</kbd> Atur Ulang',
+      cardTitle:"Stopwatch", remove:"Hapus", removeTitle:"Hapus stopwatch ini",
+      start:"Mulai", pause:"Jeda", lap:"Lap", reset:"Atur Ulang", export:"Ekspor",
+      lapsLabel:"Lap", thN:"#", thSplit:"Split", thTotal:"Total",
+      alertMax:"Maksimal 5 stopwatch saja.", alertNoLaps:"Tidak ada lap untuk diekspor.",
+      csvHeader:["Lap","Split","Total"],
+      faq:"FAQ",
+      q1:"Bagaimana membuka 5 stopwatch?", a1:'Kunjungi <code>/time/stopwatch/?n=5</code> dan bagikan tautannya.',
+      q2:"Bisakah mengekspor lap?", a2:'Bisa — klik <b>Ekspor</b> untuk mengunduh CSV (Lap, Split, Total).',
+      q3:"Bisa offline?", a3:"Logika berjalan di browser Anda. Tanpa masuk.",
+      relTitle:"Alat terkait",
+      relText:'Butuh alarm? Coba <a href="/time/countdown-timer/">Countdown Timer</a>. Untuk tanggal, lihat <a href="/calculators/date-difference/">Date Difference</a>.'
+    },
+    vi: {
+      metaTitle:"Đồng hồ bấm giờ — Nhiều bộ song song, vòng & xuất CSV | GoToolOnline",
+      metaDesc:"Đồng hồ bấm giờ trực tuyến miễn phí, tối đa 5 bộ song song. Bắt đầu/Tạm dừng, Vòng (Lap), Đặt lại và xuất CSV. Số lớn & phím tắt.",
+      back:"← Về Trang chủ",
+      crumbHome:"Trang chủ", crumbTime:"Công cụ Thời gian", crumbCur:"Đồng hồ bấm giờ",
+      h1:"Đồng hồ bấm giờ (tối đa 5)",
+      hero:'Chạy nhiều đồng hồ độc lập, có vòng và xuất CSV. Chia sẻ bố cục bằng <code>?n=5</code>.',
+      addOne:"Thêm đồng hồ", addToFive:"Thêm 4 cái nữa",
+      kbdHint:'Bàn phím (khi thẻ được chọn): <kbd>Space</kbd> Bắt đầu/Tạm dừng · <kbd>L</kbd> Vòng · <kbd>R</kbd> Đặt lại',
+      cardTitle:"Đồng hồ", remove:"Xoá", removeTitle:"Xoá đồng hồ này",
+      start:"Bắt đầu", pause:"Tạm dừng", lap:"Vòng", reset:"Đặt lại", export:"Xuất",
+      lapsLabel:"Vòng", thN:"#", thSplit:"Split", thTotal:"Tổng",
+      alertMax:"Tối đa 5 đồng hồ bấm giờ.", alertNoLaps:"Không có vòng để xuất.",
+      csvHeader:["Lap","Split","Total"],
+      faq:"FAQ",
+      q1:"Mở sẵn 5 đồng hồ thế nào?", a1:'Truy cập <code>/time/stopwatch/?n=5</code> và chia sẻ liên kết.',
+      q2:"Xuất thời gian vòng được không?", a2:'Được — bấm <b>Xuất</b> để tải CSV (Lap, Split, Total).',
+      q3:"Dùng offline chứ?", a3:"Chạy hoàn toàn trong trình duyệt, không cần đăng nhập.",
+      relTitle:"Công cụ liên quan",
+      relText:'Cần báo thức? Thử <a href="/time/countdown-timer/">Đồng hồ đếm ngược</a>. Tính ngày xem <a href="/calculators/date-difference/">Chênh lệch ngày</a>.'
+    },
+    bn: {
+      metaTitle:"স্টপওয়াচ — একাধিক টাইমার, ল্যাপ ও CSV এক্সপোর্ট | GoToolOnline",
+      metaDesc:"বিনামূল্যের অনলাইন স্টপওয়াচ (সর্বোচ্চ ৫টি সমান্তরাল)। শুরু/বিরতি, ল্যাপ, রিসেট ও CSV এক্সপোর্ট। বড় ডিজিট ও কিবোর্ড শর্টকাট।",
+      back:"← হোমে ফিরে যান",
+      crumbHome:"হোম", crumbTime:"সময়ের টুলস", crumbCur:"স্টপওয়াচ",
+      h1:"স্টপওয়াচ (সর্বোচ্চ ৫টি)",
+      hero:'একাধিক স্বাধীন স্টপওয়াচ চালান, ল্যাপসহ CSV এক্সপোর্ট। <code>?n=5</code> দিয়ে ৫টির লেআউট শেয়ার করুন।',
+      addOne:"স্টপওয়াচ যোগ করুন", addToFive:"আর ৪টি যোগ করুন",
+      kbdHint:'কিবোর্ড (কার্ড ফোকাস): <kbd>Space</kbd> শুরু/বিরতি · <kbd>L</kbd> ল্যাপ · <kbd>R</kbd> রিসেট',
+      cardTitle:"স্টপওয়াচ", remove:"মুছুন", removeTitle:"এই স্টপওয়াচ মুছুন",
+      start:"শুরু", pause:"বিরতি", lap:"ল্যাপ", reset:"রিসেট", export:"এক্সপোর্ট",
+      lapsLabel:"ল্যাপ", thN:"#", thSplit:"স্প্লিট", thTotal:"মোট",
+      alertMax:"সর্বোচ্চ ৫টি স্টপওয়াচ।", alertNoLaps:"এক্সপোর্ট করার মতো ল্যাপ নেই।",
+      csvHeader:["Lap","Split","Total"],
+      faq:"FAQ",
+      q1:"৫টি স্টপওয়াচ সহ কীভাবে খুলবো?", a1:'<code>/time/stopwatch/?n=5</code> ভিজিট করে লিঙ্ক শেয়ার করুন।',
+      q2:"ল্যাপ সময় কি এক্সপোর্ট হবে?", a2:'হ্যাঁ — <b>এক্সপোর্ট</b> ক্লিক করে CSV (Lap, Split, Total) ডাউনলোড করুন।',
+      q3:"অফলাইনে কাজ করে?", a3:"ব্রাউজারেই চলে, কোনো সাইন-ইন দরকার নেই।",
+      relTitle:"সম্পর্কিত টুলস",
+      relText:'অ্যালার্ম দরকার? দেখুন <a href="/time/countdown-timer/">কাউন্টডাউন টাইমার</a>। তারিখ গণনা: <a href="/calculators/date-difference/">ডেট ডিফারেন্স</a>।'
+    },
+    ng: null, // fallback to en
+    sw: {
+      metaTitle:"Kipima Muda — Vipima Muda Vingi, Duru & Utoaji CSV | GoToolOnline",
+      metaDesc:"Kipima muda mtandaoni bure hadi 5 sambamba. Anza/Sitisha, Duru, Weka upya na CSV. Nambari kubwa na njia za mkato.",
+      back:"← Rudi Nyumbani",
+      crumbHome:"Nyumbani", crumbTime:"Zana za Muda", crumbCur:"Kipima muda",
+      h1:"Kipima muda (Hadi 5)",
+      hero:'Endesha vipima muda huru vingi, na duru na uhamishaji CSV. Shiriki mpangilio kwa <code>?n=5</code>.',
+      addOne:"Ongeza Kipima muda", addToFive:"Ongeza 4 Zaidi",
+      kbdHint:'Kibodi (kadi imezingatiwa): <kbd>Space</kbd> Anza/Sitisha · <kbd>L</kbd> Duru · <kbd>R</kbd> Weka upya',
+      cardTitle:"Kipima muda", remove:"Futa", removeTitle:"Futa kipima muda hiki",
+      start:"Anza", pause:"Sitisha", lap:"Duru", reset:"Weka upya", export:"Pakua CSV",
+      lapsLabel:"Duru", thN:"#", thSplit:"Mgawanyo", thTotal:"Jumla",
+      alertMax:"Upeo ni vipima muda 5 pekee.", alertNoLaps:"Hakuna duru za kupakua.",
+      csvHeader:["Lap","Split","Total"],
+      faq:"Maswali ya Mara kwa Mara",
+      q1:"Nifungue vipi na vipima muda 5?", a1:'Tembelea <code>/time/stopwatch/?n=5</code> na ushiriki kiungo.',
+      q2:"Naweza kupakua nyakati za duru?", a2:'Ndiyo — bonyeza <b>Pakua CSV</b> kupakua faili (Lap, Split, Total).',
+      q3:"Hufanya kazi nje ya mtandao?", a3:"Mantiki inaendeshwa kwenye kivinjari chako. Hakuna kuingia.",
+      relTitle:"Zana zinazohusiana",
+      relText:'Unahitaji kengele? Jaribu <a href="/time/countdown-timer/">Kipima muda cha Ku-countdown</a>. Kwa tarehe, tazama <a href="/calculators/date-difference/">Tofauti ya Tarehe</a>.'
+    },
+    ar: {
+      metaTitle:"ساعة إيقاف — مؤقتات متوازية، لفّات وتصدير CSV | GoToolOnline",
+      metaDesc:"ساعة إيقاف عبر الإنترنت حتى 5 مؤقتات متوازية. بدء/إيقاف مؤقت، لفّة، إعادة ضبط وتصدير CSV. أرقام كبيرة واختصارات لوحة المفاتيح.",
+      back:"← الرجوع إلى الصفحة الرئيسية",
+      crumbHome:"الصفحة الرئيسية", crumbTime:"أدوات الوقت", crumbCur:"ساعة إيقاف",
+      h1:"ساعة إيقاف (حتى 5)",
+      hero:'شغّل عدة ساعات إيقاف مستقلة مع اللفّات وتصدير CSV. شارك التخطيط عبر <code>?n=5</code>.',
+      addOne:"إضافة ساعة إيقاف", addToFive:"إضافة 4 أخرى",
+      kbdHint:'لوحة المفاتيح (عند تركيز البطاقة): <kbd>Space</kbd> بدء/إيقاف مؤقت · <kbd>L</kbd> لفّة · <kbd>R</kbd> إعادة ضبط',
+      cardTitle:"ساعة إيقاف", remove:"حذف", removeTitle:"حذف هذه الساعة",
+      start:"بدء", pause:"إيقاف مؤقت", lap:"لفة", reset:"إعادة ضبط", export:"تصدير",
+      lapsLabel:"اللفّات", thN:"#", thSplit:"الفاصل", thTotal:"الإجمالي",
+      alertMax:"الحد الأقصى 5 ساعات إيقاف.", alertNoLaps:"لا توجد لفّات للتصدير.",
+      csvHeader:["Lap","Split","Total"],
+      faq:"الأسئلة الشائعة",
+      q1:"كيف أفتح بـ 5 ساعات إيقاف؟", a1:'اذهب إلى <code>/time/stopwatch/?n=5</code> وشارك الرابط.',
+      q2:"هل يمكن تصدير أزمنة اللفّات؟", a2:'نعم — انقر <b>تصدير</b> لتحميل CSV (Lap, Split, Total).',
+      q3:"هل تعمل دون اتصال؟", a3:"التشغيل داخل المتصفح. لا حاجة لتسجيل دخول.",
+      relTitle:"أدوات ذات صلة",
+      relText:'تريد مؤقت عدّ تنازلي؟ جرّب <a href="/time/countdown-timer/">العدّاد التنازلي</a>. لحساب التواريخ، انظر <a href="/calculators/date-difference/">فرق التواريخ</a>.'
+    }
+  };
+  I18N.ng = I18N.en; // English (NG) fallback
+
+  function getLang(){
+    const u = new URL(location.href);
+    return u.searchParams.get('lang') || localStorage.getItem('lang') || 'en';
+  }
+
+  function applyLang(lang){
+    const t = I18N[lang] || I18N.en;
+    window._t = t;
+
+    document.documentElement.lang = HTML_LANG[lang] || 'en';
+    document.documentElement.dir  = (lang === 'ar') ? 'rtl' : 'ltr';
+
+    document.title = t.metaTitle;
+    const md = document.querySelector('meta[name="description"]'); if (md) md.setAttribute('content', t.metaDesc);
+
+    // Header & crumbs
+    document.getElementById('backLink').textContent = t.back;
+    document.getElementById('bcHome').textContent = t.crumbHome;
+    document.getElementById('bcTime').textContent = t.crumbTime;
+    document.getElementById('bcCurrent').textContent = t.crumbCur;
+
+    // Main hero & toolbar
+    document.getElementById('pageTitle').textContent = t.h1;
+    document.getElementById('hero').innerHTML = t.hero;
+    document.getElementById('addOne').textContent = t.addOne;
+    document.getElementById('addToFive').textContent = t.addToFive;
+    document.getElementById('kbHint').innerHTML = t.kbdHint;
+
+    // FAQ & related
+    document.getElementById('faq-h2').textContent = t.faq;
+    document.getElementById('q1').textContent = t.q1; document.getElementById('a1').innerHTML = t.a1;
+    document.getElementById('q2').textContent = t.q2; document.getElementById('a2').innerHTML = t.a2;
+    document.getElementById('q3').textContent = t.q3; document.getElementById('a3').textContent  = t.a3;
+    document.getElementById('relTitle').textContent = t.relTitle;
+    document.getElementById('relText').innerHTML = t.relText;
+
+    // Existing cards text refresh
+    document.querySelectorAll('.title strong').forEach((el, idx)=>{
+      const id = el.dataset.sid || (idx+1);
+      el.textContent = `${t.cardTitle} #${id}`;
+    });
+    document.querySelectorAll('.btn-remove').forEach(el=>{ el.textContent = t.remove; el.title = t.removeTitle; });
+    document.querySelectorAll('.btn-start').forEach(el=>{
+      // keep Start/Pause state; if currently "Pause" use t.pause
+      el.textContent = el.dataset.state === 'pause' ? t.pause : t.start;
+    });
+    document.querySelectorAll('.btn-lap').forEach(el=> el.textContent = t.lap);
+    document.querySelectorAll('.btn-reset').forEach(el=> el.textContent = t.reset);
+    document.querySelectorAll('.btn-export').forEach(el=> el.textContent = t.export);
+    document.querySelectorAll('.laps-label').forEach(el=> el.setAttribute('aria-label', t.lapsLabel));
+    document.querySelectorAll('thead').forEach(head=>{
+      const th = head.querySelectorAll('th');
+      if (th[0]) th[0].textContent = t.thN;
+      if (th[1]) th[1].textContent = t.thSplit;
+      if (th[2]) th[2].textContent = t.thTotal;
+    });
+
+    // persist & sync URL ?lang
+    localStorage.setItem('lang', lang);
+    const url = new URL(location.href);
+    url.searchParams.set('lang', lang);
+    history.replaceState({}, '', url.pathname + '?' + url.searchParams.toString());
+  }
+
+  const langSel = document.getElementById('lang');
+  const curLang = getLang();
+  langSel.value = I18N[curLang] ? curLang : 'en';
+  applyLang(langSel.value);
+  langSel.addEventListener('change', ()=> applyLang(langSel.value));
+</script>
+
+<script>
+  // ------- Stopwatch logic (with i18n alerts & labels) -------
+  const MAX_SW = 5;
+  const state = []; // [{id, running, elapsed, last, laps:[{n,time,split}], raf, el}]
+  let idSeq = 1;
+  const wrap = document.getElementById('wrap');
+
+  function fmt(ms){
+    ms = Math.max(0, ms|0);
+    const cs = Math.floor((ms % 1000) / 10);
+    const s  = Math.floor(ms / 1000) % 60;
+    const m  = Math.floor(ms / 60000) % 60;
+    const h  = Math.floor(ms / 3600000);
+    const HH = String(h).padStart(2,'0');
+    const MM = String(m).padStart(2,'0');
+    const SS = String(s).padStart(2,'0');
+    const CS = String(cs).padStart(2,'0');
+    return `${HH}:${MM}:${SS}.${CS}`;
+  }
+
+  function createCard(){
+    const t = window._t || I18N.en;
+    if (state.length >= MAX_SW) { alert(t.alertMax); return; }
+    const id = idSeq++;
+    const el = document.createElement('div');
+    el.className = 'sw';
+    el.tabIndex = 0; // focusable for keyboard
+    el.innerHTML = `
+      <div class="title">
+        <strong data-sid="${id}">${t.cardTitle} #${id}</strong>
+        <button class="btn-remove" data-act="remove" title="${t.removeTitle}">${t.remove}</button>
+      </div>
+      <div class="time" data-role="time" aria-live="polite">00:00:00.00</div>
+      <div class="controls" role="group" aria-label="Controls">
+        <button class="btn-start" data-act="start">${t.start}</button>
+        <button class="btn-lap" data-act="lap" disabled>${t.lap}</button>
+        <button class="btn-reset" data-act="reset" disabled>${t.reset}</button>
+        <button class="btn-export" data-act="export" disabled title="Export laps to CSV">${t.export}</button>
+      </div>
+      <div class="laplist">
+        <table aria-label="${t.lapsLabel}" class="laps-label">
+          <thead><tr><th>${t.thN}</th><th>${t.thSplit}</th><th>${t.thTotal}</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    `;
+    wrap.appendChild(el);
+
+    const st = {
+      id,
+      running:false,
+      elapsed:0, last:0,
+      laps:[],
+      raf:null,
+      el
+    };
+    state.push(st);
+    wireCard(st);
+    return st;
+  }
+
+  function wireCard(st){
+    const t = window._t || I18N.en;
+    const timeEl = st.el.querySelector('[data-role="time"]');
+    const btnStart = st.el.querySelector('button[data-act="start"]');
+    const btnLap = st.el.querySelector('button[data-act="lap"]');
+    const btnReset = st.el.querySelector('button[data-act="reset"]');
+    const btnExport = st.el.querySelector('button[data-act="export"]');
+    const btnRemove = st.el.querySelector('button[data-act="remove"]');
+    const tbody = st.el.querySelector('tbody');
+
+    function updateView(ms){ timeEl.textContent = fmt(ms); }
+
+    function tick(now){
+      if (!st.running){ st.raf = null; return; }
+      if (!st.last) st.last = now;
+      const dt = now - st.last;
+      st.last = now;
+      st.elapsed += dt;
+      updateView(st.elapsed);
+      st.raf = requestAnimationFrame(tick);
+    }
+
+    function start(){
+      if (st.running) return;
+      st.running = true;
+      btnStart.textContent = (window._t || I18N.en).pause;
+      btnStart.dataset.state = 'pause';
+      btnLap.disabled = false;
+      btnReset.disabled = false;
+      btnExport.disabled = st.laps.length === 0;
+      st.last = performance.now();
+      st.raf = requestAnimationFrame(tick);
+    }
+
+    function pause(){
+      if (!st.running) return;
+      st.running = false;
+      btnStart.textContent = (window._t || I18N.en).start;
+      btnStart.dataset.state = 'start';
+      if (st.raf){ cancelAnimationFrame(st.raf); st.raf = null; }
+    }
+
+    function toggle(){ st.running ? pause() : start(); }
+
+    function reset(){
+      pause();
+      st.elapsed = 0;
+      st.laps = [];
+      tbody.innerHTML = '';
+      updateView(0);
+      btnLap.disabled = true;
+      btnReset.disabled = true;
+      btnExport.disabled = true;
+    }
+
+    function lap(){
+      const n = st.laps.length + 1;
+      const split = st.laps.length ? st.elapsed - st.laps[st.laps.length-1].time : st.elapsed;
+      st.laps.push({ n, time: st.elapsed, split });
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${n}</td><td>${fmt(split)}</td><td>${fmt(st.elapsed)}</td>`;
+      tbody.prepend(tr);
+      btnExport.disabled = false;
+    }
+
+    function exportCSV(){
+      const t = window._t || I18N.en;
+      if (!st.laps.length){ alert(t.alertNoLaps); return; }
+      const header = t.csvHeader || ["Lap","Split","Total"];
+      let csv = header.join(',') + '\n';
+      const arr = [...st.laps].sort((a,b)=>a.n-b.n);
+      arr.forEach(x=> csv += `${x.n},${fmt(x.split)},${fmt(x.time)}\n`);
+      const blob = new Blob([csv], {type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `stopwatch_${st.id}_laps.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    // Button events
+    btnStart.addEventListener('click', toggle);
+    btnLap.addEventListener('click', lap);
+    btnReset.addEventListener('click', reset);
+    btnExport.addEventListener('click', exportCSV);
+    btnRemove.addEventListener('click', ()=>{
+      pause();
+      const idx = state.findIndex(x=>x.id===st.id);
+      if (idx>=0) state.splice(idx,1);
+      st.el.remove();
+    });
+
+    // Keyboard shortcuts (card must be focused)
+    st.el.addEventListener('keydown', (e)=>{
+      const k = e.key.toLowerCase();
+      if (k === ' ' || k === 'spacebar'){ e.preventDefault(); toggle(); }
+      if (k === 'l'){ e.preventDefault(); if (!btnLap.disabled) lap(); }
+      if (k === 'r'){ e.preventDefault(); reset(); }
+    });
+
+    updateView(0);
+  }
+
+  // Toolbar actions
+  document.getElementById('addOne').addEventListener('click', ()=> createCard());
+  document.getElementById('addToFive').addEventListener('click', ()=>{
+    while (state.length < MAX_SW) createCard();
+  });
+
+  // Boot: from URL ?n=5
+  (function boot(){
+    const n = Math.max(1, Math.min(MAX_SW, parseInt(new URLSearchParams(location.search).get('n')||'1',10)));
+    for (let i=0;i<n;i++) createCard();
+  })();
+</script>
+
+<!-- 保留你原来的 Home 链接解析，并继续透传 ?lang -->
+<script>
+(function(){
+  // Compute site root by removing the last two segments (category/tool)
+  var path = location.pathname.replace(/\/+$/,''); // strip trailing slashes
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = ['']; // already at root
+  var home = parts.join('/') + '/';
+
+  // preserve ?lang if present
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+
+  document.querySelectorAll('a[data-home]').forEach(function(a){
+    a.setAttribute('href', home);
+  });
+})();
+</script>
+</body>
+</html>

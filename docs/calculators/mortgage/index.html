@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Mortgage Calculator — Monthly Payment & Amortization | GoToolOnline</title>
+<meta name="description" content="Free mortgage calculator: monthly payment, total interest, payoff time and full amortization schedule. Supports down payment, extra monthly payment, CSV export and multiple currencies."/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+
+<!-- Social -->
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Mortgage Calculator — Payment & Amortization"/>
+<meta property="og:description" content="Compute monthly payment, total interest and view the amortization schedule. Export CSV. Down payment & extra payment supported."/>
+<meta property="og:url" content="https://gotoolonline.com/calculators/mortgage/"/>
+<meta name="twitter:card" content="summary"/>
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text x='2' y='14' font-size='14'>🏠</text></svg>">
+<style>
+  :root{--bg:#0a0f1e;--card:#0f1830;--fg:#eaf3ff;--muted:#9fb0c3;--acc:#4fb3ff}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+  a{color:#8cd1ff;text-decoration:none}
+  header{max-width:1100px;margin:18px auto 8px;display:flex;gap:10px;align-items:center;padding:0 16px}
+  header a{color:var(--fg)}
+  .pill{padding:8px 12px;border:1px solid #24365b;background:#0f1a2f;border-radius:999px;cursor:pointer}
+  /* language UI */
+  #langBtn{margin-left:8px}
+  .lang-panel{position:fixed; top:72px; right:18px; z-index:1200;background:#0f1830; border:1px solid #1a2843; border-radius:16px;padding:12px; display:none; width:min(420px, calc(100vw - 24px));box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  .lang-panel.open{ display:block }
+  .lang-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px }
+  .lang-grid button{display:block;width:100%;text-align:center;padding:10px 10px;border:1px solid #24365b;background:#0f1a2f;border-radius:12px;color:var(--fg);font-size:14px;cursor:pointer}
+  .lang-grid button.active{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+
+  main{max-width:1100px;margin:8px auto 80px;padding:0 16px}
+  .card{background:var(--card);border:1px solid #1a2843;border-radius:18px;padding:16px;margin:12px 0}
+  h1{margin:4px 0 8px 0}
+  .muted{color:var(--muted)}
+  input,select,button{padding:12px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:var(--fg);font-size:16px}
+  button{cursor:pointer;font-weight:800}
+  button.primary{background:linear-gradient(180deg,#2a78ff,#0050d4);border:none}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .summary{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .k{color:var(--muted);font-size:14px}
+  .v{font-weight:800;font-size:18px}
+  table{width:100%;border-collapse:collapse;margin-top:10px;font-size:14px}
+  th,td{border-bottom:1px solid #223055;padding:8px;text-align:right}
+  th:first-child,td:first-child{text-align:left}
+  .small{font-size:13px;color:var(--muted)}
+  footer{max-width:1100px;margin:40px auto 0;padding:0 16px;color:var(--muted);font-size:14px}
+  @media (max-width:900px){ .grid{grid-template-columns:1fr} .summary{grid-template-columns:1fr} }
+  @media print{ header,footer,.no-print{display:none!important} body{background:#fff;color:#000} .card{border:none} }
+</style>
+
+<!-- Structured data -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Mortgage Calculator","url":"https://gotoolonline.com/calculators/mortgage/","applicationCategory":"FinanceApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"GoToolOnline","url":"https://gotoolonline.com"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+  {"@type":"Question","name":"Does this include taxes, insurance or PMI?","acceptedAnswer":{"@type":"Answer","text":"No. This tool focuses on principal and interest (P&I). You can approximate by adding those costs to the extra payment field."}},
+  {"@type":"Question","name":"Can I add extra monthly payment?","acceptedAnswer":{"@type":"Answer","text":"Yes. Use the Extra monthly payment input to see faster payoff and lower total interest."}},
+  {"@type":"Question","name":"What if the APR is 0%?","acceptedAnswer":{"@type":"Answer","text":"The calculator uses a simple division of loan amount by term months when the interest rate is zero."}}
+]}
+</script>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/calculators/mortgage/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/calculators/mortgage/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/calculators/mortgage/">
+</head>
+<body>
+<header>
+  <a class="pill" data-home href="#">🛠 GoToolOnline</a>
+  <a class="pill" data-home href="#" data-i18n="ui.back">← Back to Home</a>
+  <button id="langBtn" class="pill" aria-haspopup="dialog" aria-expanded="false" data-i18n="ui.lang">🌐 Language</button>
+  <div class="lang-panel" id="langPanel" role="dialog" aria-label="Select language">
+    <div class="lang-grid" id="langGrid"></div>
+  </div>
+</header>
+
+<main>
+  <section class="card" aria-labelledby="title">
+    <h1 id="title" data-i18n="title">Mortgage Calculator</h1>
+    <p class="small" data-i18n="intro">Compute monthly payment, total interest, payoff time and see the amortization schedule. Export CSV for the full table.</p>
+
+    <div class="grid" style="margin-top:8px">
+      <!-- Inputs -->
+      <div class="card" aria-label="Inputs">
+        <div class="two">
+          <label><span data-i18n="labels.ccy">Currency</span>
+            <select id="ccy" aria-label="Currency">
+              <!-- 保留英文币种名称，避免生硬翻译 -->
+              <option value="USD">USD — US Dollar</option>
+              <option value="AUD">AUD — Australian Dollar</option>
+              <option value="CAD">CAD — Canadian Dollar</option>
+              <option value="GBP">GBP — British Pound</option>
+              <option value="EUR">EUR — Euro</option>
+            </select>
+          </label>
+          <label><span data-i18n="labels.term">Term (years)</span>
+            <input id="years" type="number" inputmode="numeric" min="1" value="30"/>
+          </label>
+        </div>
+
+        <div class="row">
+          <label style="flex:1"><span data-i18n="labels.price">Home price</span>
+            <input id="price" type="number" inputmode="decimal" min="0" style="width:100%" value="600000"/>
+          </label>
+          <label style="flex:1"><span data-i18n="labels.down">Down payment</span>
+            <input id="down" type="number" inputmode="decimal" min="0" style="width:100%" value="120000"/>
+          </label>
+        </div>
+
+        <div class="row">
+          <label style="flex:1"><span data-i18n="labels.apr">Annual rate (APR, %)</span>
+            <input id="apr" type="number" inputmode="decimal" step="0.01" style="width:100%" value="5.5"/>
+          </label>
+          <label style="flex:1"><span data-i18n="labels.extra">Extra monthly payment</span>
+            <input id="extra" type="number" inputmode="decimal" min="0" style="width:100%" value="0"/>
+          </label>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <button class="primary" id="calc" data-i18n="btn.calc">Calculate</button>
+          <button id="export" data-i18n="btn.export">Export CSV</button>
+          <span class="small" data-i18n="note.pi">P&amp;I only. For taxes/insurance/PMI, add into “Extra” as an estimate.</span>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div class="card" aria-label="Results">
+        <h3 style="margin:0 0 8px 0" data-i18n="results.title">Results</h3>
+        <div class="summary" role="list">
+          <div class="row" role="listitem"><div class="k" style="flex:1" data-i18n="results.kLoan">Loan amount</div><div class="v" id="loan">—</div></div>
+          <div class="row" role="listitem"><div class="k" style="flex:1" data-i18n="results.kPmt">Monthly payment</div><div class="v" id="pmt">—</div></div>
+          <div class="row" role="listitem"><div class="k" style="flex:1" data-i18n="results.kInt">Total interest</div><div class="v" id="interest">—</div></div>
+          <div class="row" role="listitem"><div class="k" style="flex:1" data-i18n="results.kMonths">Months to pay off</div><div class="v" id="months">—</div></div>
+        </div>
+        <p class="small" style="margin-top:8px" data-i18n="results.note">Monthly payment shown includes any “Extra monthly payment”.</p>
+      </div>
+    </div>
+
+    <div class="card" aria-label="Amortization schedule">
+      <h3 style="margin:0 0 8px" data-i18n="amort.title">Amortization Schedule</h3>
+      <div class="small" data-i18n="amort.note">First 120 rows shown here. Use CSV export for the full schedule.</div>
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th data-i18n="table.num">#</th>
+            <th data-i18n="table.pay">Payment</th>
+            <th data-i18n="table.prin">Principal</th>
+            <th data-i18n="table.int">Interest</th>
+            <th data-i18n="table.bal">Balance</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin:0 0 6px" data-i18n="related.title">Related tools</h3>
+      <ul class="small" style="margin:6px 0 0 18px">
+        <li><a href="/calculators/percentage-calculator/" data-i18n="related.pct">Percentage Calculator</a></li>
+        <li><a href="/currency/currency-converter/" data-i18n="related.fx">Currency Converter</a></li>
+        <li><a href="/time/timezone-converter/" data-i18n="related.world">World Time (by Country)</a></li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer class="small" style="text-align:left;max-width:1100px;margin:auto;padding:0 16px 28px">
+  <div data-i18n="disclaimer">Disclaimer: For informational purposes only. This is not financial advice.</div>
+  <div style="margin-top:8px">© <span id="y"></span> GoToolOnline.com · <span data-i18n="ui.tagline">Free online tools for everyone.</span></div>
+</footer>
+
+<script>
+/* ========= i18n (9 languages) + lang switch; digits forced to Western ========= */
+(function(){
+  const LANGS = ['en','zh','ph','id','vi','bn','ng','sw','ar'];
+  const NAMES = {en:'English', zh:'简体中文', ph:'Tagalog', id:'Bahasa Indonesia', vi:'Tiếng Việt', bn:'বাংলা', ng:'English (NG)', sw:'Kiswahili', ar:'العربية'};
+
+  function getCookie(name){ return ('; '+document.cookie).split('; '+name+'=').pop().split(';')[0] || ''; }
+  function setCookie(name,val){ document.cookie = name+'='+val+';path=/;max-age=31536000'; }
+
+  function pickLang(){
+    const url = new URL(location.href);
+    const q = (url.searchParams.get('lang')||'').toLowerCase();
+    const c = (getCookie('lang')||'').toLowerCase();
+    const nav = (navigator.language||'en').toLowerCase();
+    const MAP = {en:'en', tl:'ph', fil:'ph', id:'id', vi:'vi', bn:'bn', sw:'sw', ar:'ar', zh:'zh', 'zh-cn':'zh', 'zh-hans':'zh'};
+    let lang='en';
+    if (q && LANGS.includes(q)) lang=q;
+    else if (c && LANGS.includes(c)) lang=c;
+    else lang = MAP[nav] || MAP[nav.split('-')[0]] || 'en';
+    setCookie('lang', lang);
+    document.documentElement.lang = (lang==='ph'?'tl':(lang==='ng'?'en':lang));
+    document.documentElement.dir = (lang==='ar'?'rtl':'ltr');
+    return lang;
+  }
+
+  function merge(base, over){
+    const out = Array.isArray(base)? base.slice() : {...base};
+    if (!over) return out;
+    for (const k of Object.keys(over)){
+      if (over[k] && typeof over[k]==='object' && !Array.isArray(over[k]) && base && typeof base[k]==='object'){
+        out[k] = merge(base[k], over[k]);
+      } else { out[k] = over[k]; }
+    }
+    return out;
+  }
+
+  const EN = {
+    meta:{title:"Mortgage Calculator — Monthly Payment & Amortization | GoToolOnline",
+          desc:"Free mortgage calculator: monthly payment, total interest, payoff time and full amortization schedule. Supports down payment, extra monthly payment, CSV export and multiple currencies."},
+    ui:{back:"← Back to Home", lang:"Language", tagline:"Free online tools for everyone."},
+    title:"Mortgage Calculator",
+    intro:"Compute monthly payment, total interest, payoff time and see the amortization schedule. Export CSV for the full table.",
+    labels:{ccy:"Currency", term:"Term (years)", price:"Home price", down:"Down payment", apr:"Annual rate (APR, %)", extra:"Extra monthly payment"},
+    btn:{calc:"Calculate", export:"Export CSV"},
+    note:{pi:"P&I only. For taxes/insurance/PMI, add into “Extra” as an estimate."},
+    results:{title:"Results", kLoan:"Loan amount", kPmt:"Monthly payment", kInt:"Total interest", kMonths:"Months to pay off", note:"Monthly payment shown includes any “Extra monthly payment”."},
+    amort:{title:"Amortization Schedule", note:"First 120 rows shown here. Use CSV export for the full schedule."},
+    table:{num:"#", pay:"Payment", prin:"Principal", int:"Interest", bal:"Balance"},
+    related:{title:"Related tools", pct:"Percentage Calculator", fx:"Currency Converter", world:"World Time (by Country)"},
+    disclaimer:"Disclaimer: For informational purposes only. This is not financial advice."
+  };
+
+  const ZH = {
+    meta:{title:"房贷计算器 — 月供与摊还表 | GoToolOnline",
+          desc:"免费房贷计算器：月供、总利息、还清时间与完整摊还表。支持首付、每月额外还款、CSV 导出和多种货币。"},
+    ui:{back:"← 返回首页", lang:"语言", tagline:"免费、好用、对隐私友好"},
+    title:"房贷计算器",
+    intro:"计算月供、总利息与还清时间，并查看摊还表。可导出 CSV 获取完整明细。",
+    labels:{ccy:"货币", term:"贷款年限（年）", price:"房价", down:"首付", apr:"年利率（APR，%）", extra:"每月额外还款"},
+    btn:{calc:"计算", export:"导出 CSV"},
+    note:{pi:"仅计算本息（P&I）。税/保险/PMI 可粗略加在“额外还款”。"},
+    results:{title:"结果", kLoan:"贷款金额", kPmt:"每月还款", kInt:"总利息", kMonths:"还清月数", note:"上述“每月还款”已包含“每月额外还款”。"},
+    amort:{title:"摊还表", note:"下方仅展示前 120 行，完整明细请用 CSV 导出。"},
+    table:{num:"#", pay:"当期还款", prin:"本金", int:"利息", bal:"余额"},
+    related:{title:"相关工具", pct:"百分比计算器", fx:"货币换算", world:"世界时间（按国家）"},
+    disclaimer:"免责声明：仅供参考，不构成财务建议。"
+  };
+
+  const PH = {
+    ui:{back:"← Bumalik sa Home", lang:"Wika", tagline:"Libreng online na mga tool"},
+    title:"Kalkulador ng Mortgage",
+    intro:"Kuwentahin ang buwanang bayad, kabuuang interes, oras ng payoff at tingnan ang amortization schedule. Maaari ring i-export bilang CSV.",
+    labels:{ccy:"Pera", term:"Haba (taon)", price:"Presyo ng bahay", down:"Down payment", apr:"Taunang rate (APR, %)", extra:"Dagdag na buwanang bayad"},
+    btn:{calc:"Kuwentahin", export:"I-export ang CSV"},
+    note:{pi:"P&I lang. Idagdag sa “Dagdag” para tantyahin ang buwis/insurance/PMI."},
+    results:{title:"Mga Resulta", kLoan:"Halagang hiniram", kPmt:"Buwanang bayad", kInt:"Kabuuang interes", kMonths:"Bilang ng buwan hanggang matapos", note:"Kasama na rito ang anumang “Dagdag na buwanang bayad”."},
+    amort:{title:"Iskedyul ng Amortisasyon", note:"Unang 120 hilera lang ang ipinapakita. Gamitin ang CSV para sa buo."},
+    table:{num:"#", pay:"Bayad", prin:"Principal", int:"Interes", bal:"Balanse"},
+    related:{title:"Kaugnay na mga tool", pct:"Kalkulador ng Porsyento", fx:"Palitan ng Salapi", world:"Oras ng Mundo (Bawat Bansa)"},
+    disclaimer:"Paunawa: Para sa impormasyon lamang; hindi ito payong pinansyal."
+  };
+
+  const ID = {
+    ui:{back:"← Kembali ke Beranda", lang:"Bahasa", tagline:"Alat online gratis untuk semua"},
+    title:"Kalkulator KPR",
+    intro:"Hitung cicilan bulanan, total bunga, lama pelunasan, dan lihat jadwal amortisasi. Ekspor CSV untuk tabel lengkap.",
+    labels:{ccy:"Mata uang", term:"Tenor (tahun)", price:"Harga rumah", down:"Uang muka", apr:"Suku bunga tahunan (APR, %)", extra:"Tambahan cicilan per bulan"},
+    btn:{calc:"Hitung", export:"Ekspor CSV"},
+    note:{pi:"Hanya pokok & bunga (P&I). Pajak/asuransi/PMI bisa ditaksir lewat “Tambahan cicilan”。"},
+    results:{title:"Hasil", kLoan:"Jumlah pinjaman", kPmt:"Cicilan bulanan", kInt:"Total bunga", kMonths:"Bulan hingga lunas", note:"Cicilan bulanan sudah termasuk “Tambahan cicilan”。"},
+    amort:{title:"Tabel Amortisasi", note:"Hanya 120 baris pertama yang ditampilkan. Gunakan ekspor CSV untuk lengkapnya."},
+    table:{num:"#", pay:"Pembayaran", prin:"Pokok", int:"Bunga", bal:"Sisa pokok"},
+    related:{title:"Alat terkait", pct:"Kalkulator Persentase", fx:"Konverter Mata Uang", world:"Waktu Dunia (per Negara)"},
+    disclaimer:"Penafian: Hanya untuk informasi; bukan nasihat finansial."
+  };
+
+  const VI = {
+    ui:{back:"← Về trang chủ", lang:"Ngôn ngữ", tagline:"Công cụ miễn phí cho mọi người"},
+    title:"Máy tính thế chấp (Mortgage)",
+    intro:"Tính tiền trả hàng tháng, tổng lãi, thời gian trả hết và xem lịch khấu hao. Xuất CSV cho bảng đầy đủ.",
+    labels:{ccy:"Tiền tệ", term:"Kỳ hạn (năm)", price:"Giá nhà", down:"Trả trước", apr:"Lãi suất năm (APR, %)", extra:"Thêm trả hàng tháng"},
+    btn:{calc:"Tính", export:"Xuất CSV"},
+    note:{pi:"Chỉ gốc + lãi (P&I). Thuế/bảo hiểm/PMI có thể cộng tạm vào mục “Thêm trả”."},
+    results:{title:"Kết quả", kLoan:"Khoản vay", kPmt:"Trả hàng tháng", kInt:"Tổng lãi", kMonths:"Số tháng để trả hết", note:"Số tiền trả hàng tháng đã gồm “Thêm trả hàng tháng”。"},
+    amort:{title:"Bảng khấu hao", note:"Hiển thị 120 dòng đầu. Dùng CSV để lấy đầy đủ."},
+    table:{num:"#", pay:"Khoản trả", prin:"Gốc", int:"Lãi", bal:"Dư nợ"},
+    related:{title:"Công cụ liên quan", pct:"Máy tính phần trăm", fx:"Đổi tiền tệ", world:"Giờ thế giới (theo quốc gia)"},
+    disclaimer:"Lưu ý: Chỉ nhằm mục đích tham khảo, không phải tư vấn tài chính."
+  };
+
+  const BN = {
+    ui:{back:"← হোমে ফিরে যান", lang:"ভাষা", tagline:"সবার জন্য ফ্রি টুল"},
+    title:"মর্টগেজ ক্যালকুলেটর",
+    intro:"মাসিক কিস্তি, মোট সুদ, পরিশোধকাল এবং অ্যামর্টাইজেশন সিডিউল দেখুন। সম্পূর্ণ টেবিলের জন্য CSV এক্সপোর্ট করুন।",
+    labels:{ccy:"মুদ্রা", term:"মেয়াদ (বছর)", price:"বাড়ির মূল্য", down:"ডাউন পেমেন্ট", apr:"বার্ষিক হার (APR, %)", extra:"অতিরিক্ত মাসিক পরিশোধ"},
+    btn:{calc:"হিসাব করুন", export:"CSV এক্সপোর্ট"},
+    note:{pi:"শুধু P&I। কর/বিমা/PMI আনুমানিকভাবে “অতিরিক্ত” ঘরে যোগ করুন।"},
+    results:{title:"ফলাফল", kLoan:"ঋণের পরিমাণ", kPmt:"মাসিক কিস্তি", kInt:"মোট সুদ", kMonths:"মোট মাস", note:"উল্লিখিত মাসিক কিস্তিতে “অতিরিক্ত মাসিক পরিশোধ” অন্তর্ভুক্ত।"},
+    amort:{title:"অ্যামর্টাইজেশন সিডিউল", note:"এখানে প্রথম 120 সারি দেখানো হয়েছে। সম্পূর্ণর জন্য CSV ব্যবহার করুন।"},
+    table:{num:"#", pay:"পরিশোধ", prin:"মূল", int:"সুদ", bal:"ব্যালান্স"},
+    related:{title:"সম্পর্কিত টুল", pct:"পার্সেন্টেজ ক্যালকুলেটর", fx:"কারেন্সি কনভার্টার", world:"বিশ্ব সময় (দেশভিত্তিক)"},
+    disclaimer:"অস্বীকৃতি: শুধুমাত্র তথ্যগত উদ্দেশ্যে; আর্থিক পরামর্শ নয়।"
+  };
+
+  const NG = {
+    ui:{back:"← Back to Home", lang:"Language", tagline:"Fast, free tools for everyone"},
+    title:"Mortgage Calculator",
+    intro:"Compute monthly payment, total interest, payoff time and view the amortization schedule. Export CSV for the full table.",
+    labels:{ccy:"Currency", term:"Term (years)", price:"Home price", down:"Down payment", apr:"Annual rate (APR, %)", extra:"Extra monthly payment"},
+    btn:{calc:"Calculate", export:"Export CSV"},
+    note:{pi:"P&I only. Add taxes/insurance/PMI into “Extra” if needed."},
+    results:{title:"Results", kLoan:"Loan amount", kPmt:"Monthly payment", kInt:"Total interest", kMonths:"Months to pay off", note:"Monthly payment includes any “Extra monthly payment”。"},
+    amort:{title:"Amortization Schedule", note:"First 120 rows shown. Use CSV for the full schedule."},
+    table:{num:"#", pay:"Payment", prin:"Principal", int:"Interest", bal:"Balance"},
+    related:{title:"Related tools", pct:"Percentage Calculator", fx:"Currency Converter", world:"World Time (by Country)"},
+    disclaimer:"Disclaimer: For informational purposes only. This is not financial advice."
+  };
+
+  const SW = {
+    ui:{back:"← Rudi nyumbani", lang:"Lugha", tagline:"Zana za bure kwa kila mtu"},
+    title:"Kikokotoo cha Rehani",
+    intro:"Hesabu malipo ya kila mwezi, jumla ya riba, muda wa kulipa na uone ratiba ya amortization. Toa CSV kwa jedwali kamili.",
+    labels:{ccy:"Sarafu", term:"Muda (miaka)", price:"Bei ya nyumba", down:"Amana ya mwanzo", apr:"Kiwango cha mwaka (APR, %)", extra:"Malipo ya ziada kila mwezi"},
+    btn:{calc:"Hesabu", export:"Hamisha CSV"},
+    note:{pi:"P&I pekee. Kodi/bima/PMI unaweza kujumlisha kwa “Ziada”。"},
+    results:{title:"Matokeo", kLoan:"Kiasi cha mkopo", kPmt:"Malipo ya mwezi", kInt:"Jumla ya riba", kMonths:"Miezi kukamilika", note:"Malipo ya mwezi yanajumuisha “Malipo ya ziada kila mwezi”。"},
+    amort:{title:"Ratiba ya Amortization", note:"Mstari 120 ya kwanza tu inaonyeshwa. Tumia CSV kwa zote."},
+    table:{num:"#", pay:"Malipo", prin:"Mkopo mkuu", int:"Riba", bal:"Deni lililosalia"},
+    related:{title:"Zana zinazohusiana", pct:"Kikokotoo cha Asilimia", fx:"Kigeuzi cha Sarafu", world:"Saa za Dunia (Nchi)"},
+    disclaimer:"Kumbuka: Kwa taarifa tu; si ushauri wa kifedha."
+  };
+
+  const AR = {
+    meta:{title:"حاسبة الرهن العقاري — الدفعة الشهرية وجداول السداد | GoToolOnline",
+          desc:"حاسبة رهن عقاري مجانية: الدفعة الشهرية، إجمالي الفائدة، مدة السداد وجدول الإطفاء الكامل. تدعم الدفعة الأولى، دفعة شهرية إضافية وتصدير CSV."},
+    ui:{back:"← العودة إلى الصفحة الرئيسية", lang:"اللغة", tagline:"أدوات مجانية للجميع"},
+    title:"حاسبة الرهن العقاري",
+    intro:"احسب الدفعة الشهرية وإجمالي الفائدة ومدة السداد، واعرض جدول الإطفاء. يمكنك التصدير كملف CSV.",
+    labels:{ccy:"العملة", term:"المدة (بالسنوات)", price:"سعر المنزل", down:"الدفعة الأولى", apr:"المعدل السنوي (APR،٪)", extra:"دفعة شهرية إضافية"},
+    btn:{calc:"احسب", export:"تصدير CSV"},
+    note:{pi:"P&I فقط. أضف الضرائب/التأمين/PMI تقريبًا ضمن “الإضافية”。"},
+    results:{title:"النتائج", kLoan:"قيمة القرض", kPmt:"القسط الشهري", kInt:"إجمالي الفائدة", kMonths:"الأشهر حتى السداد", note:"يشمل القسط الشهري أي “دفعة شهرية إضافية”。"},
+    amort:{title:"جدول الإطفاء", note:"يُعرض هنا أول 120 صفًا. استخدم CSV للجدول الكامل."},
+    table:{num:"#", pay:"الدفعة", prin:"الأصل", int:"الفائدة", bal:"الرصيد"},
+    related:{title:"أدوات ذات صلة", pct:"حاسبة النسبة المئوية", fx:"محول العملات", world:"الوقت العالمي (حسب البلد)"},
+    disclaimer:"إخلاء مسؤولية: لأغراض معلوماتية فقط وليست نصيحة مالية."
+  };
+
+  const MAP = {en:EN, zh:ZH, ph:PH, id:ID, vi:VI, bn:BN, ng:NG, sw:SW, ar:AR};
+
+  function get(obj, path){ return String(path).split('.').reduce((o,k)=> (o && (k in o))? o[k] : undefined, obj); }
+
+  function applyI18N(D){
+    // title/desc
+    if (get(D,'meta.title')) document.title = get(D,'meta.title');
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc && get(D,'meta.desc')) desc.setAttribute('content', get(D,'meta.desc'));
+
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      const val = get(D, key);
+      if (val == null) return;
+      if (/<[a-z][\s\S]*>/i.test(val)) el.innerHTML = val; else el.textContent = val;
+    });
+
+    const btn = document.getElementById('langBtn'); if (btn) btn.textContent = '🌐 ' + (get(D,'ui.lang')||'Language');
+  }
+
+  function keepLangInLinks(lang){
+    document.querySelectorAll('a[href]').forEach(a=>{
+      const href = a.getAttribute('href')||'';
+      if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+      const u = new URL(href, location.origin);
+      if (!u.searchParams.get('lang')) u.searchParams.set('lang', lang);
+      a.setAttribute('href', u.pathname + u.search + u.hash);
+    });
+  }
+
+  const lang = pickLang();
+  const D = merge(EN, MAP[lang]||{});
+  applyI18N(D);
+  keepLangInLinks(lang);
+
+  window.__LANG__ = lang;
+  window.__DICT__ = D;
+
+  // language panel
+  const panel = document.getElementById('langPanel');
+  const btn = document.getElementById('langBtn');
+  const grid = document.getElementById('langGrid');
+  if (grid){
+    const LANGS_ORDER = ['en','zh','ph','id','vi','bn','ng','sw','ar'];
+    LANGS_ORDER.forEach(code=>{
+      const b=document.createElement('button');
+      b.textContent = NAMES[code]||code;
+      if (code===lang) b.className='active';
+      b.addEventListener('click', ()=>{
+        const u=new URL(location.href); u.searchParams.set('lang', code); setCookie('lang', code); location.href=u.toString();
+      });
+      grid.appendChild(b);
+    });
+  }
+  function openLang(open){ panel.classList.toggle('open', !!open); btn.setAttribute('aria-expanded', !!open); }
+  if (btn) btn.addEventListener('click', (e)=>{ e.stopPropagation(); openLang(!panel.classList.contains('open')); });
+  document.addEventListener('click', (e)=>{ if(panel && panel.classList.contains('open')){ const within = panel.contains(e.target) || (btn && btn.contains(e.target)); if(!within) openLang(false); } });
+})();
+</script>
+
+<script>
+/* ========= Calculator logic (numbers forced to Western digits) ========= */
+(function(){
+  // footer year
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  const $ = s => document.querySelector(s);
+
+  // Force Western digits using 'en-US-u-nu-latn' for currency
+  function fmtCurrencyFactory(code){
+    try { return new Intl.NumberFormat('en-US-u-nu-latn',{style:'currency',currency:code, maximumFractionDigits:2}); }
+    catch { return new Intl.NumberFormat('en-US-u-nu-latn',{style:'currency',currency:'USD', maximumFractionDigits:2}); }
+  }
+
+  function compute(){
+    const price = +$('#price').value || 0;
+    const down  = +$('#down').value  || 0;
+    const apr   = (+$('#apr').value || 0) / 100;
+    const years = Math.max(1, +$('#years').value || 0);
+    const extra = Math.max(0, +$('#extra').value || 0);
+
+    const loan = Math.max(0, price - down);
+    const n = Math.round(years * 12);
+    const r = apr / 12;
+
+    const base = r === 0 ? (loan / n) : (loan * r) / (1 - Math.pow(1 + r, -n));
+
+    let bal = loan, k = 0, totalInt = 0;
+    const rows = [];
+    while (bal > 0 && k < 1200){ // hard cap 100 years
+      k++;
+      const interest = r * bal;
+      let principal = base - interest + extra;
+      if (principal <= 0) principal = 0;
+      if (principal > bal) principal = bal;
+      const payment = principal + interest;
+      bal = bal - principal;
+      totalInt += interest;
+      rows.push({k, payment, principal, interest, balance: Math.max(0, bal)});
+      if (bal <= 0) break;
+    }
+    return {loan, base, extra, totalInt, months: k, rows};
+  }
+
+  function render(){
+    const ccy = $('#ccy').value || 'USD';
+    const fmt = fmtCurrencyFactory(ccy);
+    const r = compute();
+
+    $('#loan').textContent = fmt.format(r.loan);
+    const monthlyWithExtra = (r.rows.length ? r.rows[0].payment : (r.base + r.extra));
+    $('#pmt').textContent = fmt.format(monthlyWithExtra);
+    $('#interest').textContent = fmt.format(r.totalInt);
+    $('#months').textContent = String(r.months); // western digits
+
+    const tb = $('#tbl tbody'); tb.innerHTML='';
+    r.rows.slice(0,120).forEach(x=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${String(x.k)}</td>
+        <td>${fmt.format(x.payment)}</td>
+        <td>${fmt.format(x.principal)}</td>
+        <td>${fmt.format(x.interest)}</td>
+        <td>${fmt.format(x.balance)}</td>`;
+      tb.appendChild(tr);
+    });
+
+    window._amort = { rows: r.rows, ccy };
+  }
+
+  function exportCSV(){
+    const r = window._amort || { rows: [], ccy: ($('#ccy').value||'USD') };
+    if (!r.rows.length) { render(); }
+    const rows = (window._amort || r).rows;
+    let csv = 'Period,Payment,Principal,Interest,Balance\n';
+    rows.forEach(x=>{
+      csv += `${x.k},${x.payment.toFixed(2)},${x.principal.toFixed(2)},${x.interest.toFixed(2)},${x.balance.toFixed(2)}\n`;
+    });
+    const blob = new Blob([csv],{type:'text/csv'});
+    const a = Object.assign(document.createElement('a'),{
+      href: URL.createObjectURL(blob),
+      download: 'amortization.csv'
+    });
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  ['#calc','#price','#down','#apr','#years','#extra','#ccy'].forEach(sel=>{
+    const el = $(sel);
+    if (!el) return;
+    if (el.tagName === 'BUTTON') el.onclick = render;
+    else el.addEventListener('input', render);
+  });
+  document.getElementById('export').addEventListener('click', exportCSV);
+
+  render();
+})();
+</script>
+
+<!-- Back-to-home resolver (preserve ?lang) -->
+<script>
+(function(){
+  var path = location.pathname.replace(/\/+$/,'');
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = [''];
+  var home = parts.join('/') + '/';
+
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+
+  document.querySelectorAll('a[data-home]').forEach(function(a){
+    a.setAttribute('href', home);
+  });
+})();
+</script>
+</body>
+</html>

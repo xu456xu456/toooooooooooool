@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Free Currency Converter — Offline-First + Live Rates (Multi-Source) | GoToolOnline</title>
+<meta name="description" content="Fast, free currency converter. Works offline with a manual rate and supports live exchange rates from multiple sources for reliability. Convert USD, EUR, GBP, AUD, JPY, CNY and more."/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="robots" content="index,follow,max-image-preview:large"/>
+<meta name="theme-color" content="#0a0f1e"/>
+
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Free Currency Converter — Offline-First + Live Rates (Multi-Source)"/>
+<meta property="og:description" content="Convert currencies offline with a manual rate or fetch live multi-source rates. USD ⇄ EUR, GBP, AUD, JPY, CNY and more."/>
+<meta property="og:url" content="https://gotoolonline.com/currency/currency-converter/"/>
+<meta property="og:site_name" content="GoToolOnline"/>
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Free Currency Converter — Offline-First + Live Rates (Multi-Source)"/>
+<meta name="twitter:description" content="Works offline + live multi-source rates. USD, EUR, GBP, AUD, JPY, CNY and more."/>
+<link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'&gt;&lt;text x='6' y='52' font-size='48'&gt;🛠️&lt;/text&gt;&lt;/svg&gt;"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="dns-prefetch" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link rel="dns-prefetch" href="https://fonts.gstatic.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&amp;display=swap"/>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Currency Converter","url":"https://gotoolonline.com/currency/currency-converter/","applicationCategory":"FinancialApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"GoToolOnline","url":"https://gotoolonline.com"}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Does it work offline?","acceptedAnswer":{"@type":"Answer","text":"Yes. Enter a manual rate to convert offline. When online, you can fetch live rates from multiple sources (e.g., open.er-api.com and exchangerate.host) for reliability."}},
+{"@type":"Question","name":"Which currencies are supported?","acceptedAnswer":{"@type":"Answer","text":"Popular currencies like USD, EUR, GBP, AUD, NZD, CAD, JPY, CNY, HKD, INR, SGD, KRW, THB, PHP, MYR, IDR, CHF, SEK, NOK, DKK, ZAR, BRL, MXN and more."}},
+{"@type":"Question","name":"Why is my bank rate different?","acceptedAnswer":{"@type":"Answer","text":"Retail bank rates often include fees/spread and can differ from public mid-market quotes. For reconciliation, fix a manual rate and reuse it."}},
+{"@type":"Question","name":"How to share a pre-filled link?","acceptedAnswer":{"@type":"Answer","text":"Use URL parameters: ?amount=100&from=USD&to=EUR&rate=0.93 then share the link."}}
+]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+{"@type":"ListItem","position":1,"name":"Home","item":"https://gotoolonline.com/"},
+{"@type":"ListItem","position":2,"name":"Currency Tools","item":"https://gotoolonline.com/#currency"},
+{"@type":"ListItem","position":3,"name":"Currency Converter","item":"https://gotoolonline.com/currency/currency-converter/"}
+]}
+</script>
+<style>
+  :root { --bg:#0a0f1e; --card:#0f1830; --muted:#9fb0c3; --fg:#eaf3ff; --acc:#4fb3ff; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg);}
+  header{max-width:1200px;margin:24px auto 8px;display:flex;gap:14px;align-items:center;padding:0 18px;}
+  header a.logo{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--fg);font-weight:800;font-size:24px}
+  header a.navbtn{margin-left:auto;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:12px;color:#eaf3ff;text-decoration:none;font-size:16px}
+  header a.navbtn:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  .pill{padding:8px 12px;border:1px solid #24365b;background:#0f1a2f;border-radius:999px;color:#eaf3ff}
+  #langBtn{margin-left:8px}
+  .lang-panel{position:fixed; top:72px; right:18px; z-index:1000;background:#0f1830;border:1px solid #1a2843;border-radius:16px;padding:12px;display:none;width:min(420px,calc(100vw - 24px));box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  .lang-panel.open{display:block}
+  .lang-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .lang-grid button{display:block;width:100%;text-align:center;padding:10px;border:1px solid #24365b;background:#0f1a2f;border-radius:12px;color:#eaf3ff;font-size:14px;cursor:pointer}
+  .lang-grid button.active{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  main{max-width:1200px;margin:10px auto 64px;padding:0 18px}
+  h1{font-size:34px;margin:10px 0 10px}
+  h2{font-size:22px;margin:14px 0 6px}
+  p,label,.muted{font-size:18px; line-height:1.6}
+  .card{background:var(--card);border:1px solid #1a2843;border-radius:20px;padding:20px;margin:16px 0}
+  label{display:block;margin:10px 0 6px;color:var(--muted)}
+  input,select,button,textarea{width:100%;padding:14px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;font-size:18px}
+  button{cursor:pointer;background:linear-gradient(180deg,#2a78ff,#0050d4);border:none;font-weight:700;letter-spacing:.2px}
+  button:hover{filter:brightness(1.06)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .toolbar{display:flex;gap:12px;flex-wrap:wrap}
+  .result{padding:14px;background:#0c1426;border:1px dashed #2a3c64;border-radius:12px;margin-top:12px;font-size:20px}
+  .muted{color:#9fb0c3}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .chip{padding:8px 12px;border:1px solid #24365b;background:#0f1a2f;border-radius:999px;cursor:pointer;font-size:16px}
+  .chip:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  footer{max-width:1200px;margin:40px auto;padding:0 18px;color:#9fb0c3;font-size:15px}
+  .backTop{margin-top:12px;display:inline-block;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:10px;color:#eaf3ff;text-decoration:none}
+  .backTop:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  @media (max-width:760px){ .row{grid-template-columns:1fr} .toolbar{gap:10px} }
+  @media print{ header,footer,.no-print{display:none!important} body{background:#fff;color:#000} .card{border:none} }
+</style>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/currency/currency-converter/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/currency/currency-converter/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/currency/currency-converter/">
+</head>
+<body>
+<header>
+  <a aria-label="GoToolOnline home" class="logo" data-home href="#"><span>🛠️</span><strong>GoToolOnline</strong></a>
+  <a aria-label="Back to Home" class="navbtn" data-home href="#" data-i18n="ui.back">← Back to Home</a>
+  <button id="langBtn" class="pill" aria-haspopup="dialog" aria-expanded="false" data-i18n="ui.lang">🌐 Language</button>
+  <div class="lang-panel" id="langPanel" role="dialog" aria-label="Select language">
+    <div class="lang-grid" id="langGrid"></div>
+  </div>
+</header>
+
+<main>
+<section class="card">
+  <h1 data-i18n="title">Currency Converter</h1>
+  <p class="muted" data-i18n="lede">Free, offline-first currency converter. If live rates are blocked, enter a <strong>manual rate</strong>; otherwise click <strong>Try Live Rate</strong> for multi-source updates. Popular: <em>USD to EUR</em>, <em>USD to CNY</em>, <em>EUR to GBP</em>, <em>USD to AUD</em>.</p>
+
+  <div class="row" role="group" aria-label="Amount and manual rate">
+    <div><label for="amount" data-i18n="form.amount">Amount</label><input id="amount" inputmode="decimal" step="0.01" type="number" value="1"/></div>
+    <div><label for="manual" data-i18n="form.manual">Manual rate (optional)</label><input id="manual" inputmode="decimal" placeholder="e.g. 0.7365" step="0.000001" type="number"/></div>
+  </div>
+
+  <div class="row" role="group" aria-label="Currency selection">
+    <div>
+      <label for="from" data-i18n="form.from">From</label>
+      <select id="from" autocomplete="off"></select>
+    </div>
+    <div>
+      <label for="to" data-i18n="form.to">To</label>
+      <select id="to" autocomplete="off"></select>
+    </div>
+  </div>
+
+  <div class="toolbar" style="margin-top:10px">
+    <button id="swap" style="width:auto;padding:14px 18px" data-i18n="btn.swap">⇄ Swap</button>
+    <button id="btnConvert" data-i18n="btn.convertManual">Convert (Manual / Provided)</button>
+    <button id="btnLive" data-i18n="btn.tryLive">Try Live Rate</button>
+    <button id="btnCopy" class="pill" style="background:#0f1a2f" data-i18n="btn.copy">Copy Result</button>
+  </div>
+
+  <div id="fx" class="result" role="status" aria-live="polite">—</div>
+  <p class="muted" id="note"></p>
+
+  <h2 data-i18n="popular">Popular conversions</h2>
+  <div class="chips" id="chips">
+    <span class="chip" data-a="USD" data-b="EUR">USD → EUR</span>
+    <span class="chip" data-a="EUR" data-b="USD">EUR → USD</span>
+    <span class="chip" data-a="USD" data-b="GBP">USD → GBP</span>
+    <span class="chip" data-a="USD" data-b="JPY">USD → JPY</span>
+    <span class="chip" data-a="USD" data-b="CNY">USD → CNY</span>
+    <span class="chip" data-a="USD" data-b="AUD">USD → AUD</span>
+    <span class="chip" data-a="USD" data-b="CAD">USD → CAD</span>
+    <span class="chip" data-a="USD" data-b="INR">USD → INR</span>
+    <span class="chip" data-a="EUR" data-b="GBP">EUR → GBP</span>
+    <span class="chip" data-a="EUR" data-b="JPY">EUR → JPY</span>
+    <span class="chip" data-a="EUR" data-b="CNY">EUR → CNY</span>
+    <span class="chip" data-a="EUR" data-b="CHF">EUR → CHF</span>
+    <span class="chip" data-a="GBP" data-b="USD">GBP → USD</span>
+    <span class="chip" data-a="GBP" data-b="EUR">GBP → EUR</span>
+    <span class="chip" data-a="GBP" data-b="JPY">GBP → JPY</span>
+    <span class="chip" data-a="AUD" data-b="NZD">AUD → NZD</span>
+    <span class="chip" data-a="AUD" data-b="USD">AUD → USD</span>
+    <span class="chip" data-a="JPY" data-b="USD">JPY → USD</span>
+    <span class="chip" data-a="CNY" data-b="USD">CNY → USD</span>
+    <span class="chip" data-a="SGD" data-b="USD">SGD → USD</span>
+    <span class="chip" data-a="USD" data-b="MXN">USD → MXN</span>
+    <span class="chip" data-a="USD" data-b="BRL">USD → BRL</span>
+    <span class="chip" data-a="USD" data-b="ZAR">USD → ZAR</span>
+  </div>
+
+  <h2 data-i18n="how.title">How to use</h2>
+  <p class="muted" data-i18n="how.text">Type the amount, pick currencies, then either paste a <em>manual rate</em> (works offline) or use <em>Try Live Rate</em>. Results are shown instantly. For travel or budgeting, you can save a snapshot rate and reuse it anytime.</p>
+
+  <h2 data-i18n="faq.title">Tips &amp; FAQs</h2>
+  <p class="muted" data-i18n="faq.q1"><strong>Why is my bank rate different?</strong> Retail rates include fees/spread and differ from public mid-market quotes. For reconciliation, fix a manual rate and reuse it.</p>
+  <p class="muted" data-i18n="faq.q2"><strong>How often do rates update?</strong> Public APIs typically refresh every minutes to hourly; during volatile periods, consider fixing a reference rate.</p>
+  <p class="muted" data-i18n="faq.q3"><strong>How to share a pre-filled link?</strong> Use <code>?amount=100&amp;from=USD&amp;to=EUR&amp;rate=0.93</code> and share the URL.</p>
+  <p class="muted" data-i18n="faq.q4"><strong>Offline use?</strong> When offline, fill <em>Manual rate</em> and convert normally; when online, click “Try Live Rate”.</p>
+
+  <p class="muted" style="margin-top:10px">
+    <span data-i18n="related.title">Related tools:</span>
+    <a href="/converter/unit-converter/">Unit Converter</a> ·
+    <a href="/time/timezone-converter/">World Time Converter</a> ·
+    <a href="/time/unix-timestamp/">Unix Timestamp Converter</a>
+  </p>
+</section>
+</main>
+
+<footer>
+  <a class="backTop" href="javascript:void(0)" id="backTop" data-i18n="ui.top">Back to Top ↑</a>
+  <div style="margin-top:10px">© <span id="yy"></span> GoToolOnline.com · Free online tools for everyone.</div>
+</footer>
+
+<script>
+  // Year & Back to Top
+  document.getElementById('yy').textContent = new Date().getFullYear();
+  document.getElementById('backTop').onclick = () => window.scrollTo({top:0, behavior:'smooth'});
+
+  // Currency lists (keep populars first)
+  const POP = ["USD","EUR","GBP","AUD","NZD","CAD","JPY","CNY","HKD","INR","SGD","KRW","THB","PHP","MYR","IDR","CHF","SEK","NOK","DKK","ZAR","BRL","MXN"];
+  const ALL = POP; // extend here if needed
+
+  const fromSel = document.getElementById('from');
+  const toSel   = document.getElementById('to');
+  function fillCurrencySelects(){
+    [fromSel,toSel].forEach(sel=>{
+      sel.innerHTML='';
+      ALL.forEach(ccy=>{
+        const o=document.createElement('option'); o.value=ccy; o.textContent=ccy; sel.appendChild(o);
+      });
+    });
+    if (!fromSel.value) fromSel.value='USD';
+    if (!toSel.value) toSel.value='AUD';
+  }
+  fillCurrencySelects();
+
+  // Format helpers
+  function money(v, code){
+    try{ return new Intl.NumberFormat(undefined, {style:'currency', currency:code}).format(v); }
+    catch{ return (isFinite(v)? v.toFixed(4): '—') + ' ' + code; }
+  }
+  function rateFmt(r){ return isFinite(r)? r.toFixed(6) : '—'; }
+
+  // Convert: manual or provided rateOverride
+  function convert(rateOverride){
+    const amt = parseFloat(document.getElementById('amount').value || '0');
+    const from = fromSel.value;
+    const to = toSel.value;
+    const manual = parseFloat(document.getElementById('manual').value);
+    const out = document.getElementById('fx');
+    const note = document.getElementById('note');
+    const D = window.__DICT__ || {};
+    const msg = D.msg || {};
+
+    const rate = (typeof rateOverride==='number' && rateOverride>0) ? rateOverride :
+                 (!isNaN(manual) && manual>0 ? manual : NaN);
+
+    if (!isFinite(amt) || !from || !to){ out.textContent='—'; note.textContent=''; return; }
+    if (isNaN(rate)){
+      out.textContent = msg.noLiveEnterManual || 'No live rate. Enter a manual rate above, or click “Try Live Rate”.';
+      note.textContent=''; return;
+    }
+
+    const converted = amt * rate;
+    out.textContent = money(amt, from) + ' = ' + money(converted, to) + '  (rate ' + rateFmt(rate) + ')';
+    note.textContent = (typeof rateOverride==='number') ? (msg.liveUsed || 'Rate from live API.') : (msg.manualUsed || 'Manual rate used.');
+  }
+
+  // Live fetch with multi-source fallback
+  async function tryFetch(){
+    const from = fromSel.value;
+    const to = toSel.value;
+    const out = document.getElementById('fx');
+    const note = document.getElementById('note');
+    const D = window.__DICT__ || {}; const msg = D.msg || {};
+
+    const sources = [
+      async ()=>{ const r=await fetch('https://open.er-api.com/v6/latest/'+from,{cache:'no-store'}); const d=await r.json(); if(d&&d.result==='success'&&d.rates&&d.rates[to]) return d.rates[to]; throw 0; },
+      async ()=>{ const r=await fetch('https://api.exchangerate.host/latest?base='+from+'&symbols='+to,{cache:'no-store'}); const d=await r.json(); if(d&&d.rates&&d.rates[to]) return d.rates[to]; throw 0; }
+    ];
+
+    for(const s of sources){
+      try { const rate = await s(); convert(rate); return; } catch(e){}
+    }
+    out.textContent = msg.liveBlocked || 'Live rates are blocked by your network. Please enter a manual rate.';
+    note.textContent = (msg.tipSearch || 'Tip: Search “{FROM} to {TO}” and paste the rate here.').replace('{FROM}', from).replace('{TO}', to);
+  }
+
+  // Swap + Copy
+  document.getElementById('swap').addEventListener('click', ()=>{
+    const tmp = fromSel.value; fromSel.value = toSel.value; toSel.value = tmp; convert();
+  });
+  document.getElementById('btnCopy').addEventListener('click', ()=>{
+    const t = document.getElementById('fx').textContent.trim();
+    if (!t || t==='—') return;
+    const D = window.__DICT__ || { btn:{copied:"Copied!", copy:"Copy Result"} };
+    navigator.clipboard?.writeText(t).then(()=>{
+      const b=document.getElementById('btnCopy'); b.textContent = D.btn?.copied || "Copied!";
+      setTimeout(()=>{ b.textContent = D.btn?.copy || "Copy Result"; }, 900);
+    });
+  });
+
+  // Buttons
+  document.getElementById('btnConvert').addEventListener('click', ()=>convert());
+  document.getElementById('btnLive').addEventListener('click', tryFetch);
+
+  // Chips quick action
+  document.getElementById('chips').addEventListener('click', (e)=>{
+    const t = e.target.closest('.chip'); if(!t) return;
+    fromSel.value = t.dataset.a; toSel.value = t.dataset.b;
+    tryFetch();
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  // URL prefill: ?amount=&from=&to=&rate=
+  (function bootFromURL(){
+    const q = new URLSearchParams(location.search);
+    const amount = q.get('amount'); const from = q.get('from'); const to = q.get('to'); const rate = q.get('rate');
+    if (amount) document.getElementById('amount').value = amount;
+    if (from && ALL.includes(from.toUpperCase())) fromSel.value = from.toUpperCase();
+    if (to   && ALL.includes(to.toUpperCase()))   toSel.value   = to.toUpperCase();
+    if (rate) document.getElementById('manual').value = rate;
+    convert();
+  })();
+</script>
+
+<!-- i18n -->
+<script>
+  const EN = {
+    meta:{title:"Free Currency Converter — Offline-First + Live Rates (Multi-Source) | GoToolOnline",
+          desc:"Fast, free currency converter. Works offline with a manual rate and supports live exchange rates from multiple sources for reliability."},
+    ui:{back:"← Back to Home", lang:"Language", top:"Back to Top ↑"},
+    title:"Currency Converter",
+    lede:"Free, offline-first currency converter. If live rates are blocked, enter a <strong>manual rate</strong>; otherwise click <strong>Try Live Rate</strong> for multi-source updates. Popular: <em>USD to EUR</em>, <em>USD to CNY</em>, <em>EUR to GBP</em>, <em>USD to AUD</em>.",
+    form:{amount:"Amount", manual:"Manual rate (optional)", from:"From", to:"To"},
+    btn:{swap:"⇄ Swap", convertManual:"Convert (Manual / Provided)", tryLive:"Try Live Rate", copy:"Copy Result", copied:"Copied!"},
+    popular:"Popular conversions",
+    how:{title:"How to use", text:"Type the amount, pick currencies, then either paste a <em>manual rate</em> (works offline) or use <em>Try Live Rate</em>. Results are shown instantly. For travel or budgeting, you can save a snapshot rate and reuse it anytime."},
+    faq:{title:"Tips & FAQs",
+      q1:"<strong>Why is my bank rate different?</strong> Retail rates include fees/spread and differ from public mid-market quotes. For reconciliation, fix a manual rate and reuse it.",
+      q2:"<strong>How often do rates update?</strong> Public APIs typically refresh every minutes to hourly; during volatile periods, consider fixing a reference rate.",
+      q3:"<strong>How to share a pre-filled link?</strong> Use <code>?amount=100&amp;from=USD&amp;to=EUR&amp;rate=0.93</code> and share the URL.",
+      q4:"<strong>Offline use?</strong> When offline, fill <em>Manual rate</em> and convert normally; when online, click “Try Live Rate”."},
+    related:{title:"Related tools:"},
+    msg:{noLiveEnterManual:"No live rate. Enter a manual rate above, or click “Try Live Rate”.",
+         liveUsed:"Rate from live API.", manualUsed:"Manual rate used.",
+         liveBlocked:"Live rates are blocked by your network. Please enter a manual rate.",
+         tipSearch:"Tip: Search “{FROM} to {TO}” and paste the rate here."}
+  };
+
+  const ZH = {
+    meta:{title:"免费汇率转换器（离线优先 + 多源实时）| GoToolOnline",
+          desc:"快速、免费的汇率换算器。离线可用手动汇率；在线可尝试多源实时汇率。"},
+    ui:{back:"← 返回首页", lang:"语言", top:"返回顶部 ↑"},
+    title:"汇率转换器",
+    lede:"离线优先：若实时汇率被阻止，可输入<strong>手动汇率</strong>；否则点<strong>尝试实时汇率</strong>获取多源更新。常用：<em>USD→EUR</em>、<em>USD→CNY</em>、<em>EUR→GBP</em>、<em>USD→AUD</em>。",
+    form:{amount:"金额", manual:"手动汇率（可选）", from:"从", to:"到"},
+    btn:{swap:"⇄ 交换", convertManual:"转换（手动/已提供）", tryLive:"尝试实时汇率", copy:"复制结果", copied:"已复制"},
+    popular:"常用换算",
+    how:{title:"使用方法", text:"输入金额与币种，粘贴<strong>手动汇率</strong>（可离线），或点击<strong>尝试实时汇率</strong>。结果即时显示；旅行或做预算时可保存快照汇率反复使用。"},
+    faq:{title:"提示与常见问题",
+      q1:"<strong>银行汇率为何不同？</strong> 零售汇率含手续费/价差，通常不同于公开中间价。对账时可固定一条手动汇率。",
+      q2:"<strong>多久更新？</strong> 公共 API 一般数分钟至每小时更新；波动期建议固定参考汇率。",
+      q3:"<strong>如何分享预填链接？</strong> 使用 <code>?amount=100&amp;from=USD&amp;to=EUR&amp;rate=0.93</code>。",
+      q4:"<strong>离线？</strong> 离线时填“手动汇率”正常转换；在线时点“尝试实时汇率”。"},
+    related:{title:"相关工具："},
+    msg:{noLiveEnterManual:"暂无实时汇率。请在上方输入手动汇率，或点击“尝试实时汇率”。",
+         liveUsed:"已使用实时汇率。", manualUsed:"已使用手动汇率。",
+         liveBlocked:"网络阻止了实时汇率，请输入手动汇率。",
+         tipSearch:"小技巧：搜索“{FROM} to {TO}”并粘贴该汇率。"}
+  };
+
+  const PH = {
+    ui:{back:"← Bumalik sa Home", lang:"Wika", top:"Bumalik sa Itaas ↑"},
+    title:"Currency Converter",
+    lede:"Offline-first na converter. Kung harang ang live rates, ilagay ang <strong>manual rate</strong>; kung online, i-tap ang <strong>Try Live Rate</strong>.",
+    form:{amount:"Halaga", manual:"Manual rate (opsyonal)", from:"Mula", to:"Sa"},
+    btn:{swap:"⇄ Palitan", convertManual:"I-convert (Manual / Provided)", tryLive:"Subukan ang Live Rate", copy:"Kopyahin ang Resulta", copied:"Nakopya!"},
+    popular:"Mga madalas na conversion",
+    how:{title:"Paano gamitin", text:"Ilagay ang halaga at mga pera, pagkatapos ay manual rate o Try Live Rate."},
+    faq:{title:"Tips & FAQs", q1:"", q2:"", q3:"", q4:""},
+    related:{title:"Kaugnay na tools:"},
+    msg:{noLiveEnterManual:"Walang live rate. Ilagay ang manual rate o i-tap ang “Try Live Rate”.",
+         liveUsed:"Galing sa live API.", manualUsed:"Manual rate ang ginamit.",
+         liveBlocked:"Na-block ang live rates. Pakilagay ang manual rate.",
+         tipSearch:"Tip: Hanapin “{FROM} to {TO}” at i-paste ang rate."}
+  };
+
+  const ID = {
+    ui:{back:"← Kembali", lang:"Bahasa", top:"Kembali ke Atas ↑"},
+    title:"Konverter Mata Uang",
+    lede:"Offline-first: jika live rate terblokir, masukkan <strong>kurs manual</strong>; bila online, klik <strong>Coba Live Rate</strong>.",
+    form:{amount:"Jumlah", manual:"Kurs manual (opsional)", from:"Dari", to:"Ke"},
+    btn:{swap:"⇄ Tukar", convertManual:"Konversi (Manual/Disediakan)", tryLive:"Coba Live Rate", copy:"Salin Hasil", copied:"Tersalin!"},
+    popular:"Konversi populer",
+    how:{title:"Cara pakai", text:"Isi jumlah & mata uang, lalu kurs manual atau Live Rate."},
+    faq:{title:"Tips & FAQ", q1:"", q2:"", q3:"", q4:""},
+    related:{title:"Terkait:"},
+    msg:{noLiveEnterManual:"Tidak ada live rate. Masukkan kurs manual atau klik “Coba Live Rate”.",
+         liveUsed:"Kurs dari API live.", manualUsed:"Memakai kurs manual.",
+         liveBlocked:"Live rate terblokir. Masukkan kurs manual.",
+         tipSearch:"Tips: Cari “{FROM} to {TO}” lalu tempel kurs."}
+  };
+
+  const VI = {
+    ui:{back:"← Về trang chủ", lang:"Ngôn ngữ", top:"Lên đầu trang ↑"},
+    title:"Bộ đổi tiền tệ",
+    lede:"Ưu tiên ngoại tuyến: nếu bị chặn, nhập <strong>tỷ giá thủ công</strong>; nếu trực tuyến, bấm <strong>Thử tỷ giá trực tuyến</strong>.",
+    form:{amount:"Số tiền", manual:"Tỷ giá thủ công (tùy chọn)", from:"Từ", to:"Sang"},
+    btn:{swap:"⇄ Đổi", convertManual:"Đổi (Thủ công/Đã có)", tryLive:"Thử tỷ giá trực tuyến", copy:"Sao chép kết quả", copied:"Đã sao chép!"},
+    popular:"Chuyển đổi phổ biến",
+    how:{title:"Cách dùng", text:"Nhập số tiền & chọn tiền tệ, sau đó dán tỷ giá hoặc dùng Live Rate."},
+    faq:{title:"Mẹo & FAQ", q1:"", q2:"", q3:"", q4:""},
+    related:{title:"Liên quan:"},
+    msg:{noLiveEnterManual:"Chưa có tỷ giá trực tuyến. Hãy nhập tỷ giá thủ công hoặc bấm “Thử tỷ giá trực tuyến”.",
+         liveUsed:"Dùng tỷ giá trực tuyến.", manualUsed:"Dùng tỷ giá thủ công.",
+         liveBlocked:"Mạng chặn tỷ giá trực tuyến. Vui lòng nhập tỷ giá thủ công.",
+         tipSearch:"Mẹo: tìm “{FROM} to {TO}” rồi dán tỷ giá."}
+  };
+
+  const BN = {
+    ui:{back:"← হোমে ফিরে", lang:"ভাষা", top:"উপরে যান ↑"},
+    title:"কারেন্সি কনভার্টার",
+    lede:"অফলাইন-ফার্স্ট: লাইভ রেট না পেলে <strong>ম্যানুয়াল রেট</strong> দিন; অনলাইনে হলে <strong>Try Live Rate</strong>।",
+    form:{amount:"পরিমাণ", manual:"ম্যানুয়াল রেট (ঐচ্ছিক)", from:"থেকে", to:"তে"},
+    btn:{swap:"⇄ অদলবদল", convertManual:"কনভার্ট (ম্যানুয়াল/প্রদত্ত)", tryLive:"লাইভ রেট নিন", copy:"ফল কপি করুন", copied:"কপি হয়েছে!"},
+    popular:"জনপ্রিয় কনভার্সন",
+    how:{title:"কীভাবে ব্যবহার করবেন", text:"পরিমাণ ও কারেন্সি বাছুন, তারপর ম্যানুয়াল রেট বা লাইভ রেট।"},
+    faq:{title:"টিপস ও প্রশ্ন", q1:"", q2:"", q3:"", q4:""},
+    related:{title:"সম্পর্কিত টুলস:"},
+    msg:{noLiveEnterManual:"লাইভ রেট নেই। ম্যানুয়াল রেট দিন বা “Try Live Rate” ক্লিক করুন।",
+         liveUsed:"লাইভ API রেট ব্যবহৃত।", manualUsed:"ম্যানুয়াল রেট ব্যবহৃত।",
+         liveBlocked:"লাইভ রেট ব্লকড। অনুগ্রহ করে ম্যানুয়াল রেট দিন।",
+         tipSearch:"টিপ: “{FROM} to {TO}” খুঁজে রেট পেস্ট করুন।"}
+  };
+
+  const NG = {...EN}; // English (NG)
+
+  const SW = {
+    ui:{back:"← Rudi nyumbani", lang:"Lugha", top:"Rudi Juu ↑"},
+    title:"Kigeuzi cha Sarafu",
+    lede:"Kipaumbele nje ya mtandao: kama viwango vya moja kwa moja vimezuiliwa, weka <strong>kiasi cha mkono</strong>; ukipata mtandao, bonyeza <strong>Try Live Rate</strong>.",
+    form:{amount:"Kiasi", manual:"Kiwango cha mkono (hiari)", from:"Kutoka", to:"Kwenda"},
+    btn:{swap:"⇄ Badilisha", convertManual:"Badilisha (Manual / Zilizopo)", tryLive:"Jaribu Live Rate", copy:"Nakili Matokeo", copied:"Imenakiliwa!"},
+    popular:"Mabadilisho maarufu",
+    how:{title:"Jinsi ya kutumia", text:"Weka kiasi na sarafu, kisha kiwango cha mkono au Live Rate."},
+    faq:{title:"Vidokezo & Maswali", q1:"", q2:"", q3:"", q4:""},
+    related:{title:"Vyombo vinavyohusiana:"},
+    msg:{noLiveEnterManual:"Hakuna live rate. Weka kiwango cha mkono au bonyeza “Try Live Rate”.",
+         liveUsed:"Kiwango kutoka API ya moja kwa moja.", manualUsed:"Imetumia kiwango cha mkono.",
+         liveBlocked:"Mtandao umezuia live rates. Tafadhali weka kiwango cha mkono.",
+         tipSearch:"Dokezo: Tafuta “{FROM} to {TO}” kisha bandika kiwango."}
+  };
+
+  const AR = {
+    meta:{title:"محول العملات — دون اتصال أولاً + أسعار مباشرة متعددة المصادر | GoToolOnline",
+          desc:"محول سريع ومجاني. يعمل دون اتصال بمعدل يدوي، ويدعم أسعار صرف مباشرة من عدة مصادر."},
+    ui:{back:"← العودة إلى الصفحة الرئيسية", lang:"اللغة", top:"العودة للأعلى ↑"},
+    title:"محول العملات",
+    lede:"أولوية دون اتصال: إن كانت الأسعار المباشرة محجوبة، أدخل <strong>سعراً يدوياً</strong>؛ وإلا فانقر <strong>تجربة السعر المباشر</strong> لتحديث متعدد المصادر.",
+    form:{amount:"المبلغ", manual:"السعر اليدوي (اختياري)", from:"من", to:"إلى"},
+    btn:{swap:"⇄ تبديل", convertManual:"تحويل (يدوي/مقدم)", tryLive:"تجربة السعر المباشر", copy:"نسخ النتيجة", copied:"تم النسخ!"},
+    popular:"تحويلات شائعة",
+    how:{title:"طريقة الاستخدام", text:"أدخل المبلغ واختر العملات، ثم ألصق سعراً يدوياً (بدون اتصال) أو استخدم السعر المباشر."},
+    faq:{title:"نصائح وأسئلة شائعة", q1:"", q2:"", q3:"", q4:""},
+    related:{title:"أدوات ذات صلة:"},
+    msg:{noLiveEnterManual:"لا يوجد سعر مباشر. أدخل سعراً يدوياً أو انقر “تجربة السعر المباشر”.",
+         liveUsed:"السعر من واجهة مباشرة.", manualUsed:"تم استخدام السعر اليدوي.",
+         liveBlocked:"تم حجب الأسعار المباشرة من الشبكة. الرجاء إدخال سعر يدوي.",
+         tipSearch:"نصيحة: ابحث “{FROM} to {TO}” ثم الصق السعر هنا."}
+  };
+
+  const MAP = {en:EN, zh:ZH, ph:PH, id:ID, vi:VI, bn:BN, ng:NG, sw:SW, ar:AR};
+  const LANGS = ['en','zh','ph','id','vi','bn','ng','sw','ar'];
+  const NAMES = {en:'English', zh:'简体中文', ph:'Tagalog', id:'Bahasa Indonesia', vi:'Tiếng Việt', bn:'বাংলা', ng:'English (NG)', sw:'Kiswahili', ar:'العربية'};
+
+  function getCookie(name){ return ('; '+document.cookie).split('; '+name+'=').pop().split(';')[0] || ''; }
+  function setCookie(name,val){ document.cookie = name+'='+val+';path=/;max-age=31536000'; }
+  function get(obj, path){ return String(path).split('.').reduce((o,k)=> (o && (k in o))? o[k] : undefined, obj); }
+  function merge(base, over){ const out={...base}; if(!over) return out; for(const k in over){ if(typeof over[k]==='object' && !Array.isArray(over[k])) out[k]=merge(base[k]||{},over[k]); else out[k]=over[k]; } return out; }
+
+  function pickLang(){
+    const url = new URL(location.href);
+    const q = (url.searchParams.get('lang')||'').toLowerCase();
+    const c = (getCookie('lang')||'').toLowerCase();
+    const nav = (navigator.language||'en').toLowerCase();
+    const MAPG = {en:'en', tl:'ph', fil:'ph', id:'id', vi:'vi', bn:'bn', sw:'sw', ar:'ar', zh:'zh', 'zh-cn':'zh', 'zh-hans':'zh'};
+    let lang='en';
+    if (q && LANGS.includes(q)) lang=q;
+    else if (c && LANGS.includes(c)) lang=c;
+    else lang = MAPG[nav] || MAPG[nav.split('-')[0]] || 'en';
+    setCookie('lang', lang);
+    document.documentElement.lang = (lang==='ph'?'tl':(lang==='ng'?'en':lang));
+    document.documentElement.dir = (lang==='ar'?'rtl':'ltr');
+    return lang;
+  }
+
+  function applyI18N(D){
+    if (get(D,'meta.title')) document.title = get(D,'meta.title');
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc && get(D,'meta.desc')) desc.setAttribute('content', get(D,'meta.desc'));
+
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      const val = get(D, key);
+      if (val == null) return;
+      if (/<[a-z][\s\S]*>/i.test(val)) el.innerHTML = val; else el.textContent = val;
+    });
+  }
+
+  function keepLangInLinks(lang){
+    document.querySelectorAll('a[href]').forEach(a=>{
+      const href = a.getAttribute('href')||'';
+      if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+      const u = new URL(href, location.origin);
+      if (!u.searchParams.get('lang')) u.searchParams.set('lang', lang);
+      a.setAttribute('href', u.pathname + u.search + u.hash);
+    });
+  }
+
+  // Build currency selects after i18n init (done already) and boot lang UI
+  (function initI18N(){
+    const lang = pickLang();
+    const D = merge(EN, MAP[lang]||{});
+    window.__LANG__ = lang;
+    window.__DICT__ = D;
+    applyI18N(D);
+    keepLangInLinks(lang);
+
+    // Language panel
+    const panel = document.getElementById('langPanel');
+    const btn = document.getElementById('langBtn');
+    const grid = document.getElementById('langGrid');
+    LANGS.forEach(code=>{
+      const b=document.createElement('button');
+      b.textContent = NAMES[code]||code;
+      if (code===lang) b.className='active';
+      b.addEventListener('click', ()=>{
+        const u=new URL(location.href);
+        u.searchParams.set('lang', code);
+        setCookie('lang', code);
+        location.href=u.toString();
+      });
+      grid.appendChild(b);
+    });
+    function openLang(open){ panel.classList.toggle('open', !!open); btn.setAttribute('aria-expanded', !!open); }
+    if (btn) btn.addEventListener('click', (e)=>{ e.stopPropagation(); openLang(!panel.classList.contains('open')); });
+    document.addEventListener('click', (e)=>{ if(panel && panel.classList.contains('open')){ const within = panel.contains(e.target) || (btn && btn.contains(e.target)); if(!within) openLang(false); } });
+  })();
+</script>
+
+<!-- Preserve ?lang on home links -->
+<script>
+(function(){
+  var path = location.pathname.replace(/\/+$/,'');
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = [''];
+  var home = parts.join('/') + '/';
+
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+  document.querySelectorAll('a[data-home]').forEach(function(a){
+    a.setAttribute('href', home);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Scientific Calculator — Functions, Degrees/Radians | GoToolOnline</title>
+<meta name="description" content="Scientific calculator with big buttons. + − × ÷ % **, parentheses, sin/cos/tan, sqrt, log/ln, exp, factorial, pi/e, memory, history, Degree/Radian toggle."/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text x='6' y='52' font-size='48'>🧪</text></svg>'"/>
+
+<!-- Canonical & Social -->
+
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="Scientific Calculator — Functions, Degrees/Radians | GoToolOnline"/>
+<meta property="og:description" content="Scientific calculator with big buttons. + − × ÷ % **, parentheses, sin/cos/tan, sqrt, log/ln, exp, factorial, pi/e, memory, history, Degree/Radian toggle."/>
+<meta property="og:url" content="https://gotoolonline.com/calculators/scientific-calculator/"/>
+<meta name="twitter:card" content="summary"/>
+
+<!-- JSON-LD -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Scientific Calculator","url":"https://gotoolonline.com/calculators/scientific-calculator/","applicationCategory":"Calculator","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"GoToolOnline","url":"https://gotoolonline.com"}}
+</script>
+
+<style>
+  :root { --bg:#0a0f1e; --card:#0f1830; --muted:#9fb0c3; --fg:#eaf3ff; --acc:#4fb3ff; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+  header{max-width:1100px;margin:20px auto 8px;display:flex;gap:12px;align-items:center;padding:0 16px}
+  header a{color:var(--fg);text-decoration:none}
+  .pill{padding:8px 12px;border:1px solid #24365b;background:#0f1a2f;border-radius:999px}
+  #langBtn{margin-left:8px}
+  .lang-panel{position:fixed; top:72px; right:18px; z-index:1200;background:#0f1830; border:1px solid #1a2843; border-radius:16px;padding:12px; display:none; width:min(420px, calc(100vw - 24px));box-shadow:0 20px 60px rgba(0,0,0,.45)}
+  .lang-panel.open{ display:block }
+  .lang-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px }
+  .lang-grid button{display:block;width:100%;text-align:center;padding:10px 10px;border:1px solid #24365b;background:#0f1a2f;border-radius:12px;color:var(--fg);font-size:14px;cursor:pointer}
+  .lang-grid button.active{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+
+  main{max-width:1100px;margin:8px auto 56px;padding:0 16px}
+  .layout{display:grid;grid-template-columns:1fr 340px;gap:16px}
+  .card{background:var(--card);border:1px solid #1a2843;border-radius:18px;padding:16px}
+  .display{background:#0d142a;border:1px solid #1c2d55;border-radius:14px;padding:12px 14px}
+  .expr{font-size:18px;color:#9fb0c3;min-height:22px;word-break:break-all}
+  .out{font-size:36px;font-weight:800;letter-spacing:.5px;min-height:44px;word-break:break-all}
+  .grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+  button{padding:14px;border-radius:12px;border:1px solid #2a3d67;background:#0f1a2f;color:#eaf3ff;font-size:18px;font-weight:700;cursor:pointer}
+  button.fx{background:#13264a}
+  button.op{background:#0f223f}
+  button.equal{grid-column: span 2; background:linear-gradient(180deg,#2a78ff,#0050d4);border:none}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .small{font-size:13px;color:#9fb0c3}
+  @media (max-width: 900px){ .layout{grid-template-columns:1fr} .grid{grid-template-columns:repeat(5,1fr)} }
+</style>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/calculators/scientific-calculator/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/calculators/scientific-calculator/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/calculators/scientific-calculator/">
+</head>
+<body>
+<header>
+  <a class="pill" data-home href="#">🛠 GoToolOnline</a>
+  <a class="pill" data-home href="#" data-i18n="ui.back">← Back to Home</a>
+  <button id="langBtn" class="pill" aria-haspopup="dialog" aria-expanded="false" data-i18n="ui.lang">🌐 Language</button>
+  <div class="lang-panel" id="langPanel" role="dialog" aria-label="Select language">
+    <div class="lang-grid" id="langGrid"></div>
+  </div>
+</header>
+
+<main class="layout">
+  <section class="card">
+    <h1 style="margin:4px 0 10px" data-i18n="title">Scientific Calculator</h1>
+    <div class="display" aria-live="polite">
+      <div class="expr" id="expr"></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="out" id="out" role="status">0</div>
+        <button class="pill" id="copy" title="Copy result" data-i18n="btn.copy">Copy</button>
+      </div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button class="pill" id="mode" data-i18n="ui.mode">Mode: DEG</button>
+      <button class="pill" id="mc">MC</button>
+      <button class="pill" id="mr">MR</button>
+      <button class="pill" id="mplus">M+</button>
+      <button class="pill" id="mminus">M-</button>
+      <span class="small" id="mstat" data-i18n-prefix="ui.memory">Memory: </span><span class="small" id="mval">0</span>
+    </div>
+
+    <div class="grid" style="margin-top:12px" aria-label="Calculator keys" role="group">
+      <button class="op" data-i="C">C</button>
+      <button class="op" data-i="⌫">⌫</button>
+      <button class="op" data-i="(">(</button>
+      <button class="op" data-i=")">)</button>
+      <button class="op" data-i="%">%</button>
+      <button class="op" data-i="**">xʸ</button>
+
+      <button class="fx" data-i="sin(">sin</button>
+      <button class="fx" data-i="cos(">cos</button>
+      <button class="fx" data-i="tan(">tan</button>
+      <button class="fx" data-i="asin(">asin</button>
+      <button class="fx" data-i="acos(">acos</button>
+      <button class="fx" data-i="atan(">atan</button>
+
+      <button class="fx" data-i="sqrt(">√</button>
+      <button class="fx" data-i="log(">log</button>
+      <button class="fx" data-i="ln(">ln</button>
+      <button class="fx" data-i="exp(">exp</button>
+      <button class="fx" data-i="pi">π</button>
+      <button class="fx" data-i="e">e</button>
+
+      <button data-i="7">7</button><button data-i="8">8</button><button data-i="9">9</button>
+      <button class="op" data-i="÷">÷</button><button class="op" data-i="!">!</button><button class="op" data-i="±">±</button>
+
+      <button data-i="4">4</button><button data-i="5">5</button><button data-i="6">6</button>
+      <button class="op" data-i="×">×</button><button class="op" data-i=",">,</button><button class="op" data-i="ans">Ans</button>
+
+      <button data-i="1">1</button><button data-i="2">2</button><button data-i="3">3</button>
+      <button class="op" data-i="−">−</button><button class="op" data-i=".">.</button><button class="equal" data-i="=">=</button>
+
+      <button data-i="0" style="grid-column: span 2">0</button>
+      <button class="op" data-i="+">+</button>
+    </div>
+
+    <p class="small" style="margin-top:10px" data-i18n="lede">
+      Functions accept either numbers or nested expressions: e.g., <span class="small">sin(30)</span> (DEG) or <span class="small">sin(pi/6)</span> (RAD). Use <b>Ans</b> to reuse the last result.
+    </p>
+  </section>
+
+  <aside class="card">
+    <h2 style="margin:0 0 8px 0" data-i18n="history.title">History</h2>
+    <div class="small" id="hist"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="pill" id="clearHist" data-i18n="history.clear">Clear History</button>
+    </div>
+  </aside>
+</main>
+
+<script>
+  // --- State ---
+  const exprEl = document.getElementById('expr');
+  const outEl  = document.getElementById('out');
+  const histEl = document.getElementById('hist');
+  const mvalEl = document.getElementById('mval');
+  let text = '';
+  let memory = 0;
+  let lastAns = 0;
+  let DEG = true;
+
+  // Pretty formatting
+  function fmtNice(x){
+    if (!Number.isFinite(x)) return window.__DICT__?.msg?.error || 'Error';
+    const ax = Math.abs(x);
+    if (ax !== 0 && (ax >= 1e10 || ax < 1e-8)) return x.toExponential(10).replace(/0+e/,'e');
+    return String(+x.toFixed(12));
+  }
+  function render(){
+    exprEl.textContent = text;
+    outEl.textContent = fmtNice(safePreview(text));
+    mvalEl.textContent = String(round(memory));
+  }
+
+  // --- Tokenizer & Parser ---
+  const OPS = {
+    '+':{p:2,a:'L'}, '−':{p:2,a:'L'}, '×':{p:3,a:'L'}, '÷':{p:3,a:'L'},
+    '%':{p:4,a:'R',post:true}, '!':{p:5,a:'R',post:true}, '**':{p:6,a:'R'}
+  };
+  const FUNCS = new Set(['sin','cos','tan','asin','acos','atan','sqrt','log','ln','exp','pow']);
+  const CONST = { 'pi': Math.PI, 'e': Math.E, 'ans': ()=> lastAns };
+
+  function toTokens(s){
+    const tokens = [];
+    for (let i=0;i<s.length;){
+      const c = s[i];
+      if (/\s/.test(c)){ i++; continue; }
+      if (/\d/.test(c) || (c==='.' && /\d/.test(s[i+1]))){
+        let j=i+1; while(j<s.length && /[\d.]/.test(s[j])) j++;
+        tokens.push({t:'num',v:parseFloat(s.slice(i,j))}); i=j; continue;
+      }
+      if (/[a-z]/i.test(c)){
+        let j=i+1; while(j<s.length && /[a-z]/i.test(s[j])) j++;
+        const name = s.slice(i,j);
+        tokens.push({t: FUNCS.has(name)?'fn':'id', v:name}); i=j; continue;
+      }
+      if (c===',' ){ tokens.push({t:'comma', v:','}); i++; continue; }
+      if (c==='(' || c===')'){ tokens.push({t:'par',v:c}); i++; continue; }
+      if (s.slice(i,i+2)==='**'){ tokens.push({t:'op',v:'**'}); i+=2; continue; }
+      if ('+−×÷%!-'.includes(c)){
+        if (c==='-'){ tokens.push({t:'op',v:'−'}); i++; continue; }
+        tokens.push({t:'op',v:c}); i++; continue;
+      }
+      i++; // ignore
+    }
+    return tokens;
+  }
+
+  function toRPN(tokens){
+    const out=[], st=[];
+    let expectUnary = true;
+    for (let k=0;k<tokens.length;k++){
+      const tk = tokens[k];
+      if (tk.t==='num'){ out.push(tk); expectUnary=false; continue; }
+      if (tk.t==='id'){
+        if (tk.v in CONST){ out.push({t:'num',v: (typeof CONST[tk.v]==='function' ? CONST[tk.v]() : CONST[tk.v])}); }
+        else throw new Error('Unknown identifier: '+tk.v);
+        expectUnary=false; continue;
+      }
+      if (tk.t==='fn'){ st.push(tk); expectUnary=true; continue; }
+      if (tk.t==='comma'){ while (st.length && st.at(-1).t!=='par') out.push(st.pop()); continue; }
+      if (tk.t==='par' && tk.v==='('){ st.push(tk); expectUnary=true; continue; }
+      if (tk.t==='par' && tk.v===')'){
+        while (st.length && st.at(-1).t!=='par') out.push(st.pop());
+        st.pop();
+        if (st.length && st.at(-1).t==='fn') out.push(st.pop());
+        expectUnary=false; continue;
+      }
+      if (tk.t==='op'){
+        let op = tk.v;
+        if (op==='−' && expectUnary){ out.push({t:'num',v:0}); }
+        const p = OPS[op].p, a = OPS[op].a;
+        while (st.length && st.at(-1).t==='op'){
+          const top = OPS[st.at(-1).v];
+          if ((a==='L' && p<=top.p) || (a==='R' && p<top.p)) out.push(st.pop()); else break;
+        }
+        st.push(tk); expectUnary=true; continue;
+      }
+    }
+    while(st.length){ out.push(st.pop()); }
+    return out;
+  }
+
+  function factorial(n){ if (n<0 || !Number.isFinite(n)) return NaN; let r=1; for(let i=2;i<=Math.floor(n);i++) r*=i; return r; }
+  function rad(x){ return DEG ? x * Math.PI/180 : x; }
+  function round(x){ if (!Number.isFinite(x)) return x; return +x.toFixed(12); }
+
+  function evalRPN(rpn){
+    const st=[];
+    for (const tk of rpn){
+      if (tk.t==='num'){ st.push(tk.v); continue; }
+      if (tk.t==='op'){
+        const op=tk.v;
+        if (OPS[op].post){
+          const a = st.pop();
+          if (op==='!') st.push(factorial(a));
+          else if (op==='%') st.push(a/100);
+          continue;
+        }
+        const b=st.pop(); const a=st.pop();
+        if (op==='+') st.push(a+b);
+        else if (op==='−') st.push(a-b);
+        else if (op==='×') st.push(a*b);
+        else if (op==='÷') st.push(b===0?NaN:a/b);
+        else if (op==='**') st.push(a**b);
+        continue;
+      }
+      if (tk.t==='fn'){
+        const f=tk.v;
+        if (f==='sqrt') st.push(Math.sqrt(st.pop()));
+        else if (f==='log') st.push(Math.log10(st.pop()));
+        else if (f==='ln')  st.push(Math.log(st.pop()));
+        else if (f==='exp') st.push(Math.exp(st.pop()));
+        else if (f==='sin') st.push(Math.sin(rad(st.pop())));
+        else if (f==='cos') st.push(Math.cos(rad(st.pop())));
+        else if (f==='tan') st.push(Math.tan(rad(st.pop())));
+        else if (f==='asin'){ const x=st.pop(); st.push(DEG? (Math.asin(x)*180/Math.PI): Math.asin(x)); }
+        else if (f==='acos'){ const x=st.pop(); st.push(DEG? (Math.acos(x)*180/Math.PI): Math.acos(x)); }
+        else if (f==='atan'){ const x=st.pop(); st.push(DEG? (Math.atan(x)*180/Math.PI): Math.atan(x)); }
+        else if (f==='pow'){ const b=st.pop(), a=st.pop(); st.push(a**b); }
+      }
+    }
+    return st.pop();
+  }
+
+  function calculate(s){
+    const rpn = toRPN(toTokens(s));
+    const val = evalRPN(rpn);
+    return round(val);
+  }
+
+  function safePreview(s){
+    try{
+      if (!s.trim()) return 0;
+      return calculate(s.replace(/÷/g,'/').replace(/×/g,'*'));
+    }catch(e){ return NaN; }
+  }
+
+  // --- UI Hooks ---
+  function insert(txt){ text += txt; render(); }
+  function back(){ text = text.slice(0,-1); render(); }
+  function clear(){ text=''; render(); }
+  function equal(){
+    try{
+      const expr = text || '0';
+      const val = calculate(expr.replace(/÷/g,'/').replace(/×/g,'*'));
+      lastAns = val;
+      pushHist(`${expr} = ${fmtNice(val)}`);
+      text = String(val);
+      render();
+    }catch(e){
+      pushHist(window.__DICT__?.msg?.error || 'Error');
+      outEl.textContent = window.__DICT__?.msg?.error || 'Error';
+    }
+  }
+  function pushHist(line){ const p=document.createElement('div'); p.textContent=line; histEl.prepend(p); }
+
+  document.querySelectorAll('button[data-i]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const v = b.getAttribute('data-i');
+      if (v==='=') return equal();
+      if (v==='C') return clear();
+      if (v==='⌫') return back();
+      if (v==='±'){ text = `(${text||'0'})×(-1)`; return render(); }
+      insert(v);
+    });
+  });
+
+  // Mode & Memory
+  function setModeLabel(){
+    const prefix = window.__DICT__?.ui?.modePrefix || 'Mode';
+    document.getElementById('mode').textContent = `${prefix}: ${DEG?'DEG':'RAD'}`;
+  }
+  document.getElementById('mode').onclick = ()=>{ DEG = !DEG; setModeLabel(); render(); };
+  document.getElementById('mc').onclick   = ()=>{ memory = 0; mvalEl.textContent='0'; };
+  document.getElementById('mr').onclick   = ()=>{ insert(String(memory)); };
+  document.getElementById('mplus').onclick= ()=>{ try{ memory += +safePreview(text); mvalEl.textContent=String(round(memory));}catch{} };
+  document.getElementById('mminus').onclick=()=>{ try{ memory -= +safePreview(text); mvalEl.textContent=String(round(memory));}catch{} };
+  document.getElementById('clearHist').onclick=()=>{ histEl.innerHTML=''; };
+
+  // Copy result
+  document.getElementById('copy').onclick = () => {
+    const t = outEl.textContent.trim();
+    if (t && t !== '…') navigator.clipboard?.writeText(t);
+  };
+
+  // Keyboard
+  window.addEventListener('keydown',(e)=>{
+    const k=e.key;
+    if (k==='Enter') return equal();
+    if (k==='Backspace') return back();
+    const map={ '*':'×','/':'÷','-':'−' };
+    if (map[k]) insert(map[k]); else if (k.length===1) insert(k);
+  });
+
+  render();
+  // Expose to i18n init so it can set mode label after language load
+  window.__setModeLabel = setModeLabel;
+</script>
+
+<!-- i18n (9 languages) + lang switch; preserve ?lang; RTL for ar -->
+<script>
+(function(){
+  const LANGS = ['en','zh','ph','id','vi','bn','ng','sw','ar'];
+  const NAMES = {en:'English', zh:'简体中文', ph:'Tagalog', id:'Bahasa Indonesia', vi:'Tiếng Việt', bn:'বাংলা', ng:'English (NG)', sw:'Kiswahili', ar:'العربية'};
+
+  function getCookie(name){ return ('; '+document.cookie).split('; '+name+'=').pop().split(';')[0] || ''; }
+  function setCookie(name,val){ document.cookie = name+'='+val+';path=/;max-age=31536000'; }
+
+  function pickLang(){
+    const url = new URL(location.href);
+    const q = (url.searchParams.get('lang')||'').toLowerCase();
+    const c = (getCookie('lang')||'').toLowerCase();
+    const nav = (navigator.language||'en').toLowerCase();
+    const MAP = {en:'en', tl:'ph', fil:'ph', id:'id', vi:'vi', bn:'bn', sw:'sw', ar:'ar', zh:'zh', 'zh-cn':'zh', 'zh-hans':'zh'};
+    let lang='en';
+    if (q && LANGS.includes(q)) lang=q;
+    else if (c && LANGS.includes(c)) lang=c;
+    else lang = MAP[nav] || MAP[nav.split('-')[0]] || 'en';
+    setCookie('lang', lang);
+    document.documentElement.lang = (lang==='ph'?'tl':(lang==='ng'?'en':lang));
+    document.documentElement.dir = (lang==='ar'?'rtl':'ltr');
+    return lang;
+  }
+
+  function merge(base, over){
+    const out = Array.isArray(base)? base.slice() : {...base};
+    if (!over) return out;
+    for (const k of Object.keys(over)){
+      if (over[k] && typeof over[k]==='object' && !Array.isArray(over[k]) && base && typeof base[k]==='object'){
+        out[k] = merge(base[k], over[k]);
+      } else { out[k] = over[k]; }
+    }
+    return out;
+  }
+  function get(obj, path){ return String(path).split('.').reduce((o,k)=> (o && (k in o))? o[k] : undefined, obj); }
+
+  // ===== Dictionaries =====
+  const EN = {
+    meta:{title:"Scientific Calculator — Functions, Degrees/Radians | GoToolOnline",
+          desc:"Scientific calculator with big buttons. + − × ÷ % **, parentheses, sin/cos/tan, sqrt, log/ln, exp, factorial, pi/e, memory, history, Degree/Radian toggle."},
+    ui:{back:"← Back to Home", lang:"Language", modePrefix:"Mode", memory:"Memory: "},
+    title:"Scientific Calculator",
+    lede:'Functions accept either numbers or nested expressions: e.g., <span class="small">sin(30)</span> (DEG) or <span class="small">sin(pi/6)</span> (RAD). Use <b>Ans</b> to reuse the last result.',
+    history:{title:"History", clear:"Clear History"},
+    btn:{copy:"Copy"},
+    msg:{error:"Error"}
+  };
+
+  const ZH = {
+    meta:{title:"科学计算器 — 函数/角度/弧度 | GoToolOnline",
+          desc:"科学计算器（大按键）：+ − × ÷ % **、括号、sin/cos/tan、sqrt、log/ln、exp、阶乘、π/e、存储与历史，DEG/RAD 切换。"},
+    ui:{back:"← 返回首页", lang:"语言", modePrefix:"模式", memory:"内存："},
+    title:"科学计算器",
+    lede:'函数可接收数字或表达式：如 <span class="small">sin(30)</span>（DEG）或 <span class="small">sin(pi/6)</span>（RAD）。用 <b>Ans</b> 复用上次结果。',
+    history:{title:"历史记录", clear:"清空历史"},
+    btn:{copy:"复制"},
+    msg:{error:"错误"}
+  };
+
+  const PH = {
+    ui:{back:"← Bumalik sa Home", lang:"Wika", modePrefix:"Mode", memory:"Memory: "},
+    title:"Scientific Calculator",
+    lede:'Tumatanggap ang mga function ng numero o nested na expression: hal. <span class="small">sin(30)</span> (DEG) o <span class="small">sin(pi/6)</span> (RAD). Gamitin ang <b>Ans</b> para sa huling resulta.',
+    history:{title:"Kasaysayan", clear:"I-clear ang Kasaysayan"},
+    btn:{copy:"Kopya"},
+    msg:{error:"Error"}
+  };
+
+  const ID = {
+    ui:{back:"← Kembali ke Beranda", lang:"Bahasa", modePrefix:"Mode", memory:"Memori: "},
+    title:"Kalkulator Ilmiah",
+    lede:'Fungsi menerima angka atau ekspresi bersarang: mis. <span class="small">sin(30)</span> (DEG) atau <span class="small">sin(pi/6)</span> (RAD). Gunakan <b>Ans</b> untuk hasil terakhir.',
+    history:{title:"Riwayat", clear:"Hapus Riwayat"},
+    btn:{copy:"Salin"},
+    msg:{error:"Error"}
+  };
+
+  const VI = {
+    ui:{back:"← Về trang chủ", lang:"Ngôn ngữ", modePrefix:"Chế độ", memory:"Bộ nhớ: "},
+    title:"Máy tính khoa học",
+    lede:'Hàm chấp nhận số hoặc biểu thức lồng nhau: ví dụ <span class="small">sin(30)</span> (DEG) hoặc <span class="small">sin(pi/6)</span> (RAD). Dùng <b>Ans</b> để tái sử dụng kết quả trước.',
+    history:{title:"Lịch sử", clear:"Xóa lịch sử"},
+    btn:{copy:"Sao chép"},
+    msg:{error:"Lỗi"}
+  };
+
+  const BN = {
+    ui:{back:"← হোমে ফিরে যান", lang:"ভাষা", modePrefix:"মোড", memory:"মেমরি: "},
+    title:"সায়েন্টিফিক ক্যালকুলেটর",
+    lede:'ফাংশন সংখ্যা বা nested এক্সপ্রেশন নিতে পারে: যেমন <span class="small">sin(30)</span> (DEG) বা <span class="small">sin(pi/6)</span> (RAD)। <b>Ans</b> দিয়ে শেষ ফল পুনর্ব্যবহার করুন।',
+    history:{title:"ইতিহাস", clear:"ইতিহাস মুছুন"},
+    btn:{copy:"কপি"},
+    msg:{error:"ত্রুটি"}
+  };
+
+  const NG = {
+    ui:{back:"← Back to Home", lang:"Language", modePrefix:"Mode", memory:"Memory: "},
+    title:"Scientific Calculator",
+    lede:'Functions accept numbers or nested expressions: e.g., <span class="small">sin(30)</span> (DEG) or <span class="small">sin(pi/6)</span> (RAD). Use <b>Ans</b> to reuse the last result.',
+    history:{title:"History", clear:"Clear History"},
+    btn:{copy:"Copy"},
+    msg:{error:"Error"}
+  };
+
+  const SW = {
+    ui:{back:"← Rudi nyumbani", lang:"Lugha", modePrefix:"Hali", memory:"Kumbukumbu: "},
+    title:"Kikokotoo cha Kisayansi",
+    lede:'Kazi hukubali nambari au virejeshi vilivyopangwa: k.m. <span class="small">sin(30)</span> (DEG) au <span class="small">sin(pi/6)</span> (RAD). Tumia <b>Ans</b> kutumia tena matokeo ya mwisho.',
+    history:{title:"Historia", clear:"Futa Historia"},
+    btn:{copy:"Nakili"},
+    msg:{error:"Hitilafu"}
+  };
+
+  const AR = {
+    meta:{title:"آلة حاسبة علمية — درجات/راديان | GoToolOnline",
+          desc:"آلة حاسبة علمية بأزرار كبيرة: + − × ÷ % ** وأقواس، sin/cos/tan، الجذر، log/ln، exp، عامِل، π/e، ذاكرة ومحفوظات، تبديل DEG/RAD."},
+    ui:{back:"← العودة إلى الصفحة الرئيسية", lang:"اللغة", modePrefix:"الوضع", memory:"الذاكرة: "},
+    title:"آلة حاسبة علمية",
+    lede:'تقبل الدوال أرقامًا أو تعابير متداخلة: مثل <span class="small">sin(30)</span> (DEG) أو <span class="small">sin(pi/6)</span> (RAD). استخدم <b>Ans</b> لإعادة استخدام النتيجة الأخيرة.',
+    history:{title:"السجل", clear:"مسح السجل"},
+    btn:{copy:"نسخ"},
+    msg:{error:"خطأ"}
+  };
+
+  const MAP = {en:EN, zh:ZH, ph:PH, id:ID, vi:VI, bn:BN, ng:NG, sw:SW, ar:AR};
+
+  function applyI18N(D){
+    // meta
+    if (get(D,'meta.title')) document.title = get(D,'meta.title');
+    const desc = document.querySelector('meta[name="description"]');
+    if (desc && get(D,'meta.desc')) desc.setAttribute('content', get(D,'meta.desc'));
+
+    // text nodes
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const key = el.getAttribute('data-i18n');
+      const val = get(D, key);
+      if (val == null) return;
+      if (/<[a-z][\s\S]*>/i.test(val)) el.innerHTML = val; else el.textContent = val;
+    });
+    // prefix (memory label)
+    const prefEl = document.querySelector('[data-i18n-prefix="ui.memory"]');
+    if (prefEl){ prefEl.textContent = get(D,'ui.memory') || 'Memory: '; }
+
+    // lang button label
+    const btn = document.getElementById('langBtn'); if (btn) btn.textContent = '🌐 ' + (get(D,'ui.lang')||'Language');
+
+    // update mode label using localized prefix
+    if (window.__setModeLabel) window.__setModeLabel();
+  }
+
+  function keepLangInLinks(lang){
+    document.querySelectorAll('a[href]').forEach(a=>{
+      const href = a.getAttribute('href')||'';
+      if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+      const u = new URL(href, location.origin);
+      if (!u.searchParams.get('lang')) u.searchParams.set('lang', lang);
+      a.setAttribute('href', u.pathname + u.search + u.hash);
+    });
+  }
+
+  const lang = pickLang();
+  const D = merge(EN, MAP[lang]||{});
+  applyI18N(D);
+  keepLangInLinks(lang);
+
+  window.__LANG__ = lang;
+  window.__DICT__ = D;
+
+  // language panel
+  const panel = document.getElementById('langPanel');
+  const btn = document.getElementById('langBtn');
+  const grid = document.getElementById('langGrid');
+  if (grid){
+    const LANGS_ORDER = ['en','zh','ph','id','vi','bn','ng','sw','ar'];
+    LANGS_ORDER.forEach(code=>{
+      const b=document.createElement('button');
+      b.textContent = NAMES[code]||code;
+      if (code===lang) b.className='active';
+      b.addEventListener('click', ()=>{
+        const u=new URL(location.href); u.searchParams.set('lang', code); setCookie('lang', code); location.href=u.toString();
+      });
+      grid.appendChild(b);
+    });
+  }
+  function openLang(open){ panel.classList.toggle('open', !!open); btn.setAttribute('aria-expanded', !!open); }
+  if (btn) btn.addEventListener('click', (e)=>{ e.stopPropagation(); openLang(!panel.classList.contains('open')); });
+  document.addEventListener('click', (e)=>{ if(panel && panel.classList.contains('open')){ const within = panel.contains(e.target) || (btn && btn.contains(e.target)); if(!within) openLang(false); } });
+})();
+</script>
+
+<!-- Back-to-home resolver (preserve ?lang) -->
+<script>
+(function(){
+  var path = location.pathname.replace(/\/+$/,''); // strip trailing slashes
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = ['']; // already at root
+  var home = parts.join('/') + '/';
+
+  // preserve ?lang if present
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+
+  document.querySelectorAll('a[data-home]').forEach(function(a){
+    a.setAttribute('href', home);
+  });
+})();
+</script>
+</body>
+</html>

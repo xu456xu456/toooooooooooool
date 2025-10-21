@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>DNS 检测 | GoToolOnline</title>
+<meta name="description" content="DNS Check tool"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text x='6' y='52' font-size='48'>🛠️</text></svg>"/>
+<style>
+:root{--bg:#0a0f1e;--card:#0f1830;--muted:#9fb0c3;--fg:#eaf3ff}
+*{box-sizing:border-box} body{margin:0;font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--fg)}
+main,header,footer{max-width:980px;margin:0 auto;padding:0 18px}
+header{display:flex;gap:12px;align-items:center;margin:22px auto 8px}
+header .logo{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--fg);font-weight:800;font-size:22px}
+.lang{margin-left:auto;padding:10px 12px;background:#0f1a2f;border:1px solid #24365b;border-radius:10px;color:#eaf3ff;font-size:14px}
+.card{background:#0f1830;border:1px solid #1a2843;border-radius:18px;padding:18px;margin:16px 0}
+h1{margin:6px 0 8px;font-size:28px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{padding:12px 14px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;cursor:pointer}
+button:hover{filter:brightness(1.06)}
+.small{font-size:14px;color:var(--muted)}
+a.back{margin-left:8px;color:#9fd3ff;text-decoration:none;border-bottom:1px dashed #3a82ff}
+a.back:hover{filter:brightness(1.15)}
+.panel{background:#0c1426;border:1px solid #2a3c64;border-radius:14px;padding:14px}
+</style>
+
+<link rel="canonical" href="https://gotoolonline.com/networkandAI/tools/dns-check/">
+</head>
+\1
+
+    <div id="topnav-return-home" style="position:sticky;top:0;padding:10px 14px;border-bottom:1px solid #eee;background:#fff;z-index:999;font-family:system-ui,Segoe UI,Roboto,Arial;">
+      <a href="../../index.html" style="text-decoration:none;">← 返回首页</a>
+    </div>
+    
+<header>
+  <a class="logo" data-home href="#"><span>🛠️</span><strong>GoToolOnline</strong></a>
+  <a id="backHome" class="back" href="#">← 返回首页</a>
+  <select id="lang" class="lang" aria-label="Language">
+    <option value="zh">简体中文</option><option value="en">English</option><option value="ph">Tagalog</option>
+    <option value="id">Bahasa Indonesia</option><option value="vi">Tiếng Việt</option>
+    <option value="bn">বাংলা</option><option value="ng">English (NG)</option><option value="sw">Kiswahili</option><option value="ar">العربية</option>
+  </select>
+</header>
+<main>
+
+<section class="card">
+  <h1 id="h1">DNS 检测</h1>
+  <div class="row"><button id="btnRun">开始检测</button></div>
+  <div class="panel" style="margin-top:12px">
+    <div class="kv"><strong id="lblIp">你的公网信息</strong></div>
+    <div class="kv" style="margin-top:6px">
+      <span id="flag" style="font-size:1.2rem;margin-right:.35rem">🏳️</span>
+      <span id="ipinfo" class="addr">—</span>
+    </div>
+    <div class="small" id="asn">—</div>
+  </div>
+  <div class="panel" style="margin-top:12px">
+    <div class="kv"><strong id="lblResult">DoH 解析速度（越低越好）</strong></div>
+    <table style="width:100%;border-collapse:collapse;margin-top:8px">
+      <thead><tr><th id="thProv">提供商</th><th id="thTime">延迟(ms)</th><th id="thAnswer">解析结果</th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="small" id="note">说明：浏览器无法直接读取系统正在使用的 DNS。此处为各公共 DoH 供应商的并行测试，用于推荐更快的公共 DNS。</div>
+  </div>
+</section>
+
+</main>
+<footer>© 2025 GoToolOnline.com</footer>
+<script>
+const $=s=>document.querySelector(s);
+const I18N_BACK={
+  zh:"← 返回首页", en:"← Back to Home", ph:"← Bumalik sa Home", id:"← Kembali ke Beranda",
+  vi:"← Quay lại Trang chủ", bn:"← হোমে ফিরে যান", ng:"← Back to Home", sw:"← Rudi Nyumbani", ar:"← الرجوع للرئيسية"
+};
+(function boot(){
+  const qs=new URLSearchParams(location.search); const p=(qs.get('lang')||'').toLowerCase(); const ls=(localStorage.getItem('lang')||'').toLowerCase();
+  const langs=['zh','en','ph','id','vi','bn','ng','sw','ar']; const lang=langs.includes(p)?p:(langs.includes(ls)?ls:'zh');
+  document.getElementById('lang').value=lang; document.getElementById('backHome').textContent=I18N_BACK[lang]||I18N_BACK.en; document.documentElement.dir=(lang==='ar')?'rtl':'ltr';
+  document.getElementById('lang').addEventListener('change',e=>{localStorage.setItem('lang',e.target.value); const url=new URL(location.href); url.searchParams.set('lang', e.target.value); location.href=url.pathname+url.search;});
+  const home = new URL('/', location.origin); if(lang) home.searchParams.set('lang', lang);
+  document.querySelectorAll('a[data-home],#backHome').forEach(a=>a.setAttribute('href', home.pathname + home.search + home.hash));
+})();
+</script>
+
+<script>
+const CFG={ ipinfoToken:"630a161186a234", TEST_NAME:"example.com", TIMEOUT:3500 };
+const I18N={
+  zh:{h1:"DNS 检测",run:"开始检测",ip:"你的公网信息",asn:"自治系统(ASN) / 运营商",doh:"DoH 解析速度（越低越好）",prov:"提供商",time:"延迟(ms)",answer:"解析结果",note:"浏览器无法直接读取系统正在使用的 DNS。此处为各公共 DoH 供应商的并行测试，用于推荐更快的公共 DNS。"},
+  en:{h1:"DNS Check",run:"Run",ip:"Your Public Info",asn:"ASN / ISP",doh:"DoH Resolver Latency (lower is better)",prov:"Provider",time:"Latency (ms)",answer:"Answer",note:"Browsers can’t read your system resolver. We parallel-test public DoH providers to suggest the fastest."}
+};
+const PROVIDERS=[
+  {name:"Google DNS", base:"https://dns.google/resolve", param:"name", extra:"&type=A"},
+  {name:"Cloudflare", base:"https://cloudflare-dns.com/dns-query", param:"name", extra:"&type=A&ct=application/dns-json"},
+  {name:"Quad9", base:"https://dns.quad9.net/dns-query", param:"name", extra:"&type=A&ct=application/dns-json"},
+  {name:"AdGuard", base:"https://dns.adguard.com/dns-query", param:"name", extra:"&type=A&ct=application/dns-json"}
+];
+function ccToFlag(cc){ if(!cc) return '🏳️'; return cc.toUpperCase().replace(/./g,c=>String.fromCodePoint(127397+c.charCodeAt())); }
+(async function(){
+  const qs=new URLSearchParams(location.search); const lang=(qs.get('lang')||localStorage.getItem('lang')||'zh').toLowerCase();
+  const d=(I18N[lang]||I18N.zh);
+  document.getElementById('h1').textContent=d.h1; document.getElementById('btnRun').textContent=d.run;
+  document.getElementById('lblIp').textContent=d.ip; document.getElementById('lblResult').textContent=d.doh;
+  document.getElementById('thProv').textContent=d.prov; document.getElementById('thTime').textContent=d.time; document.getElementById('thAnswer').textContent=d.answer;
+  document.getElementById('note').textContent=d.note;
+  async function publicInfo(){
+    try{
+      const j=await fetch(`https://api.ipinfo.io?token=${encodeURIComponent(CFG.ipinfoToken)}`,{cache:'no-store'}).then(r=>r.json());
+      const ip=j.ip||''; const city=j.city||''; const country=j.country||''; const org=j.org||'';
+      document.getElementById('ipinfo').textContent=[ip, city, country].filter(Boolean).join(' · ');
+      document.getElementById('asn').textContent=org?(`${d.asn}: ${org}`):'';
+      document.getElementById('flag').textContent=ccToFlag(country);
+    }catch(e){ document.getElementById('ipinfo').textContent='—'; }
+  }
+  function withTimeout(url, ms){ const ctrl=new AbortController(); const to=setTimeout(()=>ctrl.abort(),ms); return fetch(url,{signal:ctrl.signal,cache:'no-store'}).finally(()=>clearTimeout(to)); }
+  async function testProvider(prov, name){
+    const url = `${prov.base}?${prov.param}=${encodeURIComponent(name)}${prov.extra||''}`;
+    const t0=performance.now();
+    try{
+      const r=await withTimeout(url, CFG.TIMEOUT); if(!r.ok) throw 0; const j=await r.json();
+      const ms=Math.max(1,Math.round(performance.now()-t0)); const ans=(j.Answer||[]).map(a=>a.data).slice(0,3).join(', ');
+      return {prov:prov.name, ms, ans:ans||'—'};
+    }catch(e){ return {prov:prov.name, ms:null, ans:'—'}; }
+  }
+  async function run(){ 
+    const TB=document.getElementById('tbody'); TB.innerHTML='';
+    const name=CFG.TEST_NAME; const res=await Promise.all(PROVIDERS.map(p=>testProvider(p,name)));
+    const ok=res.filter(r=>typeof r.ms==='number'); const best=ok.length?ok.reduce((a,b)=>a.ms<b.ms?a:b):null;
+    for(const r of res){
+      const tr=document.createElement('tr');
+      const td1=document.createElement('td'); td1.textContent=r.prov; if(best&&best.prov===r.prov){ const b=document.createElement('span'); b.textContent='FAST'; b.style.cssText='margin-left:6px;padding:2px 8px;border-radius:999px;background:#0d4f2a;border:1px solid #1e8b4b;font-size:12px'; td1.appendChild(b); }
+      const td2=document.createElement('td'); td2.textContent=(typeof r.ms==='number')?r.ms:'—';
+      const td3=document.createElement('td'); td3.innerHTML='<span style="font-family:ui-monospace,Menlo,Consolas,monospace">'+r.ans+'</span>';
+      tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); TB.appendChild(tr);
+    }
+  }
+  document.getElementById('btnRun').addEventListener('click', run);
+  publicInfo();
+})();
+</script>
+
+</body>
+</html>

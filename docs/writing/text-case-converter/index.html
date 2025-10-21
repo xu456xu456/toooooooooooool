@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Text Case Converter | GoToolOnline</title>
+<meta charset="utf-8"/>
+<meta name="description" content="Convert text to upper/lower, sentence case, intelligent English title case, camelCase, PascalCase, snake_case, kebab-case, CONSTANT_CASE, swap case, and URL slug. Offline."/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text x='6' y='52' font-size='48'>🛠️</text></svg>'"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+<style>
+  :root { --bg:#0a0f1e; --card:#0f1830; --muted:#9fb0c3; --fg:#eaf3ff; --acc:#4fb3ff; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg);}
+  header{max-width:1200px;margin:24px auto 8px;display:flex;gap:14px;align-items:center;padding:0 18px;}
+  header a.logo{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--fg);font-weight:800;font-size:24px}
+  header a.navbtn{margin-left:auto;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:12px;color:#eaf3ff;text-decoration:none;font-size:16px}
+  header a.navbtn:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  main{max-width:1200px;margin:10px auto 72px;padding:0 18px}
+  h1{font-size:34px;margin:10px 0 10px}
+  p,label,.muted{font-size:18px; line-height:1.6}
+  .card{background:var(--card);border:1px solid #1a2843;border-radius:20px;padding:20px;margin:16px 0}
+  textarea,input,select,button{width:100%;padding:14px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;font-size:18px}
+  textarea{min-height:180px;resize:vertical}
+  button{cursor:pointer;background:linear-gradient(180deg,#2a78ff,#0050d4);border:none;font-weight:700;letter-spacing:.2px}
+  button:hover{filter:brightness(1.06)}
+  .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .btns{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{padding:10px 12px;border:1px solid #2a3d67;background:#0f1a2f;border-radius:12px;cursor:pointer}
+  .chip:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  .muted{color:#9fb0c3}
+  .inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .pill{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border:1px solid #2a3d67;border-radius:999px;background:#0f1a2f}
+  footer{max-width:1200px;margin:40px auto;padding:0 18px;color:#9fb0c3;font-size:15px}
+  .backTop{margin-top:12px;display:inline-block;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:10px;color:#eaf3ff;text-decoration:none}
+  .backTop:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  @media print{ header,footer,.no-print{display:none!important} body{background:#fff;color:#000} .card{border:none} }
+</style>
+<script>function backToTop(){ window.scrollTo({top:0, behavior:'smooth'}); }</script>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/writing/text-case-converter/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/writing/text-case-converter/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/writing/text-case-converter/">
+</head>
+<body>
+<header>
+  <a class="logo" data-home href="#"><span>🛠️</span><strong>GoToolOnline</strong></a>
+  <a class="navbtn" data-home href="#">← Back to Home</a>
+</header>
+
+<main>
+  <section class="card">
+    <h1>Text Case Converter</h1>
+    <div class="inline" style="margin-bottom:8px">
+      <label class="pill">Locale
+        <select id="locale" style="width:auto">
+          <option value="auto">Auto (browser)</option>
+          <option value="en">English</option>
+          <option value="tr">Türkçe</option>
+          <option value="az">Azərbaycan</option>
+          <option value="lt">Lietuvių</option>
+          <option value="de">Deutsch</option>
+          <option value="fr">Français</option>
+          <option value="es">Español</option>
+          <option value="pt">Português</option>
+          <option value="zh">中文</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+          <option value="ru">Русский</option>
+        </select>
+      </label>
+      <label class="pill"><input id="selOnly" type="checkbox" style="width:auto"> Only transform selection</label>
+    </div>
+
+    <label>Input</label>
+    <textarea id="src" placeholder="Paste or type text here…"></textarea>
+
+    <div class="btns" style="margin-top:12px">
+      <button class="chip" data-act="upper">UPPERCASE</button>
+      <button class="chip" data-act="lower">lowercase</button>
+      <button class="chip" data-act="sentence">Sentence case</button>
+      <button class="chip" data-act="titleSmart">Title Case (smart, EN)</button>
+      <button class="chip" data-act="titleBasic">Capitalize Each Word</button>
+      <button class="chip" data-act="camel">camelCase</button>
+      <button class="chip" data-act="pascal">PascalCase</button>
+      <button class="chip" data-act="snake">snake_case</button>
+      <button class="chip" data-act="kebab">kebab-case</button>
+      <button class="chip" data-act="constant">CONSTANT_CASE</button>
+      <button class="chip" data-act="swap">sWAP cASE</button>
+      <button class="chip" data-act="slug">URL slug</button>
+      <button class="chip" data-act="spaces">Remove extra spaces</button>
+    </div>
+
+    <div class="inline" style="margin-top:10px">
+      <button id="applyBack">Replace input with output</button>
+      <button id="copyOut" class="chip">Copy output</button>
+      <button id="clearAll" class="chip">Clear</button>
+      <button id="download" class="chip">Download .txt</button>
+    </div>
+
+    <label style="margin-top:12px">Output</label>
+    <textarea id="out" readonly rows="8" placeholder="Result will appear here…"></textarea>
+
+    <p class="muted" style="margin-top:10px">
+      Smart Title Case follows common English rules: don’t capitalize short function words
+      (<em>a, an, the, and, but, or, for, nor, so, yet, as, at, by, in, of, on, per, to, via, vs</em>…),
+      always capitalize first/last words and words after “: ! ? …”, handle hyphenated words, and preserve ALL-CAPS acronyms.
+      Locale affects i/İ (Turkish), Lithuanian dotting, etc.
+    </p>
+  </section>
+
+  <section class="card">
+    <h2 style="margin:0 0 6px 0">Tips</h2>
+    <ul class="muted" style="margin:0">
+      <li><b>Only transform selection</b> 可只改选中部分（否则处理整段）。</li>
+      <li><b>URL slug</b> 会移除重音符号并压缩为 a-z0-9 和连字符。</li>
+      <li>本工具所有逻辑在浏览器本地执行，离线可用。</li>
+    </ul>
+  </section>
+</main>
+
+<footer>
+  <a class="backTop" href="javascript:void(0)" onclick="backToTop()">Back to Top ↑</a>
+  <div style="margin-top:10px">© <span id="y"></span> GoToolOnline.com · Free online tools for everyone.</div>
+</footer>
+
+<script>
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  const $ = s=>document.querySelector(s);
+  const src = $('#src'), out = $('#out');
+
+  function getLocale(){
+    const v = $('#locale').value;
+    return v==='auto' ? (navigator.language || 'en') : v;
+  }
+  function U(s){ return s.toLocaleUpperCase(getLocale()); }
+  function L(s){ return s.toLocaleLowerCase(getLocale()); }
+
+  // ------- Core transforms -------
+  function transform(fn){
+    const selOnly = $('#selOnly').checked;
+    if (selOnly && src.selectionStart !== src.selectionEnd){
+      const a = src.selectionStart, b = src.selectionEnd;
+      const before = src.value.slice(0,a), mid = src.value.slice(a,b), after = src.value.slice(b);
+      out.value = before + fn(mid) + after;
+    }else{
+      out.value = fn(src.value || '');
+    }
+  }
+
+  function t_upper(){ transform(s=> U(s)); }
+  function t_lower(){ transform(s=> L(s)); }
+
+  function t_sentence(){
+    transform(s=>{
+      // Lower everything first, then uppercase after sentence boundaries
+      const loc = getLocale();
+      const low = s.toLocaleLowerCase(loc);
+      return low.replace(/(^\s*|[.!?。！？…]+["')\]]*\s+)(\p{L})/gu,
+        (_,p,c)=> p + c.toLocaleUpperCase(loc));
+    });
+  }
+
+  // Basic title: capitalize each word's first letter
+  function t_titleBasic(){
+    transform(s=>{
+      const loc = getLocale();
+      return s.replace(/([\p{L}\p{N}])([\p{L}\p{M}\p{N}'’]*)/gu,
+        (_,a,b)=> a.toLocaleUpperCase(loc) + b.toLocaleLowerCase(loc));
+    });
+  }
+
+  // Smart Title Case (English-centric)
+  const SMALL = new Set(['a','an','the','and','but','or','nor','for','so','yet','as','at','by','in','of','on','per','to','via','vs','v.','de','da','do','del','von','van','la','le','du','des','di']);
+  function isWord(t){ return /[\p{L}\p{N}]/u.test(t); }
+  function isAllCaps(t){ return t.length>1 && t === t.toUpperCase(); }
+
+  function capWord(word, loc){
+    // handle inner apostrophes / hyphens
+    return word.split('-').map((part,i)=>{
+      if(!part) return part;
+      const first = part.slice(0,1).toLocaleUpperCase(loc);
+      const rest  = part.slice(1).toLocaleLowerCase(loc);
+      return first + rest;
+    }).join('-');
+  }
+
+  function t_titleSmart(){
+    transform(str=>{
+      if(!str) return '';
+      const loc = 'en'; // rules are English style; casing still uses locale below if needed
+      // Tokenize by spaces to keep spacing/punct intact
+      const tokens = str.split(/(\s+)/);
+      // find first/last word indexes
+      const wordIdx = tokens.map((t,i)=> isWord(t)?i:-1).filter(i=>i>=0);
+      const firstI = wordIdx[0], lastI = wordIdx[wordIdx.length-1];
+
+      let prevEnded = true; // start of line behaves like boundary
+      return tokens.map((tok,i)=>{
+        if(!isWord(tok)){ // punctuation/space
+          if (/[.!?…:。！？]\s*$/.test(tok)) prevEnded = true;
+          return tok;
+        }
+        const raw = tok;
+        const lower = raw.toLocaleLowerCase('en'); // compare in EN
+        const isSmall = SMALL.has(lower);
+        const forceCap = (i===firstI || i===lastI || prevEnded);
+        prevEnded = false;
+
+        if (isAllCaps(raw)) return raw; // keep acronyms e.g. NASA, HTTP
+        if (isSmall && !forceCap) return lower; // keep small words lower
+
+        // Capitalize (hyphen-aware)
+        const capped = capWord(lower, getLocale());
+        return capped;
+      }).join('');
+    });
+  }
+
+  // Helpers for identifier-style cases
+  function splitWords(s){
+    // turn punctuation/underscores/dashes and case boundaries into tokens
+    const cleaned = s.replace(/[_\-]+/g,' ')
+                     .replace(/([a-z\d])([A-Z])/g,'$1 $2')
+                     .replace(/([A-Z]+)([A-Z][a-z])/g,'$1 $2');
+    const words = cleaned.match(/[\p{L}\p{M}\p{N}]+/gu) || [];
+    return words;
+  }
+  function t_camel(){
+    transform(s=>{
+      const loc = getLocale();
+      const ws = splitWords(s);
+      if (!ws.length) return '';
+      const first = ws[0].toLocaleLowerCase(loc);
+      const rest = ws.slice(1).map(w=> w.slice(0,1).toLocaleUpperCase(loc)+w.slice(1).toLocaleLowerCase(loc));
+      return [first, ...rest].join('');
+    });
+  }
+  function t_pascal(){
+    transform(s=>{
+      const loc = getLocale();
+      return splitWords(s).map(w=> w.slice(0,1).toLocaleUpperCase(loc)+w.slice(1).toLocaleLowerCase(loc)).join('');
+    });
+  }
+  function t_snake(){
+    transform(s=>{
+      return splitWords(s).map(w=> w.toLocaleLowerCase(getLocale())).join('_');
+    });
+  }
+  function t_kebab(){
+    transform(s=>{
+      return splitWords(s).map(w=> w.toLocaleLowerCase(getLocale())).join('-');
+    });
+  }
+  function t_constant(){
+    transform(s=>{
+      return splitWords(s).map(w=> w.toLocaleUpperCase(getLocale())).join('_');
+    });
+  }
+  function t_swap(){
+    transform(s=>{
+      const loc = getLocale();
+      return Array.from(s).map(ch=>{
+        const up = ch.toLocaleUpperCase(loc), low = ch.toLocaleLowerCase(loc);
+        if (ch === up && ch !== low) return low;
+        if (ch === low && ch !== up) return up;
+        return ch;
+      }).join('');
+    });
+  }
+  function t_slug(){
+    transform(s=>{
+      const loc = getLocale();
+      let x = s.normalize('NFKD').replace(/[\u0300-\u036f]/g,''); // strip accents
+      x = x.toLocaleLowerCase(loc);
+      x = x.replace(/[^a-z0-9]+/g,'-'); // ASCII-only slug
+      x = x.replace(/^-+|-+$/g,'').replace(/-+/g,'-');
+      return x;
+    });
+  }
+  function t_spaces(){
+    transform(s=>{
+      return s.replace(/[ \t]+/g,' ')
+              .replace(/ *\n */g,'\n')
+              .replace(/\n{3,}/g,'\n\n')
+              .trim();
+    });
+  }
+
+  // Wire buttons
+  const acts = {
+    upper:t_upper, lower:t_lower, sentence:t_sentence,
+    titleSmart:t_titleSmart, titleBasic:t_titleBasic,
+    camel:t_camel, pascal:t_pascal, snake:t_snake, kebab:t_kebab, constant:t_constant,
+    swap:t_swap, slug:t_slug, spaces:t_spaces
+  };
+  document.querySelectorAll('[data-act]').forEach(b=>{
+    b.addEventListener('click', ()=> acts[b.dataset.act]());
+  });
+
+  // Utility buttons
+  $('#applyBack').addEventListener('click', ()=>{ src.value = out.value; src.focus(); src.select(); });
+  $('#copyOut').addEventListener('click', ()=> navigator.clipboard?.writeText(out.value||'').catch(()=>{}));
+  $('#clearAll').addEventListener('click', ()=>{ src.value=''; out.value=''; src.focus(); });
+  $('#download').addEventListener('click', ()=>{
+    const blob = new Blob([out.value||''], {type:'text/plain;charset=utf-8'});
+    const url = URL.createObjectURL(blob); const a=document.createElement('a');
+    a.href=url; a.download='converted.txt'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  });
+
+  // Keyboard: Ctrl/Cmd+Enter => Title Smart
+  window.addEventListener('keydown',(e)=>{
+    if ((e.ctrlKey||e.metaKey) && e.key==='Enter'){ e.preventDefault(); t_titleSmart(); }
+  });
+</script>
+
+<!-- 保留“返回首页并透传 ?lang”的逻辑 -->
+<script>
+(function(){
+  var path = location.pathname.replace(/\/+$/,''); // strip trailing slashes
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = ['']; // already at root
+  var home = parts.join('/') + '/';
+
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+  document.querySelectorAll('a[data-home]').forEach(function(a){
+    a.setAttribute('href', home);
+  });
+})();
+</script>
+</body>
+</html>

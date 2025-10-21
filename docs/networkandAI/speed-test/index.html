@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>网速测试 | GoToolOnline</title>
+<meta name="description" content="Speed Test tool"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text x='6' y='52' font-size='48'>🛠️</text></svg>"/>
+<style>
+:root{--bg:#0a0f1e;--card:#0f1830;--muted:#9fb0c3;--fg:#eaf3ff}
+*{box-sizing:border-box} body{margin:0;font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--fg)}
+main,header,footer{max-width:980px;margin:0 auto;padding:0 18px}
+header{display:flex;gap:12px;align-items:center;margin:22px auto 8px}
+header .logo{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--fg);font-weight:800;font-size:22px}
+.lang{margin-left:auto;padding:10px 12px;background:#0f1a2f;border:1px solid #24365b;border-radius:10px;color:#eaf3ff;font-size:14px}
+.card{background:#0f1830;border:1px solid #1a2843;border-radius:18px;padding:18px;margin:16px 0}
+h1{margin:6px 0 8px;font-size:28px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{padding:12px 14px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;cursor:pointer}
+button:hover{filter:brightness(1.06)}
+.small{font-size:14px;color:var(--muted)}
+a.back{margin-left:8px;color:#9fd3ff;text-decoration:none;border-bottom:1px dashed #3a82ff}
+a.back:hover{filter:brightness(1.15)}
+.panel{background:#0c1426;border:1px solid #2a3c64;border-radius:14px;padding:14px}
+</style>
+
+<link rel="canonical" href="https://gotoolonline.com/networkandAI/tools/speed-test/">
+</head>
+\1
+
+    <div id="topnav-return-home" style="position:sticky;top:0;padding:10px 14px;border-bottom:1px solid #eee;background:#fff;z-index:999;font-family:system-ui,Segoe UI,Roboto,Arial;">
+      <a href="../../index.html" style="text-decoration:none;">← 返回首页</a>
+    </div>
+    
+<header>
+  <a class="logo" data-home href="#"><span>🛠️</span><strong>GoToolOnline</strong></a>
+  <a id="backHome" class="back" href="#">← 返回首页</a>
+  <select id="lang" class="lang" aria-label="Language">
+    <option value="zh">简体中文</option><option value="en">English</option><option value="ph">Tagalog</option>
+    <option value="id">Bahasa Indonesia</option><option value="vi">Tiếng Việt</option>
+    <option value="bn">বাংলা</option><option value="ng">English (NG)</option><option value="sw">Kiswahili</option><option value="ar">العربية</option>
+  </select>
+</header>
+<main>
+
+<section class="card">
+  <h1 id="h1">网速测试</h1>
+  <div class="row"><button id="btnStart">开始测试</button><button id="btnStop" class="secondary" disabled>停止</button></div>
+  <div class="grid3" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:10px">
+    <div class="panel"><div class="kv"><strong id="lblDl">下载</strong><span class="small">Mbps</span></div><div id="dl" class="big" style="font-size:28px;font-weight:800">—</div></div>
+    <div class="panel"><div class="kv"><strong id="lblUl">上传</strong><span class="small">Mbps</span></div><div id="ul" class="big" style="font-size:28px;font-weight:800">—</div></div>
+    <div class="panel"><div class="kv"><strong id="lblRtt">延迟</strong><span class="small">ms</span></div><div id="rtt" class="big" style="font-size:28px;font-weight:800">—</div></div>
+  </div>
+  <div id="warn" style="margin-top:10px;padding:10px 12px;border-radius:10px;background:#10213d;border:1px solid #284b86;color:#cfe7ff;display:none">测速脚本加载失败，可能被网络拦截。已切换备用源… 如仍无反应，请刷新或稍后再试。</div>
+  <p class="small" id="note" style="margin-top:10px">说明：结果取自最近的 M-Lab 节点，单位为兆比特/秒（Mbps）。移动网络波动较大属正常。</p>
+</section>
+
+</main>
+<footer>© 2025 GoToolOnline.com</footer>
+<script>
+const $=s=>document.querySelector(s);
+const I18N_BACK={
+  zh:"← 返回首页", en:"← Back to Home", ph:"← Bumalik sa Home", id:"← Kembali ke Beranda",
+  vi:"← Quay lại Trang chủ", bn:"← হোমে ফিরে যান", ng:"← Back to Home", sw:"← Rudi Nyumbani", ar:"← الرجوع للرئيسية"
+};
+(function boot(){
+  const qs=new URLSearchParams(location.search); const p=(qs.get('lang')||'').toLowerCase(); const ls=(localStorage.getItem('lang')||'').toLowerCase();
+  const langs=['zh','en','ph','id','vi','bn','ng','sw','ar']; const lang=langs.includes(p)?p:(langs.includes(ls)?ls:'zh');
+  document.getElementById('lang').value=lang; document.getElementById('backHome').textContent=I18N_BACK[lang]||I18N_BACK.en; document.documentElement.dir=(lang==='ar')?'rtl':'ltr';
+  document.getElementById('lang').addEventListener('change',e=>{localStorage.setItem('lang',e.target.value); const url=new URL(location.href); url.searchParams.set('lang', e.target.value); location.href=url.pathname+url.search;});
+  const home = new URL('/', location.origin); if(lang) home.searchParams.set('lang', lang);
+  document.querySelectorAll('a[data-home],#backHome').forEach(a=>a.setAttribute('href', home.pathname + home.search + home.hash));
+})();
+</script>
+
+<script>
+function ensureNDT7Loaded(){
+  return new Promise((resolve,reject)=>{
+    if (window.ndt7) return resolve(true);
+    const s = document.createElement('script');
+    s.src = 'https://unpkg.com/@measurementlab/ndt7@1.4.3/dist/ndt7.min.js';
+    s.onload = ()=> resolve(!!window.ndt7);
+    s.onerror = ()=> reject(new Error('fallback cdn blocked'));
+    document.head.appendChild(s);
+    setTimeout(()=>{
+      if (window.ndt7) return;
+      const s2 = document.createElement('script');
+      s2.src = 'https://cdn.jsdelivr.net/npm/@measurementlab/ndt7@1.4.3/dist/ndt7.min.js';
+      s2.onload = ()=> resolve(!!window.ndt7);
+      s2.onerror = ()=> reject(new Error('primary cdn blocked'));
+      document.head.appendChild(s2);
+    }, 900);
+  });
+}
+let controller=null;
+function fmtMbps(bps){ if(!bps) return '—'; return (bps/1e6).toFixed(2); }
+function fmtMs(ms){ if(!ms) return '—'; return ms.toFixed(0); }
+async function runNDT7(){
+  await ensureNDT7Loaded().catch(()=>{ document.getElementById('warn').style.display='block'; });
+  if (!window.ndt7){ document.getElementById('warn').style.display='block'; return; }
+  document.getElementById('btnStart').disabled=true; document.getElementById('btnStop').disabled=false;
+  document.getElementById('dl').textContent='—'; document.getElementById('ul').textContent='—'; document.getElementById('rtt').textContent='—';
+  controller = new AbortController();
+  try{
+    await ndt7.test({
+      userAcceptedDataPolicy: true,
+      downloadworkerfile: 'https://cdn.jsdelivr.net/npm/@measurementlab/ndt7@1.4.3/dist/ndt7-download-worker.min.js',
+      uploadworkerfile:   'https://cdn.jsdelivr.net/npm/@measurementlab/ndt7@1.4.3/dist/ndt7-upload-worker.min.js',
+      signal: controller.signal,
+      downloadrunning: (s)=>{ try{ document.getElementById('dl').textContent=fmtMbps(s.LastMeasurement.DownstreamThroughputBps); if(s.MinRTT) document.getElementById('rtt').textContent=fmtMs(s.MinRTT*1000);}catch(e){} },
+      uploadrunning:   (s)=>{ try{ document.getElementById('ul').textContent=fmtMbps(s.LastMeasurement.UpstreamThroughputBps);}catch(e){} },
+      downloadcomplete: (s)=>{ try{ document.getElementById('dl').textContent=fmtMbps(s.LastMeasurement.DownstreamThroughputBps);}catch(e){} },
+      uploadcomplete:   (s)=>{ try{ document.getElementById('ul').textContent=fmtMbps(s.LastMeasurement.UpstreamThroughputBps);}catch(e){} },
+      error: (e)=>{ console.warn('ndt7 error', e); document.getElementById('warn').style.display='block'; }
+    });
+  }catch(e){ console.warn('ndt7 run error',e); document.getElementById('warn').style.display='block'; }
+  finally{ document.getElementById('btnStart').disabled=false; document.getElementById('btnStop').disabled=true; controller=null; }
+}
+function stopTest(){ if(controller){ try{controller.abort();}catch(e){} controller=null; } document.getElementById('btnStart').disabled=false; document.getElementById('btnStop').disabled=true; }
+document.getElementById('btnStart').addEventListener('click', runNDT7);
+document.getElementById('btnStop').addEventListener('click', stopTest);
+</script>
+
+</body>
+</html>

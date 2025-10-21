@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Random Number Generator | GoToolOnline</title>
+<meta charset="utf-8"/>
+<meta name="description" content="Generate one or many random numbers between any two values. Secure RNG with unbiased sampling. Unique mode, sorting, decimals, copy/export."/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text x='6' y='52' font-size='48'>🛠️</text></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+<style>
+  :root { --bg:#0a0f1e; --card:#0f1830; --muted:#9fb0c3; --fg:#eaf3ff; --acc:#4fb3ff; --ok:#61d095; --warn:#ffb86b; --danger:#ff6b6b; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg);}
+  header{max-width:1200px;margin:24px auto 8px;display:flex;gap:14px;align-items:center;padding:0 18px;}
+  header a.logo{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--fg);font-weight:800;font-size:24px}
+  header a.navbtn{margin-left:auto;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:12px;color:#eaf3ff;text-decoration:none;font-size:16px}
+  header a.navbtn:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  select.lang{margin-left:8px;padding:8px 12px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff}
+  main{max-width:1200px;margin:10px auto 72px;padding:0 18px}
+  h1{font-size:34px;margin:10px 0 10px}
+  p,label,.muted{font-size:18px; line-height:1.6}
+  .card{background:var(--card);border:1px solid #1a2843;border-radius:20px;padding:20px;margin:16px 0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-top:12px}
+  .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;align-items:end}
+  input,select,button,textarea{width:100%;padding:14px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;font-size:18px}
+  button{cursor:pointer;background:linear-gradient(180deg,#2a78ff,#0050d4);border:none;font-weight:700;letter-spacing:.2px}
+  button.secondary{background:#0f1a2f;border:1px solid #2a3d67}
+  button:hover{filter:brightness(1.06)}
+  .muted{color:#9fb0c3}
+  .chiprow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .chip{padding:8px 12px;border:1px solid #24365b;background:#0f1a2f;border-radius:999px;cursor:pointer;font-size:16px}
+  .chip:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  .result{padding:14px;background:#0c1426;border:1px dashed #2a3c64;border-radius:12px;margin-top:12px;font-size:20px}
+  .pill{display:inline-block;padding:8px 12px;border-radius:999px;background:#0b1226;border:1px solid #2a3c64;font-weight:800}
+  .list{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .note{font-size:14px;color:#9fb0c3}
+  .ok{color:var(--ok)} .warn{color:var(--warn)}
+  footer{max-width:1200px;margin:40px auto;padding:0 18px;color:var(--muted);font-size:15px}
+  .backTop{margin-top:12px;display:inline-block;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:10px;color:#eaf3ff;text-decoration:none}
+  .backTop:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  @media print{ header,footer,.no-print{display:none!important} body{background:#fff;color:#000} .card{border:none} }
+</style>
+<script>function backToTop(){ window.scrollTo({top:0, behavior:'smooth'}); }</script>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/tools/random-number-generator/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/tools/random-number-generator/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/tools/random-number-generator/">
+</head>
+\1
+
+    <div id="topnav-return-home" style="position:sticky;top:0;padding:10px 14px;border-bottom:1px solid #eee;background:#fff;z-index:999;font-family:system-ui,Segoe UI,Roboto,Arial;">
+      <a href="../../index.html" style="text-decoration:none;">← 返回首页</a>
+    </div>
+    
+<header>
+  <a class="logo" data-home href="#"><span>🛠️</span><strong>GoToolOnline</strong></a>
+  <a class="navbtn" data-home href="#" id="back">← Back to Home</a>
+  <select id="lang" class="lang" aria-label="Language">
+    <option value="en">English</option>
+    <option value="zh">简体中文</option>
+    <option value="ph">Tagalog</option>
+    <option value="id">Bahasa Indonesia</option>
+    <option value="vi">Tiếng Việt</option>
+    <option value="bn">বাংলা</option>
+    <option value="ng">English (NG)</option>
+    <option value="sw">Kiswahili</option>
+    <option value="ar">العربية</option>
+  </select>
+</header>
+<main>
+<section class="card">
+  <h1 id="title">Random Number Generator</h1>
+  <p class="muted" id="subtitle">Secure RNG with unbiased sampling. Generate one or many values, with unique/sort/decimals.</p>
+
+  <div class="row" role="group" aria-label="Inputs">
+    <label><span id="lblMin">Min</span><input id="min" type="number" step="any" value="1"/></label>
+    <label><span id="lblMax">Max</span><input id="max" type="number" step="any" value="100"/></label>
+    <label><span id="lblCount">Count</span><input id="count" type="number" min="1" max="1000" value="10"/></label>
+    <label><span id="lblDecimals">Decimal places</span>
+      <select id="decimals">
+        <option value="0" selected>0 (integers)</option>
+        <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+        <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+        <option value="7">7</option><option value="8">8</option>
+      </select>
+    </label>
+    <label class="note"><input type="checkbox" id="unique"/> <span id="lblUnique">Unique</span></label>
+    <label class="note"><input type="checkbox" id="sortAsc"/> <span id="lblSort">Sort ascending</span></label>
+  </div>
+
+  <div class="chiprow">
+    <span class="chip" data-preset="1,6,1,0">🎲 d6</span>
+    <span class="chip" data-preset="1,20,1,0">🎲 d20</span>
+    <span class="chip" data-preset="0,1,1,0">🪙 Coin (0/1)</span>
+    <span class="chip" data-preset="1,100,1,0">1–100</span>
+    <span class="chip" data-preset="-10,10,5,0">-10…10 ×5</span>
+  </div>
+
+  <div class="row" style="margin-top:10px">
+    <button id="gen">Generate</button>
+    <button class="secondary" id="copy">Copy</button>
+    <button class="secondary" id="csv">Export CSV</button>
+    <button class="secondary" id="clear">Clear</button>
+  </div>
+
+  <div class="result" aria-live="polite">
+    <div id="msg" class="note"></div>
+    <div id="out" class="list" style="margin-top:8px"></div>
+    <div id="stats" class="note" style="margin-top:10px"></div>
+  </div>
+
+  <div class="note" style="margin-top:8px" id="footnote">
+    Uses <code>crypto.getRandomValues</code> when available (with rejection sampling to remove modulo bias). Falls back to Math.random if needed.
+  </div>
+</section>
+<section class="card">
+  <h2 style="margin:0 0 8px 0" id="faqTitle">Tips</h2>
+  <ul class="note" id="tips">
+    <li>Integers: set <b>Decimals = 0</b>. For decimals, choose 1–8; we map to an exact scaled integer range for uniformity.</li>
+    <li><b>Unique</b> requires the range to have at least as many discrete values as Count.</li>
+    <li><b>Sort</b> only changes display order; generation is still random.</li>
+  </ul>
+</section>
+</main>
+<footer>
+  <a class="backTop" href="javascript:void(0)" onclick="backToTop()">Back to Top ↑</a>
+  <div style="margin-top:10px">© <span id="y"></span> GoToolOnline.com · Free online tools for everyone.</div>
+</footer>
+
+<script>
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  // ---------- i18n ----------
+  const I18N = {
+    en:{title:"Random Number Generator",
+        sub:"Secure RNG with unbiased sampling. Generate one or many values, with unique/sort/decimals.",
+        min:"Min", max:"Max", count:"Count", decimals:"Decimal places", unique:"Unique", sort:"Sort ascending",
+        gen:"Generate", copy:"Copy", csv:"Export CSV", clear:"Clear",
+        tipsT:"Tips",
+        tipsHTML:`<li>Integers: set <b>Decimals = 0</b>. For decimals, choose 1–8; we map to an exact scaled integer range for uniformity.</li>
+                  <li><b>Unique</b> requires the range to have at least as many discrete values as Count.</li>
+                  <li><b>Sort</b> only changes display order; generation is still random.</li>`,
+        d6:"🎲 d6", d20:"🎲 d20", coin:"🪙 Coin (0/1)",
+        msgInvalid:"Invalid range.", msgTooMany:"Count exceeds number of distinct values in range.",
+        copied:"Copied.", copyFail:"Copy not supported.", ready:"Ready."
+    },
+    zh:{title:"随机数生成器",
+        sub:"加密级随机源+无偏抽样。支持多次生成、去重、排序、小数。",
+        min:"最小值", max:"最大值", count:"个数", decimals:"小数位", unique:"去重", sort:"升序显示",
+        gen:"生成", copy:"复制", csv:"导出 CSV", clear:"清空",
+        tipsT:"提示",
+        tipsHTML:`<li>整数：将<b>小数位设为 0</b>。若需小数，选 1–8 位，我们会按缩放映射到离散整数区间，保证均匀性。</li>
+                  <li>开启<b>去重</b>时，区间内可取值总数须 ≥ 个数。</li>
+                  <li><b>排序</b>仅影响展示顺序，不改变随机性。</li>`,
+        d6:"🎲 六面骰", d20:"🎲 二十面骰", coin:"🪙 硬币(0/1)",
+        msgInvalid:"区间无效。", msgTooMany:"请求数量超过区间内可取的不同数值总数。",
+        copied:"已复制。", copyFail:"不支持复制。", ready:"就绪。"
+    },
+    ph:{title:"Random Number Generator",
+        sub:"Secure RNG + unbiased. Maramihan, unique, sort, decimals.",
+        min:"Min", max:"Max", count:"Bilang", decimals:"Decimal places", unique:"Unique", sort:"Ayusin pataas",
+        gen:"Gumawa", copy:"Kopya", csv:"I-export CSV", clear:"I-clear",
+        tipsT:"Mga tip",
+        tipsHTML:`<li>Integers: <b>Decimals = 0</b>. Para sa decimals pumili ng 1–8.</li>
+                  <li><b>Unique</b> kailangan sapat ang distinct values.</li>
+                  <li><b>Sort</b> display lang, hindi hinu-hulma ang randomness.</li>`,
+        d6:"🎲 d6", d20:"🎲 d20", coin:"🪙 Barya (0/1)",
+        msgInvalid:"Maling saklaw.", msgTooMany:"Sobra ang bilang sa distinct values.",
+        copied:"Nakopya.", copyFail:"Di suportado.", ready:"Handa."
+    },
+    id:{title:"Generator Angka Acak",
+        sub:"RNG aman + sampling tak-bias. Banyak nilai, unik, urut, desimal.",
+        min:"Min", max:"Maks", count:"Jumlah", decimals:"Desimal", unique:"Unik", sort:"Urut naik",
+        gen:"Hasilkan", copy:"Salin", csv:"Ekspor CSV", clear:"Bersihkan",
+        tipsT:"Tips",
+        tipsHTML:`<li>Integer: set <b>Desimal = 0</b>. Untuk desimal pilih 1–8.</li>
+                  <li><b>Unik</b> butuh jumlah nilai berbeda yang cukup.</li>
+                  <li><b>Urut</b> hanya tampilan.</li>`,
+        d6:"🎲 d6", d20:"🎲 d20", coin:"🪙 Koin (0/1)",
+        msgInvalid:"Rentang tidak valid.", msgTooMany:"Jumlah melebihi banyaknya nilai berbeda.",
+        copied:"Tersalin.", copyFail:"Tidak didukung.", ready:"Siap."
+    },
+    vi:{title:"Bộ tạo số ngẫu nhiên",
+        sub:"Nguồn ngẫu nhiên an toàn + lấy mẫu không lệch. Nhiều số, không trùng, sắp xếp, số thập phân.",
+        min:"Nhỏ nhất", max:"Lớn nhất", count:"Số lượng", decimals:"Số chữ số thập phân", unique:"Không trùng", sort:"Tăng dần",
+        gen:"Tạo", copy:"Sao chép", csv:"Xuất CSV", clear:"Xóa",
+        tipsT:"Mẹo",
+        tipsHTML:`<li>Số nguyên: đặt <b>Thập phân = 0</b>. Cần thập phân chọn 1–8.</li>
+                  <li><b>Không trùng</b> cần đủ số giá trị phân biệt.</li>
+                  <li><b>Sắp xếp</b> chỉ ảnh hưởng hiển thị.</li>`,
+        d6:"🎲 d6", d20:"🎲 d20", coin:"🪙 Đồng xu (0/1)",
+        msgInvalid:"Khoảng không hợp lệ.", msgTooMany:"Số lượng vượt quá số giá trị phân biệt.",
+        copied:"Đã sao chép.", copyFail:"Không hỗ trợ.", ready:"Sẵn sàng."
+    },
+    bn:{title:"র‌্যান্ডম নাম্বার জেনারেটর",
+        sub:"নিরাপদ RNG ও অবায়াসড স্যাম্পলিং। একাধিক, ইউনিক, সোর্ট, দশমিক।",
+        min:"সর্বনিম্ন", max:"সর্বোচ্চ", count:"সংখ্যা", decimals:"দশমিক ঘর", unique:"ইউনিক", sort:"ক্রমবর্ধমান",
+        gen:"জেনারেট", copy:"কপি", csv:"CSV রপ্তানি", clear:"পরিষ্কার",
+        tipsT:"টিপস",
+        tipsHTML:`<li>ইন্টিজার: <b>দশমিক = 0</b> রাখুন।</li>
+                  <li><b>ইউনিক</b> হলে পরিসরে যথেষ্ট ভিন্ন মান থাকতে হবে।</li>
+                  <li><b>সোর্ট</b> কেবল প্রদর্শনের জন্য।</li>`,
+        d6:"🎲 d6", d20:"🎲 d20", coin:"🪙 কয়েন (0/1)",
+        msgInvalid:"অবৈধ পরিসর।", msgTooMany:"অনুরোধকৃত সংখ্যা পরিসরের ভিন্ন মানের চেয়ে বেশি।",
+        copied:"কপি হয়েছে।", copyFail:"কপি সমর্থিত নয়।", ready:"প্রস্তুত।"
+    },
+    ng:{title:"Random Number Generator",
+        sub:"Secure RNG + unbiased sampling. Multi, unique, sort, decimals.",
+        min:"Min", max:"Max", count:"Count", decimals:"Decimal places", unique:"Unique", sort:"Sort ascending",
+        gen:"Generate", copy:"Copy", csv:"Export CSV", clear:"Clear",
+        tipsT:"Tips",
+        tipsHTML:`<li>Integers: <b>Decimals = 0</b>. For decimals choose 1–8.</li>
+                  <li><b>Unique</b> needs enough distinct values.</li>
+                  <li><b>Sort</b> is display-only.</li>`,
+        d6:"🎲 d6", d20:"🎲 d20", coin:"🪙 Coin (0/1)",
+        msgInvalid:"Invalid range.", msgTooMany:"Count exceeds number of distinct values.",
+        copied:"Copied.", copyFail:"Copy not supported.", ready:"Ready."
+    },
+    sw:{title:"Kizalishaji Nambari Nasibu",
+        sub:"RNG salama + sampuli isiyo na upendeleo. Nyingi, ya kipekee, panga, desimali.",
+        min:"Chini", max:"Juu", count:"Idadi", decimals:"Sehemu za desimali", unique:"Ya kipekee", sort:"Panga kwa kuongezeka",
+        gen:"Zalisha", copy:"Nakili", csv:"Hamisha CSV", clear:"Futa",
+        tipsT:"Vidokezo",
+        tipsHTML:`<li>Integer: <b>Desimali = 0</b>. Kwa desimali chagua 1–8.</li>
+                  <li><b>Ya kipekee</b> inahitaji maadili tofauti ya kutosha.</li>
+                  <li><b>Panga</b> ni kwa onyesho tu.</li>`,
+        d6:"🎲 d6", d20:"🎲 d20", coin:"🪙 Sarafu (0/1)",
+        msgInvalid:"Wigo batili.", msgTooMany:"Idadi imezidi maadili tofauti.",
+        copied:"Imenakiliwa.", copyFail:"Haitumiki.", ready:"Tayari."
+    },
+    ar:{title:"مولّد أرقام عشوائية",
+        sub:"مولد عشوائي آمن مع أخذ عينات بلا انحياز. يدعم التوليد المتعدد/الفريد/الفرز/الكسور.",
+        min:"الأدنى", max:"الأعلى", count:"العدد", decimals:"مراتب عشرية", unique:"فريد", sort:"تصاعدي",
+        gen:"توليد", copy:"نسخ", csv:"تصدير CSV", clear:"مسح",
+        tipsT:"نصائح",
+        tipsHTML:`<li>للأعداد الصحيحة اجعل <b>الكسور = 0</b>. وللأعداد العشرية اختر 1–8.</li>
+                  <li>عند تفعيل <b>فريد</b> يجب أن يحتوي المجال على قيم تمييزية كافية.</li>
+                  <li><b>الفرز</b> يؤثر على العرض فقط.</li>`,
+        d6:"🎲 d6", d20:"🎲 d20", coin:"🪙 عملة (0/1)",
+        msgInvalid:"نطاق غير صالح.", msgTooMany:"العدد يتجاوز القيم المختلفة المتاحة.",
+        copied:"تم النسخ.", copyFail:"النسخ غير مدعوم.", ready:"جاهز."
+    }
+  };
+  const HTML_LANG = {en:'en', zh:'zh-CN', ph:'tl-PH', id:'id-ID', vi:'vi-VN', bn:'bn', ng:'en-NG', sw:'sw', ar:'ar'};
+  const qs = new URLSearchParams(location.search);
+
+  function setHomeLinksForLang(lang){
+    var path = location.pathname.replace(/\/+$/,''); var parts = path.split('/');
+    parts = (parts.length>=3) ? parts.slice(0, parts.length-2) : [''];
+    var home = parts.join('/') + '/';
+    const u = new URL(home, location.origin); u.searchParams.set('lang', lang);
+    document.querySelectorAll('a[data-home]').forEach(a=>a.setAttribute('href', u.pathname+u.search+u.hash));
+  }
+  function applyLang(lang){
+    const t = I18N[lang]||I18N.en;
+    document.title = t.title + " | GoToolOnline";
+    document.documentElement.lang = HTML_LANG[lang]||'en';
+    document.documentElement.dir = (lang==='ar') ? 'rtl' : 'ltr';
+    document.getElementById('back').textContent = "← " + (t.back || "Back to Home");
+    document.getElementById('title').textContent = t.title;
+    document.getElementById('subtitle').textContent = t.sub;
+    document.getElementById('lblMin').textContent = t.min;
+    document.getElementById('lblMax').textContent = t.max;
+    document.getElementById('lblCount').textContent = t.count;
+    document.getElementById('lblDecimals').textContent = t.decimals;
+    document.getElementById('lblUnique').textContent = t.unique;
+    document.getElementById('lblSort').textContent = t.sort;
+    document.getElementById('gen').textContent = t.gen;
+    document.getElementById('copy').textContent = t.copy;
+    document.getElementById('csv').textContent  = t.csv;
+    document.getElementById('clear').textContent = t.clear;
+    document.getElementById('faqTitle').textContent = t.tipsT;
+    document.getElementById('tips').innerHTML = t.tipsHTML;
+    // chips
+    const chips = document.querySelectorAll('.chip');
+    if (chips[0]) chips[0].textContent = t.d6;
+    if (chips[1]) chips[1].textContent = t.d20;
+    if (chips[2]) chips[2].textContent = t.coin;
+    localStorage.setItem('lang', lang); qs.set('lang', lang);
+    history.replaceState({}, '', location.pathname + '?' + qs.toString());
+    setHomeLinksForLang(lang);
+  }
+  (function bootLang(){
+    const L = qs.get('lang') || localStorage.getItem('lang') || 'en';
+    const sel = document.getElementById('lang'); sel.value = I18N[L]?L:'en';
+    applyLang(sel.value); sel.addEventListener('change', e=> applyLang(e.target.value));
+  })();
+
+  // ---------- RNG core (unbiased) ----------
+  const hasCrypto = !!(window.crypto && window.crypto.getRandomValues);
+  const TWO32 = 0x100000000; // 2^32
+  const TWO53 = 0x20000000000000; // 2^53
+
+  function rand32(){
+    if (hasCrypto){
+      const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0]>>>0;
+    } else {
+      // 32-bit from Math.random (~53 bits)
+      return (Math.random()*TWO32)>>>0;
+    }
+  }
+  function rand53(){
+    if (hasCrypto){
+      const a = new Uint32Array(2); crypto.getRandomValues(a);
+      // take 21 bits from high + 32 bits from low => 53-bit
+      return ((a[0] & 0x001FFFFF) * TWO32) + a[1];
+    } else {
+      // Math.random gives ~53 bits mantissa
+      return Math.floor(Math.random()*TWO53);
+    }
+  }
+  // Return uniform integer in [0, n-1] using rejection sampling
+  function randBelow(n){
+    if (n <= 1) return 0;
+    if (n <= TWO32){
+      const lim = TWO32 - (TWO32 % n) - 1;
+      while (true){
+        const r = rand32();
+        if (r <= lim) return r % n;
+      }
+    } else {
+      const lim = TWO53 - (TWO53 % n) - 1;
+      while (true){
+        const r = rand53();
+        if (r <= lim) return r % n;
+      }
+    }
+  }
+  // Uniform discrete in [minI, maxI] (integers)
+  function randIntInclusive(minI, maxI){
+    const n = maxI - minI + 1;
+    return minI + randBelow(n);
+  }
+
+  // ---------- Generate ----------
+  const el = s=>document.querySelector(s);
+  const out = el('#out'); const msg = el('#msg'); const stats = el('#stats');
+
+  function parseInputs(){
+    const t = I18N[el('#lang').value]||I18N.en;
+    const min = Number(el('#min').value);
+    const max = Number(el('#max').value);
+    const count = Math.max(1, Math.min(1000, parseInt(el('#count').value||'1',10)));
+    const dp = Math.max(0, Math.min(8, parseInt(el('#decimals').value||'0',10)));
+    const unique = el('#unique').checked;
+    const sortAsc = el('#sortAsc').checked;
+
+    const scale = Math.pow(10, dp);
+    const minI = Math.ceil(min * scale);
+    const maxI = Math.floor(max * scale);
+    if (!Number.isFinite(min) || !Number.isFinite(max) || maxI < minI){
+      throw new Error(t.msgInvalid);
+    }
+    const space = (maxI - minI + 1);
+    if (unique && count > space){
+      throw new Error(t.msgTooMany);
+    }
+    return {minI,maxI,scale,count,dp,unique,sortAsc};
+  }
+
+  function generate(){
+    const t = I18N[el('#lang').value]||I18N.en;
+    try{
+      const {minI,maxI,scale,count,dp,unique,sortAsc} = parseInputs();
+      const res = [];
+      const seen = unique ? new Set() : null;
+      while (res.length < count){
+        const nI = randIntInclusive(minI, maxI);
+        if (seen){
+          if (seen.has(nI)) continue;
+          seen.add(nI);
+        }
+        const val = (nI/scale);
+        res.push(dp ? val.toFixed(dp) : String(val));
+      }
+      if (sortAsc){
+        res.sort((a,b)=> Number(a) - Number(b));
+      }
+      // render
+      out.innerHTML = '';
+      const frag = document.createDocumentFragment();
+      res.forEach(v=>{
+        const span = document.createElement('span');
+        span.className='pill'; span.textContent=v;
+        frag.appendChild(span);
+      });
+      out.appendChild(frag);
+      msg.innerHTML = `<span class="ok">${res.length}</span> ${t.ready}`;
+      // stats
+      const nums = res.map(Number);
+      const mn = Math.min(...nums), mx = Math.max(...nums);
+      const mean = nums.reduce((a,b)=>a+b,0)/nums.length;
+      stats.textContent = `min=${mn} · max=${mx} · mean=${dp?mean.toFixed(dp):mean.toFixed(3)} ${hasCrypto?'· rng=crypto':'· rng=Math.random'}`;
+      // cache last for copy/csv
+      el('#copy').dataset.txt = res.join('\n');
+      el('#csv').dataset.txt  = res.join(',');
+    }catch(e){
+      out.innerHTML = '';
+      stats.textContent = '';
+      msg.innerHTML = `<span class="warn">${e.message}</span>`;
+    }
+  }
+
+  // Buttons
+  el('#gen').addEventListener('click', generate);
+  el('#clear').addEventListener('click', ()=>{
+    out.innerHTML=''; stats.textContent=''; msg.textContent='';
+  });
+  el('#copy').addEventListener('click', ()=>{
+    const t = I18N[el('#lang').value]||I18N.en;
+    const txt = el('#copy').dataset.txt || '';
+    if (!txt) return;
+    navigator.clipboard?.writeText(txt).then(()=>{ msg.textContent = t.copied; })
+      .catch(()=>{ msg.textContent = t.copyFail; });
+  });
+  el('#csv').addEventListener('click', ()=>{
+    const txt = el('#csv').dataset.txt || '';
+    if (!txt) return;
+    const blob = new Blob([txt+'\n'], {type:'text/csv'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'random_numbers.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  // Presets: data-preset="min,max,count,dp"
+  document.querySelector('.chiprow').addEventListener('click', (e)=>{
+    const chip = e.target.closest('.chip'); if (!chip) return;
+    const [mi,ma,c,dp] = (chip.dataset.preset||'').split(',').map(Number);
+    if (!Number.isFinite(mi) || !Number.isFinite(ma)) return;
+    el('#min').value = mi; el('#max').value = ma;
+    if (Number.isFinite(c)) el('#count').value = c;
+    if (Number.isFinite(dp)) el('#decimals').value = String(dp);
+    el('#unique').checked = false; el('#sortAsc').checked = false;
+    generate();
+  });
+
+  // Enter key = generate
+  window.addEventListener('keydown', (e)=>{
+    if (e.key === 'Enter') generate();
+  });
+</script>
+
+<!-- 主页链接语言透传（保留你的逻辑） -->
+<script>
+(function(){
+  var path = location.pathname.replace(/\/+$/,''); // strip trailing slashes
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = ['']; // already at root
+  var home = parts.join('/') + '/';
+
+  // preserve ?lang if present
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+
+  document.querySelectorAll('a[data-home]').forEach(function(a){
+    a.setAttribute('href', home);
+  });
+})();
+</script>
+</body>
+</html>

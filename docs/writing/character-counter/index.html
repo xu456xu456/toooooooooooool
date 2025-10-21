@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Character Counter | GoToolOnline</title>
+<meta charset="utf-8"/>
+<meta name="description" content="Count characters (graphemes/emoji), words, sentences, lines, paragraphs, and UTF-8 bytes. Selection stats, reading time, multi-language. All offline."/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><text x='6' y='52' font-size='48'>🛠️</text></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+<style>
+  :root { --bg:#0a0f1e; --card:#0f1830; --muted:#9fb0c3; --fg:#eaf3ff; --acc:#4fb3ff; --ok:#61d095; --warn:#ffb86b; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--fg);}
+  header{max-width:1200px;margin:24px auto 8px;display:flex;gap:14px;align-items:center;padding:0 18px;}
+  header a.logo{display:flex;gap:10px;align-items:center;text-decoration:none;color:var(--fg);font-weight:800;font-size:24px}
+  header a.navbtn{margin-left:auto;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:12px;color:#eaf3ff;text-decoration:none;font-size:16px}
+  header a.navbtn:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  select.lang{padding:8px 12px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff}
+  main{max-width:1200px;margin:10px auto 72px;padding:0 18px}
+  h1{font-size:34px;margin:10px 0 10px}
+  p,.muted,label{font-size:18px;line-height:1.6}
+  .card{background:#0f1830;border:1px solid #1a2843;border-radius:20px;padding:20px;margin:16px 0}
+  textarea,input,select,button{width:100%;padding:14px;border-radius:12px;border:1px solid #24365b;background:#0f1a2f;color:#eaf3ff;font-size:16px}
+  textarea{min-height:220px;resize:vertical}
+  button{cursor:pointer;background:linear-gradient(180deg,#2a78ff,#0050d4);border:none;font-weight:800}
+  button.ghost{background:#0f1a2f;border:1px solid #2a3d67}
+  button:hover{filter:brightness(1.06)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .stat{background:#0c1426;border:1px dashed #2a3c64;border-radius:12px;padding:12px}
+  .stat .k{font-size:14px;color:#9fb0c3}
+  .stat .v{font-size:22px;font-weight:900;margin-top:4px}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .muted{color:#9fb0c3}
+  .note{font-size:14px;color:#9fb0c3}
+  .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:#0b1226;border:1px solid #2a3c64}
+  footer{max-width:1200px;margin:40px auto;padding:0 18px;color:#9fb0c3;font-size:15px}
+  .backTop{margin-top:12px;display:inline-block;padding:10px 14px;background:#0f1a2f;border:1px solid #24365b;border-radius:10px;color:#eaf3ff;text-decoration:none}
+  .backTop:hover{border-color:#4fb3ff;box-shadow:0 0 0 3px rgba(79,179,255,.18)}
+  @media print{ header,footer,.no-print{display:none!important} body{background:#fff;color:#000} .card{border:none} .stat{border-color:#ccc} }
+</style>
+<script>function backToTop(){ window.scrollTo({top:0,behavior:'smooth'}); }</script>
+
+  
+  <link rel="alternate" hreflang="en" href="https://gotoolonline.com/writing/character-counter/"/>
+  <link rel="alternate" hreflang="x-default" href="https://gotoolonline.com/writing/character-counter/"/>
+
+<link rel="canonical" href="https://gotoolonline.com/writing/character-counter/">
+</head>
+<body>
+<header>
+  <a class="logo" data-home href="#"><span>🛠️</span><strong>GoToolOnline</strong></a>
+  <a class="navbtn" data-home href="#" id="back">← Back to Home</a>
+  <select id="lang" class="lang" aria-label="Language">
+    <option value="en">English</option>
+    <option value="zh">简体中文</option>
+    <option value="ph">Tagalog</option>
+    <option value="id">Bahasa Indonesia</option>
+    <option value="vi">Tiếng Việt</option>
+    <option value="bn">বাংলা</option>
+    <option value="ng">English (NG)</option>
+    <option value="sw">Kiswahili</option>
+    <option value="ar">العربية</option>
+  </select>
+</header>
+
+<main>
+<section class="card">
+  <h1 id="title">Character Counter</h1>
+  <p class="muted" id="subtitle">Counts grapheme clusters (emoji-aware), words, sentences, lines, paragraphs, and UTF-8 bytes. Everything runs locally.</p>
+
+  <label for="txt" id="lblInput">Your text</label>
+  <textarea id="txt" placeholder=""></textarea>
+
+  <div class="row" style="margin-top:10px">
+    <button id="paste" class="ghost">Paste</button>
+    <button id="copy" class="ghost">Copy</button>
+    <button id="clear" class="ghost">Clear</button>
+    <button id="download" class="ghost">Download .txt</button>
+    <label class="pill"><input id="trim" type="checkbox" style="width:auto;margin-right:8px"> <span id="optTrim">Trim before counting</span></label>
+  </div>
+
+  <div class="grid" style="margin-top:12px">
+    <div class="stat"><div class="k" id="kChars">Characters (graphemes)</div><div class="v" id="cChars">0</div></div>
+    <div class="stat"><div class="k" id="kCharsNoSpace">Characters (no whitespace)</div><div class="v" id="cCharsNoSpace">0</div></div>
+    <div class="stat"><div class="k" id="kWords">Words</div><div class="v" id="cWords">0</div></div>
+    <div class="stat"><div class="k" id="kSentences">Sentences</div><div class="v" id="cSentences">0</div></div>
+    <div class="stat"><div class="k" id="kLines">Lines</div><div class="v" id="cLines">0</div></div>
+    <div class="stat"><div class="k" id="kParas">Paragraphs</div><div class="v" id="cParas">0</div></div>
+    <div class="stat"><div class="k" id="kBytes">Bytes (UTF-8)</div><div class="v" id="cBytes">0</div></div>
+    <div class="stat"><div class="k" id="kSel">Selection — chars / words</div><div class="v" id="cSel">0 / 0</div></div>
+    <div class="stat"><div class="k" id="kRead">Reading time (approx)</div><div class="v" id="cRead">0s</div></div>
+  </div>
+
+  <div class="note" style="margin-top:8px" id="foot">
+    Character = <b>grapheme cluster</b> (e.g., 👨‍👩‍👧‍👦 counts as 1). Word/sentence counts use <code>Intl.Segmenter</code> when available, with safe fallbacks.
+  </div>
+</section>
+
+<section class="card">
+  <h2 style="margin:0 0 6px 0" id="tipsTitle">Tips</h2>
+  <ul class="note" id="tipsList">
+    <li>On paste-heavy tasks, enable “Trim before counting” to remove leading/trailing whitespace.</li>
+    <li>Bytes are UTF-8 encoded length. Emojis/ CJK may use multiple bytes.</li>
+    <li>Reading time: ~200 wpm for alphabetic languages; if mostly CJK, we estimate by characters (~400 cpm).</li>
+  </ul>
+</section>
+</main>
+
+<footer>
+  <a class="backTop" href="javascript:void(0)" onclick="backToTop()">Back to Top ↑</a>
+  <div style="margin-top:10px">© <span id="y"></span> GoToolOnline.com · Free online tools for everyone.</div>
+</footer>
+
+<script>
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  // -------- i18n --------
+  const I18N = {
+    en:{title:"Character Counter",
+        sub:"Counts grapheme clusters (emoji-aware), words, sentences, lines, paragraphs, and UTF-8 bytes. Everything runs locally.",
+        yourText:"Your text", paste:"Paste", copy:"Copy", clear:"Clear", dl:"Download .txt",
+        trim:"Trim before counting",
+        kChars:"Characters (graphemes)", kCharsNoSpace:"Characters (no whitespace)", kWords:"Words",
+        kSentences:"Sentences", kLines:"Lines", kParas:"Paragraphs", kBytes:"Bytes (UTF-8)",
+        kSel:"Selection — chars / words", kRead:"Reading time (approx)",
+        tipsT:"Tips",
+        tipsHTML:`<li>On paste-heavy tasks, enable “Trim before counting” to remove leading/trailing whitespace.</li>
+                  <li>Bytes are UTF-8 encoded length. Emojis/ CJK may use multiple bytes.</li>
+                  <li>Reading time: ~200 wpm for alphabetic languages; if mostly CJK, we estimate by characters (~400 cpm).</li>`,
+        ready:"Ready.", copied:"Copied.", copyFail:"Copy not supported or blocked.",
+        back:"Back to Home", placeholder:"Type or paste text here…"},
+    zh:{title:"字符统计器",
+        sub:"按字素簇统计（兼容 emoji），并计算单词、句子、行、段落及 UTF-8 字节数。本工具完全在本地运行。",
+        yourText:"在此输入文本", paste:"粘贴", copy:"复制", clear:"清空", dl:"下载 .txt",
+        trim:"统计前去除首尾空白",
+        kChars:"字符（字素簇）", kCharsNoSpace:"字符（不含空白）", kWords:"单词",
+        kSentences:"句子", kLines:"行数", kParas:"段落", kBytes:"字节数（UTF-8）",
+        kSel:"所选 — 字符 / 单词", kRead:"阅读时长（约）",
+        tipsT:"提示",
+        tipsHTML:`<li>大量粘贴时可开启“统计前去除首尾空白”。</li>
+                  <li>字节数为 UTF-8 编码长度，emoji/CJK 可能占多个字节。</li>
+                  <li>阅读时长：字母语系按 ~200 词/分钟；文本主要为中日韩时按 ~400 字/分钟估算。</li>`,
+        ready:"就绪。", copied:"已复制。", copyFail:"复制未被允许或不支持。",
+        back:"← 返回首页", placeholder:"在此输入或粘贴…"},
+    ph:{title:"Character Counter",
+        sub:"Bilang ng grapheme (emoji), words, sentences, lines, paragraphs at UTF-8 bytes. Lahat local.",
+        yourText:"Ilagay ang text", paste:"Paste", copy:"Kopya", clear:"I-clear", dl:"Download .txt",
+        trim:"Trim bago magbilang",
+        kChars:"Characters (graphemes)", kCharsNoSpace:"Characters (walang whitespace)", kWords:"Words",
+        kSentences:"Sentences", kLines:"Lines", kParas:"Paragraphs", kBytes:"Bytes (UTF-8)",
+        kSel:"Selection — chars / words", kRead:"Oras ng pagbabasa (tantiya)",
+        tipsT:"Mga tip",
+        tipsHTML:`<li>I-on ang “Trim” para alisin ang spaces sa dulo/ulo.</li>
+                  <li>Bytes ay UTF-8 length.</li>
+                  <li>Reading time ~200 wpm; CJK ~400 cpm.</li>`,
+        ready:"Handa.", copied:"Nakopya.", copyFail:"Di suportado.",
+        back:"Back to Home", placeholder:"Mag-type o paste dito…"},
+    id:{title:"Penghitung Karakter",
+        sub:"Hitung grapheme (emoji), kata, kalimat, baris, paragraf, dan byte UTF-8. Semua lokal.",
+        yourText:"Teks Anda", paste:"Tempel", copy:"Salin", clear:"Bersihkan", dl:"Unduh .txt",
+        trim:"Trim sebelum hitung",
+        kChars:"Karakter (grapheme)", kCharsNoSpace:"Karakter (tanpa whitespace)", kWords:"Kata",
+        kSentences:"Kalimat", kLines:"Baris", kParas:"Paragraf", kBytes:"Byte (UTF-8)",
+        kSel:"Seleksi — karakter / kata", kRead:"Waktu baca (±)",
+        tipsT:"Tips",
+        tipsHTML:`<li>Nyalakan “Trim” untuk buang spasi di awal/akhir.</li>
+                  <li>Byte = panjang UTF-8.</li>
+                  <li>Waktu baca ~200 wpm; CJK ~400 cpm.</li>`,
+        ready:"Siap.", copied:"Disalin.", copyFail:"Gagal menyalin.",
+        back:"Back to Home", placeholder:"Ketik atau tempel di sini…"},
+    vi:{title:"Bộ đếm ký tự",
+        sub:"Đếm chữ (grapheme/emoji), từ, câu, dòng, đoạn và byte UTF-8. Chạy hoàn toàn cục bộ.",
+        yourText:"Văn bản của bạn", paste:"Dán", copy:"Sao chép", clear:"Xóa", dl:"Tải .txt",
+        trim:"Cắt khoảng trắng trước khi đếm",
+        kChars:"Ký tự (grapheme)", kCharsNoSpace:"Ký tự (không khoảng trắng)", kWords:"Từ",
+        kSentences:"Câu", kLines:"Dòng", kParas:"Đoạn", kBytes:"Byte (UTF-8)",
+        kSel:"Vùng chọn — ký tự / từ", kRead:"Thời gian đọc (ước tính)",
+        tipsT:"Mẹo",
+        tipsHTML:`<li>Bật “Cắt” để bỏ khoảng trắng đầu/cuối.</li>
+                  <li>Byte là độ dài UTF-8.</li>
+                  <li>Thời gian đọc ~200 từ/phút; CJK ~400 ký tự/phút.</li>`,
+        ready:"Sẵn sàng.", copied:"Đã sao chép.", copyFail:"Không thể sao chép.",
+        back:"Back to Home", placeholder:"Nhập hoặc dán vào đây…"},
+    bn:{title:"অক্ষর গণক",
+        sub:"গ্রাফিম (ইমোজি), শব্দ, বাক্য, লাইন, প্যারাগ্রাফ ও UTF-8 বাইট গণনা। সম্পূর্ণ লোকাল।",
+        yourText:"আপনার টেক্সট", paste:"পেস্ট", copy:"কপি", clear:"পরিষ্কার", dl:".txt ডাউনলোড",
+        trim:"গণনার আগে ট্রিম",
+        kChars:"অক্ষর (গ্রাফিম)", kCharsNoSpace:"অক্ষর (হোয়াইটস্পেস বাদে)", kWords:"শব্দ",
+        kSentences:"বাক্য", kLines:"লাইন", kParas:"অনুচ্ছেদ", kBytes:"বাইট (UTF-8)",
+        kSel:"নির্বাচিত — অক্ষর / শব্দ", kRead:"পড়ার সময় (প্রায়)",
+        tipsT:"টিপস",
+        tipsHTML:`<li>“ট্রিম” চালু করলে শুরু/শেষের ফাঁকা অংশ বাদ দেয়।</li>
+                  <li>বাইট হলো UTF-8 দৈর্ঘ্য।</li>
+                  <li>পড়ার গতি ~200 wpm; CJK ~400 cpm.</li>`,
+        ready:"প্রস্তুত।", copied:"কপি হয়েছে।", copyFail:"কপি করা যায়নি।",
+        back:"Back to Home", placeholder:"এখানে লিখুন বা পেস্ট করুন…"},
+    ng:{title:"Character Counter",
+        sub:"Counts graphemes, words, sentences, lines, paragraphs and UTF-8 bytes. Offline.",
+        yourText:"Your text", paste:"Paste", copy:"Copy", clear:"Clear", dl:"Download .txt",
+        trim:"Trim before counting",
+        kChars:"Characters (graphemes)", kCharsNoSpace:"Characters (no whitespace)", kWords:"Words",
+        kSentences:"Sentences", kLines:"Lines", kParas:"Paragraphs", kBytes:"Bytes (UTF-8)",
+        kSel:"Selection — chars / words", kRead:"Reading time (approx)",
+        tipsT:"Tips",
+        tipsHTML:`<li>Enable “Trim” for pasted text.</li><li>Bytes are UTF-8 length.</li><li>Reading time: ~200 wpm; CJK ~400 cpm.</li>`,
+        ready:"Ready.", copied:"Copied.", copyFail:"Copy blocked.", back:"Back to Home",
+        placeholder:"Type or paste text here…"},
+    sw:{title:"Kihesabu Herufi",
+        sub:"Huhesabu grapheme (emoji), maneno, sentensi, mistari, aya na baiti za UTF-8. Kila kitu ndani ya kivinjari.",
+        yourText:"Maandishi yako", paste:"Bandika", copy:"Nakili", clear:"Futa", dl:"Pakua .txt",
+        trim:"Kata nafasi kabla ya kuhesabu",
+        kChars:"Herufi (grapheme)", kCharsNoSpace:"Herufi (bila nafasi)", kWords:"Maneno",
+        kSentences:"Sentensi", kLines:"Mistari", kParas:"Aya", kBytes:"Baiti (UTF-8)",
+        kSel:"Uteuzi — herufi / maneno", kRead:"Muda wa kusoma (makadirio)",
+        tipsT:"Vidokezo",
+        tipsHTML:`<li>Washa “Kata” kwa maandishi yaliyonakiliwa.</li>
+                  <li>Baiti ni urefu wa UTF-8.</li>
+                  <li>Muda wa kusoma ~200 wpm; CJK ~400 cpm.</li>`,
+        ready:"Tayari.", copied:"Imenakiliwa.", copyFail:"Imekataliwa.", back:"Back to Home",
+        placeholder:"Andika au bandika hapa…"},
+    ar:{title:"عداد الأحرف",
+        sub:"يحصي مجموعات المحارف (يدعم الإيموجي)، الكلمات، الجمل، الأسطر، الفقرات وحجم UTF-8. يعمل محليًا.",
+        yourText:"نصك هنا", paste:"لصق", copy:"نسخ", clear:"مسح", dl:"تنزيل .txt",
+        trim:"تشذيب قبل العد",
+        kChars:"الأحرف (مجمّعات)", kCharsNoSpace:"الأحرف (بدون فراغات)", kWords:"الكلمات",
+        kSentences:"الجمل", kLines:"الأسطر", kParas:"الفقرات", kBytes:"بايت (UTF-8)",
+        kSel:"المحدد — أحرف / كلمات", kRead:"وقت القراءة (تقريبًا)",
+        tipsT:"نصائح",
+        tipsHTML:`<li>فعّل “التشذيب” للنص الملصوق.</li><li>البايتات هي طول UTF-8.</li><li>القراءة ~200 كلمة/د؛ وللنصوص CJK ~400 حرف/د.</li>`,
+        ready:"جاهز.", copied:"نُسخ.", copyFail:"فشل النسخ.", back:"العودة إلى الرئيسية",
+        placeholder:"اكتب أو الصق هنا…"}
+  };
+  const HTML_LANG = {en:'en', zh:'zh-CN', ph:'tl-PH', id:'id', vi:'vi', bn:'bn', ng:'en', sw:'sw', ar:'ar'};
+  const qs = new URLSearchParams(location.search);
+
+  function setHomeLinksForLang(lang){
+    var path = location.pathname.replace(/\/+$/,'');
+    var parts = path.split('/'); parts = (parts.length>=3)? parts.slice(0, parts.length-2) : [''];
+    var home = parts.join('/') + '/';
+    const u = new URL(home, location.origin); u.searchParams.set('lang', lang);
+    document.querySelectorAll('a[data-home]').forEach(a=>a.setAttribute('href', u.pathname+u.search+u.hash));
+  }
+
+  function applyLang(lang){
+    const t=I18N[lang]||I18N.en;
+    document.title = t.title + " | GoToolOnline";
+    document.documentElement.lang = HTML_LANG[lang]||'en';
+    document.documentElement.dir  = (lang==='ar')?'rtl':'ltr';
+    document.getElementById('back').textContent = t.back || "Back to Home";
+    document.getElementById('title').textContent = t.title;
+    document.getElementById('subtitle').textContent = t.sub;
+    document.getElementById('lblInput').textContent = t.yourText;
+    document.getElementById('txt').placeholder = t.placeholder || "";
+    document.getElementById('paste').textContent = t.paste;
+    document.getElementById('copy').textContent = t.copy;
+    document.getElementById('clear').textContent = t.clear;
+    document.getElementById('download').textContent = t.dl;
+    document.getElementById('optTrim').textContent = t.trim;
+
+    document.getElementById('kChars').textContent = t.kChars;
+    document.getElementById('kCharsNoSpace').textContent = t.kCharsNoSpace;
+    document.getElementById('kWords').textContent = t.kWords;
+    document.getElementById('kSentences').textContent = t.kSentences;
+    document.getElementById('kLines').textContent = t.kLines;
+    document.getElementById('kParas').textContent = t.kParas;
+    document.getElementById('kBytes').textContent = t.kBytes;
+    document.getElementById('kSel').textContent = t.kSel;
+    document.getElementById('kRead').textContent = t.kRead;
+
+    document.getElementById('tipsTitle').textContent = t.tipsT;
+    document.getElementById('tipsList').innerHTML = t.tipsHTML;
+    localStorage.setItem('lang', lang); qs.set('lang', lang);
+    history.replaceState({}, '', location.pathname + '?' + qs.toString());
+    setHomeLinksForLang(lang);
+  }
+  (function bootLang(){
+    const L = qs.get('lang') || localStorage.getItem('lang') || 'en';
+    const sel = document.getElementById('lang'); sel.value = I18N[L]?L:'en';
+    applyLang(sel.value);
+    sel.addEventListener('change', e=> applyLang(e.target.value));
+  })();
+
+  // -------- counters (emoji-aware) --------
+  const segG = (typeof Intl!=='undefined' && Intl.Segmenter) ? new Intl.Segmenter(undefined,{granularity:'grapheme'}) : null;
+  const segW = (typeof Intl!=='undefined' && Intl.Segmenter) ? new Intl.Segmenter(undefined,{granularity:'word'}) : null;
+  const segS = (typeof Intl!=='undefined' && Intl.Segmenter) ? new Intl.Segmenter(undefined,{granularity:'sentence'}) : null;
+
+  const reWordFallback = /[\p{L}\p{M}\p{N}]+/gu;
+  const reSentenceFallback = /[^.!?…\n]+[.!?…]*/g;
+  const textEnc = (typeof TextEncoder!=='undefined') ? new TextEncoder() : null;
+
+  function graphemeCount(str){
+    if (!str) return 0;
+    if (segG){ let n=0; for (const _ of segG.segment(str)) n++; return n; }
+    // fallback: by code points
+    return Array.from(str).length;
+  }
+  function wordCount(str){
+    if (!str) return 0;
+    if (segW){ let n=0; for (const s of segW.segment(str)) if (s.isWordLike) n++; return n; }
+    const m = str.match(reWordFallback); return m? m.length : 0;
+  }
+  function sentenceCount(str){
+    if (!str) return 0;
+    if (segS){ let n=0; for (const _ of segS.segment(str)) n++; return n; }
+    const m = str.match(reSentenceFallback); return m? m.length : 0;
+  }
+  function lineCount(str){ if (!str) return 0; return str.split(/\r\n|\r|\n/).length; }
+  function paraCount(str){
+    if (!str) return 0;
+    // split by blank-line or line-break, trim empties
+    return str.split(/\r\n\r\n|\n\n|\r\r|[\r\n]+(?=\s*[\r\n]|$)/).map(s=>s.trim()).filter(Boolean).length;
+  }
+  function bytesUTF8(str){
+    if (!str) return 0;
+    if (textEnc) return textEnc.encode(str).length;
+    // fallback: Blob
+    try { return new Blob([str]).size; } catch { return str.length; }
+  }
+
+  function isMostlyCJK(str){
+    const m = str.match(/\p{Script=Han}|\p{Script=Hiragana}|\p{Script=Katakana}|\p{Script=Hangul}/gu);
+    return m && m.length > (str.length/6); // rough heuristic
+  }
+  function readingTime(words, chars){
+    if (words===0 && chars===0) return 0;
+    if (isMostlyCJK(chars>0? 'x'.repeat(chars):'')) {
+      const mins = chars/400/60; return mins*60; // seconds
+    }
+    return (words/200)*60; // seconds
+  }
+
+  const $ = s=>document.querySelector(s);
+  const tSel = ()=> I18N[$('#lang').value]||I18N.en;
+
+  function update(){
+    const t = tSel();
+    let txt = $('#txt').value || '';
+    if ($('#trim').checked) txt = txt.trim();
+
+    const chars = graphemeCount(txt);
+    const charsNoSpace = graphemeCount(txt.replace(/\s+/g,''));
+    const words = wordCount(txt);
+    const sents = sentenceCount(txt);
+    const lines = lineCount(txt);
+    const paras = paraCount(txt);
+    const bytes = bytesUTF8(txt);
+
+    // selection
+    const ta = $('#txt'); const selLen = Math.abs((ta.selectionEnd||0) - (ta.selectionStart||0));
+    let selText = ''; if (selLen>0) selText = ta.value.slice(ta.selectionStart, ta.selectionEnd);
+    const selChars = selText ? graphemeCount(selText) : 0;
+    const selWords = selText ? wordCount(selText) : 0;
+
+    // reading
+    const rt = readingTime(words, chars);
+    const mins = Math.floor(rt/60); const secs = Math.round(rt%60);
+    const rtStr = (mins>0? `${mins}m ${String(secs).padStart(2,'0')}s` : `${secs}s`);
+
+    // render
+    $('#cChars').textContent = String(chars);
+    $('#cCharsNoSpace').textContent = String(charsNoSpace);
+    $('#cWords').textContent = String(words);
+    $('#cSentences').textContent = String(sents);
+    $('#cLines').textContent = String(lines);
+    $('#cParas').textContent = String(paras);
+    $('#cBytes').textContent = String(bytes);
+    $('#cSel').textContent = `${selChars} / ${selWords}`;
+    $('#cRead').textContent = (chars||words)? rtStr : '0s';
+
+    localStorage.setItem('cc_text', txt);
+  }
+
+  // events
+  ['input','keyup','change'].forEach(ev=> $('#txt').addEventListener(ev, update));
+  $('#txt').addEventListener('select', update);
+  $('#trim').addEventListener('change', update);
+
+  // buttons
+  $('#paste').addEventListener('click', async ()=>{
+    try{ const s = await navigator.clipboard.readText(); if (s){ $('#txt').value = s; update(); } }
+    catch{ /* ignore */ }
+  });
+  $('#copy').addEventListener('click', ()=>{
+    const t = tSel();
+    navigator.clipboard?.writeText($('#txt').value||'').then(()=>{
+      const b = $('#copy'); b.textContent = t.copied; setTimeout(()=> b.textContent=t.copy, 900);
+    }).catch(()=>{
+      const b = $('#copy'); b.textContent = t.copyFail; setTimeout(()=> b.textContent=t.copy, 1200);
+    });
+  });
+  $('#clear').addEventListener('click', ()=>{ $('#txt').value=''; update(); });
+  $('#download').addEventListener('click', ()=>{
+    const blob = new Blob([$('#txt').value||''], {type:'text/plain;charset=utf-8'});
+    const url = URL.createObjectURL(blob); const a=document.createElement('a');
+    a.href=url; a.download='text.txt'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  });
+
+  // boot
+  (function boot(){
+    const saved = localStorage.getItem('cc_text'); if (saved) $('#txt').value = saved;
+    update();
+  })();
+
+  // Enter = do nothing special (live), but support Ctrl+A selection count update
+  window.addEventListener('keydown', (e)=>{ if (e.key==='Enter') setTimeout(update,0); });
+</script>
+
+<!-- 保留你的“返回首页带 lang”逻辑 -->
+<script>
+(function(){
+  var path = location.pathname.replace(/\/+$/,''); // strip trailing slashes
+  var parts = path.split('/');
+  if (parts.length >= 3) parts = parts.slice(0, parts.length - 2);
+  else parts = ['']; // already at root
+  var home = parts.join('/') + '/';
+
+  // preserve ?lang if present
+  var cur = new URL(location.href);
+  var lang = cur.searchParams.get('lang');
+  if (lang) {
+    var u = new URL(home, location.origin);
+    u.searchParams.set('lang', lang);
+    home = u.pathname + u.search + u.hash;
+  }
+  document.querySelectorAll('a[data-home]').forEach(function(a){
+    a.setAttribute('href', home);
+  });
+})();
+</script>
+</body>
+</html>
